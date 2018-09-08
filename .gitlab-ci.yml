@@ -1,0 +1,9 @@
+stages:
+  - build
+
+Buggy:
+  stage: build
+  tags:
+    - touchbit-shell
+  script:
+    - mvn clean install
