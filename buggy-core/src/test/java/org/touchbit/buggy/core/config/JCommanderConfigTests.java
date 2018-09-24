@@ -271,7 +271,7 @@ class JCommanderConfigTests extends BaseUnitTest {
     void unitTest_20180919202117() {
         String absolutePath = PRIMARY_CONFIG.getAbsolutePath();
         try {
-            assertThat(absolutePath, is(nullValue()));
+            assertThat(absolutePath, is(WASTE));
             PRIMARY_CONFIG.setAbsolutePath("AbsolutePath");
             assertThat(PRIMARY_CONFIG.getAbsolutePath(), is("AbsolutePath"));
         } finally {
@@ -282,55 +282,55 @@ class JCommanderConfigTests extends BaseUnitTest {
     @Test
     @DisplayName("Check PrimaryConfig.getErrorLogDir()")
     void unitTest_20180919202645() {
-        assertThat(PRIMARY_CONFIG.getErrorLogDir(), is(new File("errors")));
+        assertThat(PRIMARY_CONFIG.getErrorLogDir(), is(new File(WASTE, "errors")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getTestLogDir()")
     void unitTest_20180919202812() {
-        assertThat(PRIMARY_CONFIG.getTestLogDir(), is(new File("tests")));
+        assertThat(PRIMARY_CONFIG.getTestLogDir(), is(new File(WASTE, "tests")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getFixedLogDir()")
     void unitTest_20180919202835() {
-        assertThat(PRIMARY_CONFIG.getFixedLogDir(), is(new File("fixed")));
+        assertThat(PRIMARY_CONFIG.getFixedLogDir(), is(new File(WASTE, "fixed")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getImplementedLogDir()")
     void unitTest_20180919202856() {
-        assertThat(PRIMARY_CONFIG.getImplementedLogDir(), is(new File("implemented")));
+        assertThat(PRIMARY_CONFIG.getImplementedLogDir(), is(new File(WASTE, "implemented")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getNewErrorLogDir()")
     void unitTest_20180919202909() {
-        assertThat(PRIMARY_CONFIG.getNewErrorLogDir(), is(new File("errors/new")));
+        assertThat(PRIMARY_CONFIG.getNewErrorLogDir(), is(new File(WASTE, "errors/new")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getExpFixErrorLogDir()")
     void unitTest_20180919202937() {
-        assertThat(PRIMARY_CONFIG.getExpFixErrorLogDir(), is(new File("errors/exp_fix")));
+        assertThat(PRIMARY_CONFIG.getExpFixErrorLogDir(), is(new File(WASTE, "errors/exp_fix")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getExpImplErrorLogDir()")
     void unitTest_20180919202959() {
-        assertThat(PRIMARY_CONFIG.getExpImplErrorLogDir(), is(new File("errors/exp_impl")));
+        assertThat(PRIMARY_CONFIG.getExpImplErrorLogDir(), is(new File(WASTE, "errors/exp_impl")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getCorruptedErrorLogDir()")
     void unitTest_20180919203022() {
-        assertThat(PRIMARY_CONFIG.getCorruptedErrorLogDir(), is(new File("errors/corrupted")));
+        assertThat(PRIMARY_CONFIG.getCorruptedErrorLogDir(), is(new File(WASTE, "errors/corrupted")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getBlockedErrorLogDir()")
     void unitTest_20180919203048() {
-        assertThat(PRIMARY_CONFIG.getBlockedErrorLogDir(), is(new File("errors/blocked")));
+        assertThat(PRIMARY_CONFIG.getBlockedErrorLogDir(), is(new File(WASTE, "errors/blocked")));
     }
 
     @Test

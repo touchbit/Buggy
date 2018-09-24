@@ -37,6 +37,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static org.testng.ITestResult.*;
+import static org.touchbit.buggy.core.model.Status.BLOCKED;
 import static org.touchbit.buggy.core.model.Status.EXP_FIX;
 import static org.touchbit.buggy.core.model.Status.EXP_IMPL;
 import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
@@ -132,7 +133,6 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     @Override
     public void onStart(ISuite suite) {
         disableTestsByType(suite);
-        // If you do not expect to run all tests (including errors) -> disable the launch of the falling tests.
         if (!Buggy.getPrimaryConfig().isForceRun()) {
             disableTestsByStatus(suite);
         }
@@ -140,30 +140,33 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
 
     @Override
     public void onFinish(ISuite suite) {
-        // This method is invoked after the SuiteRunner has run all the getTestLog suites.
-        copyExpectedTestLogFiles(suite);
-        copyFixedTestLogFiles(suite);
+        suite.getAllInvokedMethods()
+                .forEach(m -> {
+                    try {
+                        copyTestMethodLogFle(m);
+                    } catch (IOException e) {
+                        Buggy.incrementBuggyErrors();
+                        frameworkLog.error(e.getMessage(), e);
+                    }
+                });
     }
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         initSteps();
         String methodName = getMethodName(method);
-        if (testResult.getStatus() == ITestResult.STARTED) {
-            if (method.isTestMethod()) {
-                BuggyLog.setTestName(getTestMethodLogFileName(method));
-                testLog.info("The test method is running:\n{} - {}", methodName, getDescription(method));
-            } else {
-                BuggyLog.setTestName(getTestMethodLogFileName(method));
-                testLog.info("The configuration method is running:\n{} - {}.", methodName, getDescription(method));
-                if (testLog.isDebugEnabled()) {
-                    StringJoiner sj = new StringJoiner("\n", "\n", "\n");
-                    for (Annotation annotation : getRealMethod(method).getAnnotations()) {
-                        sj.add(annotation.toString());
-                    }
-                    testLog.debug("Declared method annotations:{}", sj);
-                }
+        BuggyLog.setTestName(getInvokedMethodLogFileName(method));
+        if (method.isTestMethod()) {
+            testLog.info("Test method is running:\n{} - {}", methodName, getDescription(method));
+        } else {
+            testLog.info("Configuration method is running:\n{} - {}.", methodName, getDescription(method));
+        }
+        if (testLog.isDebugEnabled()) {
+            StringJoiner sj = new StringJoiner("\n", "\n", "\n");
+            for (Annotation annotation : getRealMethod(method).getAnnotations()) {
+                sj.add(annotation.toString());
             }
+            testLog.debug("Declared method annotations:{}", sj);
         }
     }
 
@@ -258,10 +261,10 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
                         testResult.setThrowable(new CorruptedTestException());
                         break;
                     case EXP_FIX:
-                        resultLog(method, EXP_FIX, buildDetailsMessage(details));
+                        resultLog(method, Status.EXP_FIX, buildDetailsMessage(details));
                         break;
                     case EXP_IMPL:
-                        resultLog(method, EXP_IMPL, buildDetailsMessage(details));
+                        resultLog(method, Status.EXP_IMPL, buildDetailsMessage(details));
                         break;
                     case BLOCKED:
                         resultLog(method, Status.BLOCKED, buildDetailsMessage(details));
@@ -340,77 +343,54 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         });
     }
 
-    public void copyFixedTestLogFiles(ISuite suite) {
-        PrimaryConfig c = Buggy.getPrimaryConfig();
-        suite.getAllInvokedMethods().stream()
-                .filter(m -> m.getTestResult().getStatus() == SUCCESS)
-                .forEach(m -> {
-                    try {
-                        Details details = getDetails(m);
-                        if (m.isTestMethod() && details != null) {
-                            if (details.status().equals(EXP_FIX)) {
-                                copyFile(new File(c.getTestLogDir(), getTestMethodLogFileName(m)),
-                                        new File(c.getFixedLogDir(), getTestMethodLogFileName(m)));
-                            } else if (details.status().equals(EXP_IMPL)) {
-                                copyFile(new File(c.getTestLogDir(), getTestMethodLogFileName(m)),
-                                        new File(c.getImplementedLogDir(), getTestMethodLogFileName(m)));
-                            }
-                        }
-                    } catch (IOException e) {
-                        Buggy.incrementBuggyErrors();
-                        frameworkLog.error(e.getMessage(), e);
-                    }
-                });
-    }
-
-    public void copyExpectedTestLogFiles(ISuite suite) {
-        suite.getAllInvokedMethods().stream()
-                .filter(m -> m.getTestResult().getStatus() == FAILURE ||
-                        m.getTestResult().getStatus() == SUCCESS_PERCENTAGE_FAILURE)
-                .forEach(m -> {
-                    try {
-                        if (m.isTestMethod()) {
-                            copyTestMethodLogFle(m);
-                        } else {
-                            copyConfigurationMethodLogFle(m);
-                        }
-                    } catch (IOException e) {
-                        Buggy.incrementBuggyErrors();
-                        frameworkLog.error(e.getMessage(), e);
-                    }
-                });
-    }
-
     public void copyTestMethodLogFle(IInvokedMethod method) throws IOException {
         PrimaryConfig c = Buggy.getPrimaryConfig();
         Details details = getDetails(method);
-        if (details != null) {
-            switch (details.status()) {
-                case CORRUPTED:
-                    copyFile(new File(c.getTestLogDir(), getTestMethodLogFileName(method)),
-                            new File(c.getCorruptedErrorLogDir(), getTestMethodLogFileName(method)));
-                    break;
-                case EXP_FIX:
-                    copyFile(new File(c.getTestLogDir(), getTestMethodLogFileName(method)),
-                            new File(c.getExpFixErrorLogDir(), getTestMethodLogFileName(method)));
-                    break;
-                case EXP_IMPL:
-                    copyFile(new File(c.getTestLogDir(), getTestMethodLogFileName(method)),
-                            new File(c.getExpImplErrorLogDir(), getTestMethodLogFileName(method)));
-                    break;
-                case BLOCKED:
-                    copyFile(new File(c.getTestLogDir(), getTestMethodLogFileName(method)),
-                            new File(c.getBlockedErrorLogDir(), getTestMethodLogFileName(method)));
-                    break;
-                default:
-                    if (method.getTestResult().getStatus() == FAILURE ||
-                            method.getTestResult().getStatus() == SUCCESS_PERCENTAGE_FAILURE) {
-                        copyFile(new File(c.getTestLogDir(), getTestMethodLogFileName(method)),
-                                new File(c.getNewErrorLogDir(), getTestMethodLogFileName(method)));
-                    }
+        int iTestResultStatus = method.getTestResult().getStatus();
+        File sourceFile = new File(c.getTestLogDir(), getInvokedMethodLogFileName(method));
+        File targetFile = null;
+        if (details == null) {
+            if (iTestResultStatus == FAILURE || iTestResultStatus == SUCCESS_PERCENTAGE_FAILURE) {
+                targetFile = new File(c.getNewErrorLogDir(), getInvokedMethodLogFileName(method));
+                copyFile(sourceFile, targetFile);
             }
+            return;
+        }
+        Status status = details.status();
+        switch (iTestResultStatus) {
+            case ITestResult.SUCCESS:
+                if (status.equals(EXP_FIX) || status.equals(BLOCKED)) {
+                    targetFile = new File(c.getFixedLogDir(), getInvokedMethodLogFileName(method));
+                }
+                if (status.equals(EXP_IMPL)) {
+                    targetFile = new File(c.getImplementedLogDir(), getInvokedMethodLogFileName(method));
+                }
+                break;
+            case ITestResult.FAILURE:
+            case ITestResult.SUCCESS_PERCENTAGE_FAILURE:
+                switch (status) {
+                    case EXP_FIX:
+                        targetFile = new File(c.getExpFixErrorLogDir(), getInvokedMethodLogFileName(method));
+                        break;
+                    case EXP_IMPL:
+                        targetFile = new File(c.getExpImplErrorLogDir(), getInvokedMethodLogFileName(method));
+                        break;
+                    case BLOCKED:
+                        targetFile = new File(c.getBlockedErrorLogDir(), getInvokedMethodLogFileName(method));
+                        break;
+                    case CORRUPTED:
+                        targetFile = new File(c.getCorruptedErrorLogDir(), getInvokedMethodLogFileName(method));
+                        break;
+                    default:
+                        targetFile = new File(c.getNewErrorLogDir(), getInvokedMethodLogFileName(method));
+                }
+        }
+        if (targetFile != null) {
+            copyFile(sourceFile, targetFile);
         }
     }
+
+
 
     public void copyConfigurationMethodLogFle(IInvokedMethod method) throws IOException {
         PrimaryConfig c = Buggy.getPrimaryConfig();

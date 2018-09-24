@@ -1220,6 +1220,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         ITestNGMethod iTestNGMethod = getMockITestNGMethod(clazz, methodName, isTest);
         IInvokedMethod iInvokedMethod = mock(IInvokedMethod.class);
         when(iInvokedMethod.getTestMethod()).thenReturn(iTestNGMethod);
+        when(iInvokedMethod.isTestMethod()).thenReturn(isTest);
         return iInvokedMethod;
     }
 

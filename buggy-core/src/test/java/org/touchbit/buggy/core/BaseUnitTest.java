@@ -40,6 +40,7 @@ public abstract class BaseUnitTest {
         System.setProperty(LOG_DIRECTORY, WASTE + "/");
         Buggy.initJCommander();
         PRIMARY_CONFIG = Buggy.getPrimaryConfig();
+        PRIMARY_CONFIG.setAbsolutePath(WASTE);
         File wasteDir = new File(WASTE);
         File logFile = new File(WASTE, "console.txt");
         delete(wasteDir);
