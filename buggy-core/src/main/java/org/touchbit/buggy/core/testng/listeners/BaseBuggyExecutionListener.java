@@ -1,0 +1,186 @@
+/*
+ * Copyright © 2018 Shaburov Oleg
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.touchbit.buggy.core.testng.listeners;
+
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.testng.*;
+import org.touchbit.buggy.core.Buggy;
+import org.touchbit.buggy.core.config.PrimaryConfig;
+import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Suite;
+import org.touchbit.buggy.core.utils.StringUtils;
+import org.touchbit.buggy.core.utils.log.BuggyLog;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * Created by Oleg Shaburov on 16.05.2018
+ * shaburov.o.a@gmail.com
+ */
+@SuppressWarnings("WeakerAccess")
+public abstract class BaseBuggyExecutionListener implements BuggyListener, IExecutionListener {
+
+    protected static AtomicInteger testCount = new AtomicInteger(0);
+    protected static AtomicInteger corruptedError = new AtomicInteger(0);
+    protected static AtomicInteger expFixError = new AtomicInteger(0);
+    protected static AtomicInteger expImplError = new AtomicInteger(0);
+    protected static AtomicInteger blockedError = new AtomicInteger(0);
+    protected static AtomicInteger newError = new AtomicInteger(0);
+    protected static AtomicInteger fixed = new AtomicInteger(0);
+    protected static AtomicInteger implemented = new AtomicInteger(0);
+
+    protected long startTime;
+    protected long finishTime;
+    private String arrow = " \u2B9E ";
+
+    protected Logger testLog;
+    protected Logger frameworkLog;
+    protected Logger consoleLog;
+
+    @Override
+    public void onExecutionStart() {
+        startTime = new Date().getTime();
+        if (testLog == null) {
+            testLog = BuggyLog.test();
+        }
+        if (frameworkLog == null) {
+            frameworkLog = BuggyLog.framework();
+        }
+        if (consoleLog == null) {
+            consoleLog = BuggyLog.console();
+        }
+    }
+
+    @Override
+    public void onExecutionFinish() {
+        finishTime = new Date().getTime();
+    }
+
+    public void setArrow(String a) {
+        arrow = a;
+    }
+
+    protected @Nullable Details getDetails(IInvokedMethod method) {
+        return getDetails(method.getTestMethod());
+    }
+
+    protected @Nullable Details getDetails(ITestNGMethod method) {
+        return getDetails(method.getConstructorOrMethod().getMethod());
+    }
+
+    protected @Nullable Details getDetails(Method method) {
+        return method.getAnnotation(Details.class);
+    }
+
+    protected Suite getSuite(ITestClass iTestClass) {
+        return iTestClass.getRealClass().getAnnotation(Suite.class);
+    }
+
+    protected Suite getSuite(ITestNGMethod method) {
+        return (Suite) method.getRealClass().getAnnotation(Suite.class);
+    }
+
+    protected String getURLEncodedLogFileName(ITestNGMethod method) {
+        PrimaryConfig c = Buggy.getPrimaryConfig();
+        String urlEncoded = StringUtils.encode(getTestMethodLogFileName(method));
+        if (!String.valueOf(c.getBuildLogUrl()).equalsIgnoreCase("null")) {
+            return arrow + c.getBuildLogUrl() + new File(c.getTestLogDir() , urlEncoded).getAbsolutePath();
+        } else {
+            return arrow + "file://" + new File(c.getTestLogDir(), urlEncoded);
+        }
+    }
+
+    protected String getTestMethodLogFileName(IInvokedMethod method) {
+        return getTestMethodLogFileName(method.getTestMethod());
+    }
+
+    protected String getTestMethodLogFileName(ITestNGMethod method) {
+        return getTestMethodLogFileName(method.getConstructorOrMethod().getMethod());
+    }
+
+    protected String getTestMethodLogFileName(Method method) {
+        String caseIds = "";
+        String methodName = method.getName();
+        Details details = getDetails(method);
+        if (details != null) {
+            List<Integer> ids = new ArrayList<>();
+            for (int id : details.id()) {
+                if (id > 0) {
+                    ids.add(id);
+                }
+            }
+            if (!ids.isEmpty()) {
+                caseIds = Arrays.toString(details.id()) + "_";
+            }
+        }
+        return caseIds + methodName + ".log";
+    }
+
+    protected Method getRealMethod(ITestResult result) {
+        return getRealMethod(result.getMethod());
+    }
+
+    protected Method getRealMethod(IInvokedMethod method) {
+        return getRealMethod(method.getTestMethod());
+    }
+
+    protected Method getRealMethod(ITestNGMethod method) {
+        return method.getConstructorOrMethod().getMethod();
+    }
+
+    protected String getDescription(IInvokedMethod method) {
+        return method.getTestMethod().getDescription();
+    }
+
+    protected String getClassSimpleName(IInvokedMethod method) {
+        return method.getTestMethod().getRealClass().getSimpleName();
+    }
+
+    protected String getMethodName(IInvokedMethod method) {
+        return method.getTestMethod().getMethodName();
+    }
+
+    protected boolean isIssuesPresent(Details details) {
+        for (String s : details.issue()) {
+            if (!s.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected String getIssues(Details details) {
+        return Arrays.toString(details.issue());
+    }
+
+    protected String buildDetailsMessage(Details details, Object... appends) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        for (Object o : appends) {
+            stringJoiner.add(String.valueOf(o));
+        }
+        String ref = isIssuesPresent(details) ? arrow + getIssues(details) : "";
+        if (ref.length() != 0) {
+            return ref + " " + stringJoiner;
+        }
+        return stringJoiner.length() != 0 ? arrow + stringJoiner : "";
+    }
+
+}

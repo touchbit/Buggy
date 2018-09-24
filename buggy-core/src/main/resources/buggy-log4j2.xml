@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <properties>
+        <!-- The root path to the log directory. It is initialized 1 time at startup. -->
+        <property name="log.path">${sys:log.directory}</property>
+        <!-- Patterns. -->
+        <property name="test.log.pattern">%d{HH:mm:ss.SSS} %m%n</property>
+        <property name="base.log.pattern">%d{HH:mm:ss.SSS} [%17t] - %m%n</property>
+        <!-- ASCIIConsole configuration -->
+        <property name="colors">{FATAL=red blink, ERROR=red, WARN=Magenta, INFO=NAN, DEBUG=green, TRACE=blue}</property>
+        <property name="rb">red bright</property>
+        <property name="bex">{FATAL=${rb}, ERROR=${rb}, WARN=${rb}, INFO=${rb}, DEBUG=${rb}, TRACE=${rb}}</property>
+    </properties>
+    <Appenders>
+        <!-- The route dynamically determines the name of the log file through ThreadContext -->
+        <Routing name="Routing">
+            <Routes pattern="$${ctx:log.file.name}">
+                <Route>
+                    <File name="Routing" fileName="${log.path}/tests/${ctx:log.file.name}">
+                        <PatternLayout pattern="${test.log.pattern}"/>
+                    </File>
+                </Route>
+                <!-- The default route, if ${log.file.name} is not present in the ThreadContext. -->
+                <Route key="${ctx:log.file.name}">
+                    <File name="Framework" fileName="${log.path}/Framework.log">
+                        <PatternLayout pattern="${test.log.pattern}"/>
+                    </File>
+                </Route>
+            </Routes>
+        </Routing>
+        <Console name="ASCII-Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%msg%n}${colors}%highlight{%ex}${bex}"/>
+        </Console>
+        <File name="Framework" fileName="${log.path}/Framework.log">
+            <PatternLayout pattern="${test.log.pattern}"/>
+        </File>
+        <File name="TestSupervisor" fileName="${log.path}/TestSupervisor.log">
+            <PatternLayout pattern="${base.log.pattern}"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name= "Console" level="all" additivity="false">
+            <AppenderRef ref="ASCII-Console"/>
+        </Logger>
+        <Logger name="Routing" level="all" additivity="false">
+            <AppenderRef ref="Routing"/>
+        </Logger>
+        <Logger name="Framework" level="all" additivity="false">
+            <AppenderRef ref="Framework"/>
+        </Logger>
+        <Logger name="org.touchbit.buggy.core" level="all" additivity="false">
+            <AppenderRef ref="Framework"/>
+        </Logger>
+        <Logger name="org.touchbit.buggy.core.testng.listeners.TestSupervisor" level="INFO" additivity="false">
+            <AppenderRef ref="TestSupervisor"/>
+        </Logger>
+    </Loggers>
+</Configuration>

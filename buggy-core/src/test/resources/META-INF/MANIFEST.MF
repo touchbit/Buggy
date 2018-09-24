@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: Core module
+Implementation-Version: 0.0.1
+Built-By: ra
+Implementation-Vendor-Id: org.touchbit.buggy
+Created-By: Apache Maven 3.5.2
+Build-Jdk: 1.8.0_171
+Implementation-Vendor: TouchBIT
+
