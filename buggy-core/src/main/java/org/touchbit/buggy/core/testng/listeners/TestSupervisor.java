@@ -101,7 +101,7 @@ public class TestSupervisor extends BaseBuggyExecutionListener implements IExecu
 
     private void removeTest(String name) {
         if (executableTests.remove(name)) {
-            LOG.info("Test {} is removed from the list of executable tests.", name);
+            LOG.info("The test {} is removed from the list of executable tests.", name);
         }
     }
 
@@ -109,7 +109,7 @@ public class TestSupervisor extends BaseBuggyExecutionListener implements IExecu
         if (thread != null) {
             runMetronome = false;
             thread.interrupt();
-            LOG.info("Monitoring is stopped.");
+            LOG.info("Metronome is stopped.");
         }
     }
 

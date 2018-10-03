@@ -53,8 +53,7 @@ import static org.touchbit.buggy.core.utils.StringUtils.*;
 public class BuggyExecutionListener extends BaseBuggyExecutionListener
         implements IExecutionListener, IInvokedMethodListener, ISuiteListener, ITestListener, IClassListener {
 
-    private static ThreadLocal<Integer> stepNum = new ThreadLocal<>();
-    private static ThreadLocal<List<String>> steps = new ThreadLocal<>();
+    private static final ThreadLocal<List<String>> STEPS = new ThreadLocal<>();
 
     public BuggyExecutionListener() { }
 
@@ -117,7 +116,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
             testLog.info("Steps:\n{}", sb);
         } else {
             Buggy.incrementBuggyWarns();
-            frameworkLog.warn("There are no playback steps in the test method {}", method.getName());
+            frameworkLog.warn("There are no playback STEPS in the test method {}", method.getName());
         }
         testLog.info("Date: {}", new Date());
     }
@@ -144,7 +143,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
                 .forEach(m -> {
                     try {
                         copyTestMethodLogFle(m);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         Buggy.incrementBuggyErrors();
                         frameworkLog.error(e.getMessage(), e);
                     }
@@ -153,7 +152,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-        initSteps();
+        STEPS.set(new ArrayList<>());
         String methodName = getMethodName(method);
         BuggyLog.setTestName(getInvokedMethodLogFileName(method));
         if (method.isTestMethod()) {
@@ -202,34 +201,28 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
      * Method for the separation of steps in the test log.
      */
     public static void step(@NotNull final Logger logger, @NotNull final String msg, @NotNull final Object... args) {
-        if (stepNum.get() == null) {
-            initSteps();
-        }
-        int step = stepNum.get() + 1;
+        int stepNum = getSteps().size() + 1;
         String msgBody = msg;
         for (Object s : args) {
             msgBody = msgBody.replaceFirst("\\{}", String.valueOf(s));
         }
-        String stepText = "Step " + step + ". " + msgBody;
-        logger.info(" -----------\u2B9E {}", stepText);
-        steps.get().add(stepText);
-        stepNum.set(step);
-    }
-
-    public static void initSteps() {
-        stepNum.set(0);
-        steps.set(new ArrayList<>());
+        String stepInfo = "Step " + stepNum + ". " + msgBody;
+        logger.info(" -----------\u2B9E {}", stepInfo);
+        STEPS.get().add(stepInfo);
     }
 
     public static List<String> getSteps() {
-        return steps.get();
+        if (STEPS.get() == null) {
+            STEPS.set(new ArrayList<>());
+        }
+        return STEPS.get();
     }
 
     public static void setSteps(List<String> stepList) {
         if (stepList == null) {
-            steps.set(new ArrayList<>());
+            STEPS.set(new ArrayList<>());
         } else {
-            steps.set(stepList);
+            STEPS.set(stepList);
         }
     }
 

@@ -22,6 +22,7 @@ import org.touchbit.buggy.core.BaseUnitTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.touchbit.buggy.core.config.PrimaryConfig.INTELLIJ_IDEA_TEST_RUN;
 
 /**
  * Created by Oleg Shaburov on 20.09.2018
@@ -33,9 +34,13 @@ class IntellijIdeaTestNgPluginListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onExecutionStart()")
     void unitTest_20180920223244() {
-        IntellijIdeaTestNgPluginListener listener = new IntellijIdeaTestNgPluginListener();
-        listener.onExecutionStart();
-        assertThat(listener.isEnable(), is(false));
+        try {
+            IntellijIdeaTestNgPluginListener listener = new IntellijIdeaTestNgPluginListener();
+            listener.onExecutionStart();
+            assertThat(listener.isEnable(), is(false));
+        } finally {
+            System.setProperty(INTELLIJ_IDEA_TEST_RUN, Boolean.FALSE.toString());
+        }
     }
 
 }

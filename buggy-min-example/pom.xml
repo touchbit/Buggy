@@ -10,7 +10,7 @@
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>buggy-minimal-example</artifactId>
+    <artifactId>buggy-min-example</artifactId>
     <name>Buggy minimal example</name>
     <version>0.0.1</version>
     <packaging>jar</packaging>
