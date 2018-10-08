@@ -260,7 +260,8 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <argLine>-javaagent:${settings.localRepository}/org/jmockit/jmockit/1.42/jmockit-1.42.jar</argLine>
+                    <!--suppress MavenModelInspection -->
+                    <argLine>${argLine} -javaagent:${settings.localRepository}/org/jmockit/jmockit/1.42/jmockit-1.42.jar</argLine>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <reportsDirectory>${sonar.junit.reportPaths}</reportsDirectory>
                 </configuration>

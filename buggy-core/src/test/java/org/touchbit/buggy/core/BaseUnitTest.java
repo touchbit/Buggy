@@ -1,6 +1,7 @@
 package org.touchbit.buggy.core;
 
 import mockit.Expectations;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.function.Executable;
 import org.touchbit.buggy.core.config.PrimaryConfig;
 import org.touchbit.buggy.core.indirect.SuppressException;
@@ -8,10 +9,12 @@ import org.touchbit.buggy.core.indirect.UnitTestPrimaryConfig;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Type;
+import org.touchbit.buggy.core.testng.listeners.BuggyExecutionListener;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -40,6 +43,7 @@ public abstract class BaseUnitTest {
         System.setProperty(LOG_DIRECTORY, WASTE + "/");
         Buggy.initJCommander();
         PRIMARY_CONFIG = Buggy.getPrimaryConfig();
+        PRIMARY_CONFIG.setAbsolutePath(WASTE);
         File wasteDir = new File(WASTE);
         File logFile = new File(WASTE, "console.txt");
         delete(wasteDir);
@@ -52,6 +56,11 @@ public abstract class BaseUnitTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @BeforeEach
+    public void stepReset() {
+        BuggyExecutionListener.setSteps(new ArrayList<>());
     }
 
     private static PrintStream outputFile(File f) throws FileNotFoundException {

@@ -158,7 +158,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     void unitTest_20180921183228() {
         BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
         ITestResult iTestResult = getMockITestResult(1);
-        BuggyExecutionListener.setSteps(new ArrayList<>());
+        BuggyExecutionListener.setSteps(new ArrayList<String>() {{ add("steppp"); }});
         listener.onTestFinish(iTestResult);
     }
 
@@ -235,11 +235,11 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onFinish()")
     void unitTest_20180922085205() {
-        ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
-        List<ITestNGMethod> allMethods = new ArrayList<>();
+        IInvokedMethod method = getMockIInvokedMethod(true);
+        List<IInvokedMethod> allMethods = new ArrayList<>();
         allMethods.add(method);
         ISuite suite = mock(ISuite.class);
-        when(suite.getAllMethods()).thenReturn(allMethods);
+        when(suite.getAllInvokedMethods()).thenReturn(allMethods);
         UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(EXP_FIX, SMOKE));
         listener.onFinish(suite);
     }
@@ -312,7 +312,6 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             when(iInvokedMethod.isTestMethod()).thenReturn(true);
             ITestResult iTestResult = getMockITestResult(1);
             when(iTestResult.getThrowable()).thenReturn(new Exception());
-            BuggyExecutionListener.initSteps();
             BuggyExecutionListener.step(LOG, "with exception");
             listener.afterInvocation(iInvokedMethod, iTestResult);
             assertThat(BuggyExecutionListener.getSteps(), contains("Step 1. with exception - ERROR"));
@@ -326,7 +325,6 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             when(iInvokedMethod.isTestMethod()).thenReturn(true);
             ITestResult iTestResult = getMockITestResult(1);
             listener.afterInvocation(iInvokedMethod, iTestResult);
-            BuggyExecutionListener.initSteps();
             listener.afterInvocation(iInvokedMethod, iTestResult);
             assertThat(BuggyExecutionListener.getSteps(), is(empty()));
         }
@@ -340,7 +338,6 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             when(iInvokedMethod.isTestMethod()).thenReturn(true);
             ITestResult iTestResult = getMockITestResult(1);
             listener.afterInvocation(iInvokedMethod, iTestResult);
-            BuggyExecutionListener.initSteps();
             listener.afterInvocation(iInvokedMethod, iTestResult);
             assertThat(BuggyExecutionListener.getSteps(), is(empty()));
         }
@@ -351,7 +348,6 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod();
             when(iInvokedMethod.isTestMethod()).thenReturn(false);
-            BuggyExecutionListener.initSteps();
             listener.afterInvocation(iInvokedMethod, getMockITestResult(1));
             assertThat(BuggyExecutionListener.getSteps(), is(empty()));
         }
@@ -365,7 +361,6 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check step(LOG, \"msg\")")
         void unitTest_20180921192521() {
-            BuggyExecutionListener.initSteps();
             BuggyExecutionListener.step(LOG, "msg");
             assertThat(BuggyExecutionListener.getSteps(), contains("Step 1. msg"));
         }
@@ -373,9 +368,24 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check step(LOG, \"msg {}\", \"with args\")")
         void unitTest_20180921192637() {
-            BuggyExecutionListener.initSteps();
             BuggyExecutionListener.step(LOG, "msg {}", "with args");
             assertThat(BuggyExecutionListener.getSteps(), contains("Step 1. msg with args"));
+        }
+
+        @Test
+        @DisplayName("Check ignoring step() ASC")
+        void unitTest_20181004002108() {
+            BuggyExecutionListener.step(LOG, "a");
+            BuggyExecutionListener.step(LOG, "b");
+            assertThat(BuggyExecutionListener.getSteps().toString(), is("[Step 1. a, Step 2. b]"));
+        }
+
+        @Test
+        @DisplayName("Check ignoring step() DESC")
+        void unitTest_20181004004254() {
+            BuggyExecutionListener.step(LOG, "b");
+            BuggyExecutionListener.step(LOG, "a");
+            assertThat(BuggyExecutionListener.getSteps().toString(), is("[Step 1. b, Step 2. a]"));
         }
 
     }
@@ -1220,6 +1230,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         ITestNGMethod iTestNGMethod = getMockITestNGMethod(clazz, methodName, isTest);
         IInvokedMethod iInvokedMethod = mock(IInvokedMethod.class);
         when(iInvokedMethod.getTestMethod()).thenReturn(iTestNGMethod);
+        when(iInvokedMethod.isTestMethod()).thenReturn(isTest);
         return iInvokedMethod;
     }
 
