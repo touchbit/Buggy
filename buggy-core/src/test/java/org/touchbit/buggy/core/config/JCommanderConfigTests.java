@@ -33,14 +33,15 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.touchbit.buggy.core.config.PrimaryConfig.INTELLIJ_IDEA_TEST_RUN;
 import static org.touchbit.buggy.core.model.Type.INTEGRATION;
 import static org.touchbit.buggy.core.model.Type.SYSTEM;
+import static org.touchbit.buggy.core.testng.listeners.IntellijIdeaTestNgPluginListener.INTELLIJ_IDEA_TEST_RUN;
 
 /**
  * Created by Oleg Shaburov on 19.09.2018
  * shaburov.o.a@gmail.com
  */
+@SuppressWarnings("ALL")
 @DisplayName("JCommander configuration tests")
 class JCommanderConfigTests extends BaseUnitTest {
 

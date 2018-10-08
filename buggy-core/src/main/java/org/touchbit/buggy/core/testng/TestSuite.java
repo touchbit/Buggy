@@ -163,6 +163,20 @@ public class TestSuite extends XmlSuite {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            TestSuite testSuite = (TestSuite) obj;
+            return testSuite.suite.equals(suite);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * super.hashCode() + ((suite == null) ? 0 : suite.hashCode());
+    }
+
     public Suite getSuite() {
         return suite;
     }

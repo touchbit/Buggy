@@ -43,6 +43,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 import static org.touchbit.buggy.core.config.Parameters.*;
+import static org.touchbit.buggy.core.testng.listeners.IntellijIdeaTestNgPluginListener.INTELLIJ_IDEA_TEST_RUN;
 
 /**
  * Primary Config for jCommander
@@ -50,14 +51,12 @@ import static org.touchbit.buggy.core.config.Parameters.*;
  * Created by Oleg Shaburov on 30.05.2018
  * shaburov.o.a@gmail.com
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "squid:S2696"})
 @IndexSubclasses
 public interface PrimaryConfig {
 
-    String INTELLIJ_IDEA_TEST_RUN = "intellij.idea.test.run";
-
     default DefaultValueProvider getDefaultValueProvider() {
-        return new DefaultValueProvider(this);
+        return new DefaultValueProvider();
     }
 
     default Boolean isIntellijIdeaTestRun() {
@@ -286,46 +285,41 @@ public interface PrimaryConfig {
         private static List<Interface> interfaces;
         private static Type type = Type.INTEGRATION;
 
-        private final PrimaryConfig config;
-
-        protected DefaultValueProvider(final PrimaryConfig primaryConfig) {
-            config = primaryConfig;
-        }
-
         @Override
         public String getDefaultValueFor(String optionName) {
+            PrimaryConfig p = new PrimaryConfig() {};
             switch (optionName) {
-                case FORCE:
-                case F:
-                    return String.valueOf(config.isForceRun());
-                case SMOKE:
-                    return String.valueOf(config.isSmoke());
-                case ALL:
-                    return String.valueOf(config.isPrintAllParameters());
-                case N:
-                case NOTIFICATION:
-                    return String.valueOf(config.isNotify());
-                case THREADS:
-                    return String.valueOf(config.getThreads());
-                case LOG:
-                    return String.valueOf(config.getLogPath());
-                case BUILDS_URL:
-                    return String.valueOf(config.getBuildLogUrl());
                 case S:
                 case SERVICES:
-                    return String.valueOf(config.getServices());
+                    return String.valueOf(p.getServices());
                 case I:
                 case INTERFACE:
-                    return String.valueOf(config.getInterfaces());
+                    return String.valueOf(p.getInterfaces());
+                case FORCE:
+                case F:
+                return String.valueOf(force);
+                case SMOKE:
+                return String.valueOf(smoke);
+                case ALL:
+                return String.valueOf(printAll);
+                case N:
+                case NOTIFICATION:
+                return String.valueOf(notify);
+                case THREADS:
+                return String.valueOf(threads);
+                case LOG:
+                return String.valueOf(logPath);
+                case BUILDS_URL:
+                return String.valueOf(buildsUrl);
                 case T:
                 case TYPE:
-                    return String.valueOf(config.getType());
+                    return String.valueOf(type);
                 case PRINT_SUITE:
-                    return String.valueOf(config.isPrintSuite());
+                    return String.valueOf(printSuite);
                 case PRINT_CAUSE:
-                    return String.valueOf(config.isPrintCause());
+                    return String.valueOf(printCause);
                 case PRINT_LOG:
-                    return String.valueOf(config.isPrintLogFile());
+                    return String.valueOf(printLog);
                 default:
                     return null;
             }
