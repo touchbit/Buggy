@@ -100,7 +100,7 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
 
     protected String getURLEncodedLogFileName(ITestNGMethod method) {
         PrimaryConfig c = Buggy.getPrimaryConfig();
-        String urlEncoded = StringUtils.encode(getTestMethodLogFileName(method));
+        String urlEncoded = StringUtils.encode(getInvokedMethodLogFileName(method));
         if (!String.valueOf(c.getBuildLogUrl()).equalsIgnoreCase("null")) {
             return arrow + c.getBuildLogUrl() + new File(c.getTestLogDir() , urlEncoded).getAbsolutePath();
         } else {
@@ -108,17 +108,17 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         }
     }
 
-    protected String getTestMethodLogFileName(IInvokedMethod method) {
-        return getTestMethodLogFileName(method.getTestMethod());
+    protected String getInvokedMethodLogFileName(IInvokedMethod method) {
+        return getInvokedMethodLogFileName(method.getTestMethod());
     }
 
-    protected String getTestMethodLogFileName(ITestNGMethod method) {
-        return getTestMethodLogFileName(method.getConstructorOrMethod().getMethod());
-    }
-
-    protected String getTestMethodLogFileName(Method method) {
+    protected String getInvokedMethodLogFileName(ITestNGMethod iTestNGMethod) {
+        Method method = iTestNGMethod.getConstructorOrMethod().getMethod();
         String caseIds = "";
         String methodName = method.getName();
+        if (!iTestNGMethod.isTest()) {
+            return methodName + ".log";
+        }
         Details details = getDetails(method);
         if (details != null) {
             List<Integer> ids = new ArrayList<>();
