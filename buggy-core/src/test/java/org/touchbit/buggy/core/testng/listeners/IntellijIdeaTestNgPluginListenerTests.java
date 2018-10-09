@@ -22,7 +22,7 @@ import org.touchbit.buggy.core.BaseUnitTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.touchbit.buggy.core.config.PrimaryConfig.INTELLIJ_IDEA_TEST_RUN;
+import static org.touchbit.buggy.core.testng.listeners.IntellijIdeaTestNgPluginListener.INTELLIJ_IDEA_TEST_RUN;
 
 /**
  * Created by Oleg Shaburov on 20.09.2018
