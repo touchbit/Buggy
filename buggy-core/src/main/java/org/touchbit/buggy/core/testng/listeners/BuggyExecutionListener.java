@@ -377,6 +377,8 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
                     default:
                         targetFile = new File(c.getNewErrorLogDir(), getInvokedMethodLogFileName(method));
                 }
+            default:
+                // ignore unhandled statuses
         }
         if (targetFile != null) {
             copyFile(sourceFile, targetFile);
