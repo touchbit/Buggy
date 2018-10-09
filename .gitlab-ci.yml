@@ -24,5 +24,4 @@ Buggy modules:
 #    - master
   when: on_success
   script:
-    - mvn deploy -Dmaven.skip.test
-
+    - mvn deploy -Dmaven.test.skip=true
