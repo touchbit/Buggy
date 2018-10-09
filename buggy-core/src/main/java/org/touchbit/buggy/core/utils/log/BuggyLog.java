@@ -34,7 +34,7 @@ import java.io.File;
  * Created by Oleg Shaburov on 17.05.2018
  * shaburov.o.a@gmail.com
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused", "squid:S1118"})
 @IndexSubclasses
 public class BuggyLog {
 

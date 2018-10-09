@@ -52,6 +52,8 @@ import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
  */
 public abstract class Buggy {
 
+    private static final String UNABLE_CREATE_CLASS = "Unable to create a new instance of class: ";
+
     private static AtomicInteger buggyErrors = new AtomicInteger(0);
     private static AtomicInteger buggyWarns = new AtomicInteger(0);
 
@@ -111,7 +113,7 @@ public abstract class Buggy {
             try {
                 jCommander.addCommand(c.newInstance());
             } catch (Exception e) {
-                exitRun(1, "Unable to create a new instance of class: " + c, e);
+                exitRun(1, UNABLE_CREATE_CLASS + c, e);
             }
         });
         jCommander.setDefaultProvider(primaryConfig.getDefaultValueProvider());
@@ -175,7 +177,7 @@ public abstract class Buggy {
         try {
             logList.get(0).newInstance();
         } catch (Exception e) {
-            exitRun(1, "Unable to create a new instance of class: " + logList.get(0), e);
+            exitRun(1, UNABLE_CREATE_CLASS + logList.get(0), e);
         }
     }
 
@@ -226,7 +228,7 @@ public abstract class Buggy {
                                 .dotFiller(l.getSimpleName(), 47, "DISABLED"));
                     }
                 } catch (Exception e) {
-                    throw new BuggyException("Unable to create a new instance of class: " + l, e);
+                    throw new BuggyException(UNABLE_CREATE_CLASS + l, e);
                 }
             });
         }
@@ -294,18 +296,23 @@ public abstract class Buggy {
                 }
             }
         }
-        List<TestSuite> defaultTestSuites = new ArrayList<>();
+        addTestClassSuites(testSuites);
+        return testSuites;
+    }
+
+    private static void addTestClassSuites(List<TestSuite> testSuites) {
+        List<TestSuite> testClassSuites = new ArrayList<>();
         Iterable<Class<?>> tmp = ClassIndex.getAnnotated(Suite.class);
         List<Class<?>> annotated = new ArrayList<>();
         tmp.forEach(c -> {if (!TestSuite.class.isAssignableFrom(c)) annotated.add(c);});
         for (Class<?> aClass : annotated) {
             Suite testClassSuite = aClass.getAnnotation(Suite.class);
             if (BuggyUtils.isListBaseSuiteContainsClass(testSuites, aClass) ||
-                    BuggyUtils.isListBaseSuiteContainsClass(defaultTestSuites, aClass)) {
+                    BuggyUtils.isListBaseSuiteContainsClass(testClassSuites, aClass)) {
                 continue;
             }
             TestSuite testSuite = null;
-            for (TestSuite s : defaultTestSuites) {
+            for (TestSuite s : testClassSuites) {
                 if (BuggyUtils.equalsSuites(s.getSuite(), testClassSuite)) {
                     testSuite = s;
                 }
@@ -313,13 +320,12 @@ public abstract class Buggy {
             if (testSuite == null) {
                 TestSuite s = new TestSuite(testClassSuite);
                 s.addTestPackage("default", aClass);
-                defaultTestSuites.add(s);
+                testClassSuites.add(s);
             } else {
                 testSuite.addTestPackage("default", aClass);
             }
         }
-        testSuites.addAll(defaultTestSuites);
-        return testSuites;
+        testSuites.addAll(testClassSuites);
     }
 
     public static void exitRunWithUsage(int status) {

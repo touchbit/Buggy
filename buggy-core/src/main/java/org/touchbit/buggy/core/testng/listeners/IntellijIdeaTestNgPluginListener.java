@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.touchbit.buggy.core.config.PrimaryConfig.INTELLIJ_IDEA_TEST_RUN;
 import static org.touchbit.buggy.core.utils.IOHelper.readPropertiesFileFromResource;
 
 /**
@@ -34,6 +33,8 @@ import static org.touchbit.buggy.core.utils.IOHelper.readPropertiesFileFromResou
  */
 @SuppressWarnings("WeakerAccess")
 public final class IntellijIdeaTestNgPluginListener extends BuggyExecutionListener implements ITestNGListener {
+
+    public static final String INTELLIJ_IDEA_TEST_RUN = "intellij.idea.test.run";
 
     public IntellijIdeaTestNgPluginListener() {
         System.setProperty(INTELLIJ_IDEA_TEST_RUN, Boolean.TRUE.toString());

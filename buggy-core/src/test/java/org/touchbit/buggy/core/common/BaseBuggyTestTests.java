@@ -23,7 +23,7 @@ import org.touchbit.buggy.core.BaseUnitTest;
 import org.touchbit.buggy.core.test.BaseBuggyTest;
 
 import static org.mockito.Mockito.mock;
-import static org.touchbit.buggy.core.config.PrimaryConfig.INTELLIJ_IDEA_TEST_RUN;
+import static org.touchbit.buggy.core.testng.listeners.IntellijIdeaTestNgPluginListener.INTELLIJ_IDEA_TEST_RUN;
 
 /**
  * Created by Oleg Shaburov on 19.09.2018
