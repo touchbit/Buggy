@@ -23,6 +23,10 @@ Buggy-core test:
     - mvn test
   artifacts:
     name: buggy
+    expire_in: 1 week
+    reports:
+      junit:
+        - "*/target/reports/TEST-*.xml"
     paths:
       - "*/target/reports"
       - "*/target/classes"
@@ -36,6 +40,10 @@ Buggy-feign test:
     - mvn test
   artifacts:
     name: buggy
+    expire_in: 1 week
+    reports:
+      junit:
+        - "*/target/reports/TEST-*.xml"
     paths:
       - "*/target/reports"
       - "*/target/classes"
@@ -49,6 +57,10 @@ Buggy-okhttp test:
     - mvn test
   artifacts:
     name: buggy
+    expire_in: 1 week
+    reports:
+      junit:
+        - "*/target/reports/TEST-*.xml"
     paths:
       - "*/target/reports"
       - "*/target/classes"
@@ -69,12 +81,27 @@ Sonar:
         mvn sonar:sonar -Dsonar.login=$SONAR_LOGIN $SONAR_ARGS -Dsonar.analysis.mode=preview
       fi
 
+Version:
+  stage: analyse
+  tags:
+  - touchbit-shell
+  script:
+    - mvn dependency:purge-local-repository@local-buggy
+    - mvn dependency:get@current-version && CHECK_RESULT=$(echo $?) || CHECK_RESULT=$(echo $?)
+    - >
+      if [ "${CHECK_RESULT}" != 1 ]; then
+        BUGGY_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        echo "[ERROR] The current version of Buggy ($BUGGY_VERSION) already exists in the TouchBIT repository"
+        echo "To set the new version, use the command: 'mvn versions:set -DnewVersion=<new version>'"
+        echo "Versioning rules: https://semver.org/spec/v2.0.0-rc.2.html"
+        false
+      fi
+
 Deploy Buggy:
   stage: deploy
   dependencies:
     - Sonar
-#  only:
-#    - master
+    - Version
   script:
     - mvn deploy -Dmaven.test.skip=true
 
