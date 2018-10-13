@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * Created by Oleg Shaburov on 13.10.2018
  * shaburov.o.a@gmail.com
  */
-public abstract class CURLLoggingInterceptor implements BaseInterceptor {
+public abstract class CURLLoggingInterceptor {
 
     private final Consumer<String> logMethod;
 
@@ -16,7 +16,6 @@ public abstract class CURLLoggingInterceptor implements BaseInterceptor {
         this.logMethod = logMethod;
     }
 
-    @Override
     public <T extends Iterable<String>> void intercept(String method, String url, Map<String, T> headers, String body) {
         final StringBuilder curl = new StringBuilder();
         curl.append("curl -i -k");

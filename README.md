@@ -9,7 +9,7 @@ A framework based on testNG for testing automation
 2. Choice JUnit configuration   
 3. Add to VM options `-javaagent:$MAVEN_REPOSITORY$/org/jmockit/jmockit/1.42/jmockit-1.42.jar`   
     ![junit_jmockit_config](.indirect/img/junit_jmockit_config.png)   
-4. Add code coverage configuration (jacoco) with pattern: `org.touchbit.buggy.core.*`   
+4. Add code coverage configuration (jacoco) with pattern: `org.touchbit.buggy.*`   
     ![junit_coverage](.indirect/img/junit_coverage.png)   
 5. Clear all existing configurations.   
     ![junit_clean](.indirect/img/junit_clean.png)   
