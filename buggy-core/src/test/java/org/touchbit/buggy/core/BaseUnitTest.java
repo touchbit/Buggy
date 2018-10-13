@@ -3,6 +3,7 @@ package org.touchbit.buggy.core;
 import mockit.Expectations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.function.Executable;
+import org.slf4j.helpers.SubstituteLogger;
 import org.touchbit.buggy.core.config.PrimaryConfig;
 import org.touchbit.buggy.core.indirect.SuppressException;
 import org.touchbit.buggy.core.indirect.UnitTestPrimaryConfig;
@@ -161,4 +162,20 @@ public abstract class BaseUnitTest {
             public Class<? extends Annotation> annotationType() { return Details.class; }
         };
     }
+
+    public static class Log extends SubstituteLogger {
+
+        public String msg;
+
+        public Log() {
+            super(null, null, true);
+        }
+
+        @Override
+        public void info(String msg) {
+            this.msg = msg;
+        }
+
+    }
+
 }
