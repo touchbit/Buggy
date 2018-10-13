@@ -7,11 +7,12 @@
     <groupId>org.touchbit.buggy</groupId>
     <artifactId>buggy</artifactId>
     <name>Buggy</name>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>buggy-core</module>
+        <module>buggy-transport</module>
         <module>buggy-min-example</module>
     </modules>
 
@@ -96,14 +97,18 @@
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-core</artifactId>
-                <version>0.1.0</version>
-                <scope>compile</scope>
+                <version>0.2.0</version>
             </dependency>
+            <dependency>
+                <groupId>org.touchbit.buggy</groupId>
+                <artifactId>buggy-transport</artifactId>
+                <version>0.2.0</version>
+            </dependency>
+            <!-- Compile -->
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>7.0.0-beta1</version>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.beust</groupId>
