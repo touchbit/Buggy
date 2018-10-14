@@ -22,7 +22,6 @@ Buggy-core test:
     - cd buggy-core
     - mvn test
   artifacts:
-    name: buggy
     expire_in: 1 week
     paths:
       - "*/target/reports"
@@ -36,7 +35,6 @@ Buggy-feign test:
     - cd buggy-feign
     - mvn test
   artifacts:
-    name: buggy
     expire_in: 1 week
     paths:
       - "*/target/reports"
@@ -50,7 +48,6 @@ Buggy-okhttp test:
     - cd buggy-okhttp
     - mvn test
   artifacts:
-    name: buggy
     expire_in: 1 week
     paths:
       - "*/target/reports"
@@ -72,11 +69,11 @@ Sonar:
         mvn sonar:sonar -Dsonar.login=$SONAR_LOGIN $SONAR_ARGS -Dsonar.analysis.mode=preview
       fi
 
-Version:
-  stage: analyse
-  tags:
-  - touchbit-shell
-  script:
+Deploy Buggy:
+  stage: deploy
+  dependencies:
+    - Sonar
+  before_script:
     - mvn dependency:purge-local-repository@local-buggy
     - mvn dependency:get@current-version && CHECK_RESULT=$(echo $?) || CHECK_RESULT=$(echo $?)
     - >
@@ -87,12 +84,5 @@ Version:
         echo "Versioning rules: https://semver.org/spec/v2.0.0-rc.2.html"
         false
       fi
-
-Deploy Buggy:
-  stage: deploy
-  dependencies:
-    - Sonar
-    - Version
   script:
     - mvn deploy -Dmaven.test.skip=true
-

@@ -40,7 +40,11 @@ public abstract class BaseUnitTest {
 
         @Override
         public void info(String msg) {
-            this.msg = msg;
+            if (this.msg == null) {
+                this.msg = msg;
+            } else {
+                this.msg = this.msg + "\n" + msg;
+            }
         }
 
     }
