@@ -101,7 +101,7 @@ public abstract class BaseTelegramNotifier extends BaseBuggyExecutionListener im
         sj.add(StringUtils.filler("`", "-", fullLen, "`"));
         String date = DurationFormatUtils.formatDuration(finishTime - startTime, "HH:mm:ss");
         sj.add("Test execution time: *" + date + "*");
-        sj.add("[Logs](" + Buggy.getPrimaryConfig().getBuildLogUrl() + ")");
+        sj.add("[Logs](" + Buggy.getPrimaryConfig().getArtifactsUrl() + ")");
         try {
             notifier.report(sj.toString());
         } catch (Exception e) {
@@ -111,7 +111,7 @@ public abstract class BaseTelegramNotifier extends BaseBuggyExecutionListener im
     }
 
     private String wrapErrorsMDLink(Integer value, String subLink) {
-        String artifactLogPath = Buggy.getPrimaryConfig().getBuildLogUrl() + "/errors/" + subLink;
+        String artifactLogPath = Buggy.getPrimaryConfig().getArtifactsUrl() + "/errors/" + subLink;
         if (value > 0 ) {
             return "[" + value + "](" + artifactLogPath + ")";
         }
@@ -119,7 +119,7 @@ public abstract class BaseTelegramNotifier extends BaseBuggyExecutionListener im
     }
 
     private String wrapFixedMDLink(Integer value, String subLink) {
-        String artifactLogPath = Buggy.getPrimaryConfig().getBuildLogUrl() + "/fixed/" + subLink;
+        String artifactLogPath = Buggy.getPrimaryConfig().getArtifactsUrl() + "/fixed/" + subLink;
         if (value > 0 ) {
             return "[" + value + "](" + artifactLogPath + ")";
         }

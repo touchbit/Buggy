@@ -162,7 +162,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
         StringBuilder sb = new StringBuilder();
         Buggy.setProgramName("unitTest_20180920231553");
         Notifier notifier = sb::append;
-        PRIMARY_CONFIG.setBuildUrl("http://build.url");
+        PRIMARY_CONFIG.setArtifactsUrl("http://build.url");
         try {
             BaseTelegramNotifier telegram = new BaseTelegramNotifier(notifier) {
                 @Override
@@ -199,7 +199,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
                     "Test execution time: *00:00:00*\n" +
                     "[Logs](http://build.url)\n"));
         } finally {
-            PRIMARY_CONFIG.setBuildUrl(null);
+            PRIMARY_CONFIG.setArtifactsUrl(null);
         }
     }
 
