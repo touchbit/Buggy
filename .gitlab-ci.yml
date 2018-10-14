@@ -25,7 +25,6 @@ Buggy-core test:
     expire_in: 1 week
     paths:
       - "*/target/reports"
-      - "*/target/classes"
 
 Buggy-feign test:
   stage: test
@@ -38,7 +37,6 @@ Buggy-feign test:
     expire_in: 1 week
     paths:
       - "*/target/reports"
-      - "*/target/classes"
 
 Buggy-okhttp test:
   stage: test
@@ -51,7 +49,6 @@ Buggy-okhttp test:
     expire_in: 1 week
     paths:
       - "*/target/reports"
-      - "*/target/classes"
 
 Sonar:
   stage: analyse
@@ -64,10 +61,24 @@ Sonar:
   script:
     - >
       if [ "$CI_BUILD_REF_NAME" == "master" ]; then
-        mvn sonar:sonar -Dsonar.login=$SONAR_LOGIN $SONAR_ARGS
+        mvn compile sonar:sonar -Dsonar.login=$SONAR_LOGIN $SONAR_ARGS
       else
-        mvn sonar:sonar -Dsonar.login=$SONAR_LOGIN $SONAR_ARGS -Dsonar.analysis.mode=preview
+        mvn compile sonar:sonar -Dsonar.login=$SONAR_LOGIN $SONAR_ARGS -Dsonar.analysis.mode=preview
       fi
+
+Deploy Snapshot:
+  stage: deploy
+  dependencies:
+    - Sonar
+  except:
+    - tags
+  when: manual
+  script:
+    - BUGGY_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+    - SNAPSHOT_BUGGY_VERSION=${BUGGY_VERSION}-SNAPSHOT
+    - mvn versions:set -DnewVersion=${SNAPSHOT_BUGGY_VERSION}
+    - mvn deploy -Dmaven.test.skip=true
+    - "curl -X POST \"https://api.telegram.org/bot$BABBLER_TOKEN/sendMessage?chat_id=$TELEGRAM_BUGGY_CI_CD_CHAT_ID&disable_notification=true&parse_mode=Markdown&text=*Buggy*%0ANew version deployed: %5B${SNAPSHOT_BUGGY_VERSION}%5D%28https://touchbit.org/repository/org/touchbit/buggy/buggy/${SNAPSHOT_BUGGY_VERSION}/\""
 
 Deploy Buggy:
   stage: deploy
@@ -84,5 +95,8 @@ Deploy Buggy:
         echo "Versioning rules: https://semver.org/spec/v2.0.0-rc.2.html"
         false
       fi
+  only:
+    - tags
   script:
     - mvn deploy -Dmaven.test.skip=true
+    - "curl -X POST \"https://api.telegram.org/bot$BABBLER_TOKEN/sendMessage?chat_id=$TELEGRAM_BUGGY_CI_CD_CHAT_ID&disable_notification=false&parse_mode=Markdown&text=*Buggy*%0ANew version deployed: %5B${BUGGY_VERSION}%5D%28https://touchbit.org/repository/org/touchbit/buggy/\""
