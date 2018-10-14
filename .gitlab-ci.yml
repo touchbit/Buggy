@@ -78,7 +78,7 @@ Deploy Snapshot:
     - SNAPSHOT_BUGGY_VERSION=${BUGGY_VERSION}-SNAPSHOT
     - mvn versions:set -DnewVersion=${SNAPSHOT_BUGGY_VERSION}
     - mvn deploy -Dmaven.test.skip=true
-    - "curl -X POST \"https://api.telegram.org/bot$BABBLER_TOKEN/sendMessage?chat_id=$TELEGRAM_BUGGY_CI_CD_CHAT_ID&disable_notification=true&parse_mode=Markdown&text=*Buggy*%0ANew version deployed: %5B${SNAPSHOT_BUGGY_VERSION}%5D%28https://touchbit.org/repository/org/touchbit/buggy/buggy/${SNAPSHOT_BUGGY_VERSION}/\""
+    - "curl -X POST \"https://api.telegram.org/bot$BABBLER_TOKEN/sendMessage?chat_id=$TELEGRAM_BUGGY_CI_CD_CHAT_ID&disable_notification=true&parse_mode=Markdown&text=*Buggy*%0ANew version deployed: %5B${SNAPSHOT_BUGGY_VERSION}%5D%28https://touchbit.org/repository/org/touchbit/buggy/buggy/${SNAPSHOT_BUGGY_VERSION}/%29\""
 
 Deploy Buggy:
   stage: deploy
@@ -99,4 +99,5 @@ Deploy Buggy:
     - tags
   script:
     - mvn deploy -Dmaven.test.skip=true
-    - "curl -X POST \"https://api.telegram.org/bot$BABBLER_TOKEN/sendMessage?chat_id=$TELEGRAM_BUGGY_CI_CD_CHAT_ID&disable_notification=false&parse_mode=Markdown&text=*Buggy*%0ANew version deployed: %5B${BUGGY_VERSION}%5D%28https://touchbit.org/repository/org/touchbit/buggy/\""
+    - BUGGY_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+    - "curl -X POST \"https://api.telegram.org/bot$BABBLER_TOKEN/sendMessage?chat_id=$TELEGRAM_BUGGY_CI_CD_CHAT_ID&disable_notification=false&parse_mode=Markdown&text=*Buggy*%0ANew version deployed: %5B${BUGGY_VERSION}%5D%28https://touchbit.org/repository/org/touchbit/buggy/buggy/${BUGGY_VERSION}/%29\""
