@@ -40,7 +40,7 @@ public class Parameters {
     public static final String F = "-f";
     public static final String FORCE = "--force";
     public static final String SMOKE = "--smoke";
-    public static final String BUILDS_URL = "--builds-url";
+    public static final String ARTIFACTS_URL = "--artifacts-url";
     public static final String STATUS = "--status";
     public static final String ALL = "--all";
     public static final String PRINT_SUITE = "--print-suite";

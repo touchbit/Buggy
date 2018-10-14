@@ -208,15 +208,15 @@ class JCommanderConfigTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check PrimaryConfig.setBuildUrl(String buildsUrl)")
+    @DisplayName("Check PrimaryConfig.setArtifactsUrl(String buildsUrl)")
     void unitTest_20180919201516() {
-        String buildLogUrl = PRIMARY_CONFIG.getBuildLogUrl();
+        String buildLogUrl = PRIMARY_CONFIG.getArtifactsUrl();
         try {
             assertThat(buildLogUrl, is("null"));
-            PRIMARY_CONFIG.setBuildUrl("BuildUrl");
-            assertThat(PRIMARY_CONFIG.getBuildLogUrl(), is("BuildUrl"));
+            PRIMARY_CONFIG.setArtifactsUrl("BuildUrl");
+            assertThat(PRIMARY_CONFIG.getArtifactsUrl(), is("BuildUrl"));
         } finally {
-            PRIMARY_CONFIG.setBuildUrl(buildLogUrl);
+            PRIMARY_CONFIG.setArtifactsUrl(buildLogUrl);
         }
     }
 

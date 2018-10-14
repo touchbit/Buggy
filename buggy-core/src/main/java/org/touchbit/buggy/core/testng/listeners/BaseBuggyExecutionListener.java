@@ -98,11 +98,14 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         return (Suite) method.getRealClass().getAnnotation(Suite.class);
     }
 
-    protected String getURLEncodedLogFileName(ITestNGMethod method) {
+    protected String getURLEncodedLogFilePath(ITestNGMethod method) {
         PrimaryConfig c = Buggy.getPrimaryConfig();
         String urlEncoded = StringUtils.encode(getInvokedMethodLogFileName(method));
-        if (!String.valueOf(c.getBuildLogUrl()).equalsIgnoreCase("null")) {
-            return arrow + c.getBuildLogUrl() + new File(c.getTestLogDir() , urlEncoded).getAbsolutePath();
+        if (c.getArtifactsUrl() != null) {
+            String parentDir = c.getTestLogDir().getParentFile().getName();
+            String logDir = new File(parentDir, c.getTestLogDir().getName()).getPath();
+            String url = c.getArtifactsUrl().endsWith("/") ? c.getArtifactsUrl() : c.getArtifactsUrl() + "/";
+            return arrow + url + new File(logDir, urlEncoded).getPath();
         } else {
             return arrow + "file://" + new File(c.getTestLogDir(), urlEncoded);
         }

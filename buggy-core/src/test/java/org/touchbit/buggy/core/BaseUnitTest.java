@@ -1,24 +1,39 @@
 package org.touchbit.buggy.core;
 
 import mockit.Expectations;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.function.Executable;
+import org.slf4j.Logger;
 import org.slf4j.helpers.SubstituteLogger;
+import org.testng.IInvokedMethod;
+import org.testng.ITestClass;
+import org.testng.ITestNGMethod;
+import org.testng.ITestResult;
+import org.testng.internal.ConstructorOrMethod;
 import org.touchbit.buggy.core.config.PrimaryConfig;
 import org.touchbit.buggy.core.indirect.SuppressException;
+import org.touchbit.buggy.core.indirect.TestInterface;
+import org.touchbit.buggy.core.indirect.TestService;
 import org.touchbit.buggy.core.indirect.UnitTestPrimaryConfig;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
+import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.model.Type;
 import org.touchbit.buggy.core.testng.listeners.BuggyExecutionListener;
+import org.touchbit.buggy.core.testng.listeners.BuggyExecutionListenerTests;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.slf4j.helpers.NOPLogger.NOP_LOGGER;
 import static org.touchbit.buggy.core.model.Status.SUCCESS;
 import static org.touchbit.buggy.core.model.Type.SYSTEM;
 import static org.touchbit.buggy.core.utils.log.BuggyLog.LOG_DIRECTORY;
@@ -27,8 +42,10 @@ import static org.touchbit.buggy.core.utils.log.BuggyLog.LOG_DIRECTORY;
  * Created by Oleg Shaburov on 15.09.2018
  * shaburov.o.a@gmail.com
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class BaseUnitTest {
 
+    protected static final Logger LOG = NOP_LOGGER;
     protected static final String WASTE;
     protected static final String CLASSES;
     protected static final String TEST_CLASSES;
@@ -81,6 +98,7 @@ public abstract class BaseUnitTest {
         }};
     }
 
+    @SuppressWarnings("unused")
     protected void suppressSystemExit(int status) {
         suppressSystemExit(status, false);
     }
@@ -176,6 +194,122 @@ public abstract class BaseUnitTest {
             this.msg = msg;
         }
 
+    }
+
+    protected static IInvokedMethod getMockIInvokedMethod() {
+        return getMockIInvokedMethod(true);
+    }
+
+    protected static IInvokedMethod getMockIInvokedMethod(boolean isTest) {
+        return getMockIInvokedMethod(BuggyExecutionListenerTests.MockITestClass.class, "iTestResultMethodWithDetails", isTest);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    protected static IInvokedMethod getMockIInvokedMethod(Class<?> clazz, String methodName, boolean isTest) {
+        ITestNGMethod iTestNGMethod = getMockITestNGMethod(clazz, methodName, isTest);
+        IInvokedMethod iInvokedMethod = mock(IInvokedMethod.class);
+        when(iInvokedMethod.getTestMethod()).thenReturn(iTestNGMethod);
+        when(iInvokedMethod.isTestMethod()).thenReturn(isTest);
+        return iInvokedMethod;
+    }
+
+    protected static ITestNGMethod getMockITestNGMethod(Class<?> clazz, String methodName, boolean isTest) {
+        ITestNGMethod method = getMockITestNGMethod(clazz, methodName);
+        when(method.isTest()).thenReturn(isTest);
+        return method;
+    }
+
+    protected static ITestNGMethod getMockITestNGMethod() {
+        return getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithDetails");
+    }
+
+    protected static ITestNGMethod getMockITestNGMethod(Class<?> clazz, String methodName) {
+        Method method;
+        try {
+            method = clazz.getMethod(methodName);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        ConstructorOrMethod constructorOrMethod = mock(ConstructorOrMethod.class);
+        when(constructorOrMethod.getMethod()).thenReturn(method);
+        ITestNGMethod iTestNGMethod = mock(ITestNGMethod.class);
+        when(iTestNGMethod.getConstructorOrMethod()).thenReturn(constructorOrMethod);
+        when(iTestNGMethod.getMethodName()).thenReturn(methodName);
+        when(iTestNGMethod.getRealClass()).thenReturn(clazz);
+        when(iTestNGMethod.isTest()).thenReturn(true);
+        when(iTestNGMethod.getInvocationCount()).thenReturn(1);
+        return iTestNGMethod;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected static ITestClass getMockITestClass(Class aClass) {
+        ITestClass iTestClass = mock(ITestClass.class);
+        when(iTestClass.getRealClass()).thenReturn(aClass);
+        return iTestClass;
+    }
+
+    protected static ITestResult getMockITestResult(Integer status) {
+        Method method;
+        try {
+            method = MockITestClass.class.getMethod("iTestResultMethodWithDetails");
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        ConstructorOrMethod constructorOrMethod = mock(ConstructorOrMethod.class);
+        when(constructorOrMethod.getMethod()).thenReturn(method);
+
+        ITestNGMethod iTestNGMethod = mock(ITestNGMethod.class);
+        when(iTestNGMethod.getConstructorOrMethod()).thenReturn(constructorOrMethod);
+
+        ITestResult iTestResult = mock(ITestResult.class);
+        when(iTestResult.getStatus()).thenReturn(status);
+        when(iTestResult.getMethod()).thenReturn(iTestNGMethod);
+        return iTestResult;
+    }
+
+    protected class UnitTestBuggyExecutionListener extends BuggyExecutionListener {
+
+        public ITestNGMethod method;
+        public Status status;
+        public String msg;
+        public Details details;
+
+        public UnitTestBuggyExecutionListener() {
+            super(LOG, LOG, LOG);
+        }
+
+        public UnitTestBuggyExecutionListener(Details details) {
+            super(LOG, LOG, LOG);
+            this.details = details;
+        }
+
+        public UnitTestBuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger) {
+            super(testLogger, frameworkLogger, consoleLogger);
+        }
+
+        @Override
+        public void resultLog(ITestNGMethod method, Status status, String msg) {
+            this.method = method;
+            this.status = status;
+            this.msg = msg;
+        }
+
+        @Override
+        protected @Nullable Details getDetails(Method method) {
+            return details;
+        }
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @Suite(service = TestService.class, interfaze = TestInterface.class)
+    public static class MockITestClass {
+        @SuppressWarnings("WeakerAccess")
+        @Details
+        public void iTestResultMethodWithDetails() { }
+        @SuppressWarnings({"WeakerAccess", "unused"})
+        public void iTestResultMethodWithoutDetails() {
+            // for getMockITestResult()
+        }
     }
 
 }

@@ -177,13 +177,13 @@ public interface PrimaryConfig {
         return DefaultValueProvider.notify;
     }
 
-    @Parameter(names = {BUILDS_URL}, description = "The storage address for the builds (artifacts).")
-    default void setBuildUrl(String buildsUrl) {
-        DefaultValueProvider.buildsUrl = buildsUrl;
+    @Parameter(names = {ARTIFACTS_URL}, description = "The storage address for the builds (artifacts).")
+    default void setArtifactsUrl(String artifactsUrl) {
+        DefaultValueProvider.artifactsUrl = artifactsUrl;
     }
 
-    default String getBuildLogUrl() {
-        return DefaultValueProvider.buildsUrl;
+    default String getArtifactsUrl() {
+        return DefaultValueProvider.artifactsUrl;
     }
 
     @Parameter(names = {PRINT_SUITE}, description = "Display information on the Suite in the console log.")
@@ -280,7 +280,7 @@ public interface PrimaryConfig {
         private static Integer status;
         private static String  logPath = "logs";
         private static String  absoluteLogPath;
-        private static String  buildsUrl;
+        private static String artifactsUrl;
         private static List<Service> services;
         private static List<Interface> interfaces;
         private static Type type = Type.INTEGRATION;
@@ -309,8 +309,8 @@ public interface PrimaryConfig {
                 return String.valueOf(threads);
                 case LOG:
                 return String.valueOf(logPath);
-                case BUILDS_URL:
-                return String.valueOf(buildsUrl);
+                case ARTIFACTS_URL:
+                return String.valueOf(artifactsUrl);
                 case T:
                 case TYPE:
                     return String.valueOf(type);

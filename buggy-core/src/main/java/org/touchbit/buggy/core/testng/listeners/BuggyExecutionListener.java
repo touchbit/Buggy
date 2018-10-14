@@ -406,7 +406,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         }
         testLog.info("{} - {} {}", methodName, statusName, method.getDescription());
         if (Buggy.getPrimaryConfig().isPrintLogFile() && method.getInvocationCount() > 0) {
-            msg = msg + getURLEncodedLogFileName(method);
+            msg = msg + getURLEncodedLogFilePath(method);
         }
         if (Buggy.getPrimaryConfig().isPrintCause()) {
             printASCIIStatus(status, StringUtils.dotFiller(methodName, 47, statusName) + msg);
