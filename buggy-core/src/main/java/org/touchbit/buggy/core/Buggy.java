@@ -53,8 +53,8 @@ public abstract class Buggy {
 
     private static final String UNABLE_CREATE_CLASS = "Unable to create a new instance of class: ";
 
-    private static AtomicInteger buggyErrors = new AtomicInteger(0);
-    private static AtomicInteger buggyWarns = new AtomicInteger(0);
+    private static AtomicInteger buggyErrors = new AtomicInteger();
+    private static AtomicInteger buggyWarns = new AtomicInteger();
 
     private static TestNG testNG;
     private static JCommander jCommander;
@@ -66,6 +66,7 @@ public abstract class Buggy {
     private static Class<? extends PrimaryConfig> primaryConfigClass;
     private static ExitHandler exitHandler = new BuggyExitHandler();
 
+    private static boolean primaryConfigInitialized = false;
     private static boolean configurationInitialized = false;
     private static boolean running = false;
 
@@ -80,6 +81,7 @@ public abstract class Buggy {
     }
 
     public static void main(String[] args, TestNG tng) {
+        setDefault();
         testNG = tng;
         initConfiguration(args);
         run();
@@ -89,14 +91,27 @@ public abstract class Buggy {
         return running;
     }
 
+    public static void setDefault() {
+        primaryConfigInitialized = false;
+        configurationInitialized = false;
+        running = false;
+        buggyErrors.set(0);
+        buggyWarns.set(0);
+    }
+
     public static void initConfiguration(String... args) {
         StringUtils.println(CONSOLE_DELIMITER);
         initBuggyConfiguration();
         initJCommander(args);
+        primaryConfigInitialized = true;
         initLogs();
         addBuggyListeners();
-        printConfig();
         configurationInitialized = true;
+        printConfig();
+    }
+
+    public static boolean isPrimaryConfigInitialized() {
+        return primaryConfigInitialized;
     }
 
     public static void initBuggyConfiguration() {
@@ -165,7 +180,7 @@ public abstract class Buggy {
             exitHandler.exitRun(1, "There is no write permission for the log directory or the path to the file is specified: " +
                     absoluteLogDir.getAbsolutePath());
         }
-        BuggyLog.setLogPath(primaryConfig.getAbsoluteLogPath());
+        BuggyLog.setLogsDirPath(primaryConfig.getAbsoluteLogPath());
         Iterable<Class<? extends BuggyLog>> subclasses = ClassIndex.getSubclasses(BuggyLog.class);
         List<Class<? extends BuggyLog>> logList = new ArrayList<>();
         for (Class<? extends BuggyLog> c : subclasses) {

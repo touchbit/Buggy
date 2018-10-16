@@ -22,6 +22,7 @@ import org.atteo.classindex.IndexSubclasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.utils.IOHelper;
 import org.touchbit.buggy.core.utils.StringUtils;
@@ -55,22 +56,17 @@ public class BuggyLog {
     }
 
     public BuggyLog(Logger consoleLogger, Logger frameworkLogger, Logger testLogger) {
+        checkBuggyConfiguration();
         setConsoleLog(consoleLogger);
         setFrameworkLog(frameworkLogger);
         setTestLog(testLogger);
     }
 
-    private static void init() {
-        setConsoleLog(LoggerFactory.getLogger("Console"));
-        setFrameworkLog(LoggerFactory.getLogger("Framework"));
-        setTestLog(LoggerFactory.getLogger("Routing"));
-    }
-
-    public static String getLogPath() {
+    public static String getLogsDirPath() {
         return logPath;
     }
 
-    public static void setLogPath(String path) {
+    public static void setLogsDirPath(String path) {
         if (path == null) {
             throw new BuggyConfigurationException("The path to the log directory can not be empty");
         }
@@ -78,11 +74,12 @@ public class BuggyLog {
         System.setProperty(LOG_DIRECTORY, logPath);
     }
 
-    public static void setTestName(String logName) {
+    public static void setTestLogFileName(String logName) {
         MDC.put(LOG_FILE_NAME, logName);
     }
 
     public static synchronized void reloadConfig() {
+        checkBuggyConfiguration();
         Exception exception = null;
         try {
             configuration = XMLLogConfigurator.reloadXMLConfiguration(CONFIG);
@@ -152,6 +149,18 @@ public class BuggyLog {
 
     public static void setTestLog(Logger test) {
         BuggyLog.test = test;
+    }
+
+    private static void checkBuggyConfiguration() {
+        if (!Buggy.isPrimaryConfigInitialized()) {
+            Buggy.getExitHandler().exitRun(1, "The logger cannot be initialized before the Buggy configuration.");
+        }
+    }
+
+    private static void init() {
+        setConsoleLog(LoggerFactory.getLogger("Console"));
+        setFrameworkLog(LoggerFactory.getLogger("Framework"));
+        setTestLog(LoggerFactory.getLogger("Routing"));
     }
 
 }
