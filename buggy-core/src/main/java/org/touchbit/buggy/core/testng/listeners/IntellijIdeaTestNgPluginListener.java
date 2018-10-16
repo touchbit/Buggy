@@ -66,4 +66,8 @@ public final class IntellijIdeaTestNgPluginListener extends BuggyExecutionListen
         return false;
     }
 
+    public static Boolean isIntellijIdeaTestRun() {
+        return Boolean.valueOf(System.getProperty(INTELLIJ_IDEA_TEST_RUN, Boolean.FALSE.toString()));
+    }
+
 }

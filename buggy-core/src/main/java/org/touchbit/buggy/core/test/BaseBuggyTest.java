@@ -20,9 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.testng.listeners.BuggyExecutionListener;
+import org.touchbit.buggy.core.testng.listeners.IntellijIdeaTestNgPluginListener;
 import org.touchbit.buggy.core.utils.log.BuggyLog;
-
-import static org.touchbit.buggy.core.Buggy.exitRun;
 
 /**
  * Base class for tests.
@@ -39,14 +38,11 @@ public abstract class BaseBuggyTest {
     }
 
     protected BaseBuggyTest(final Logger logger) {
-        if (!Buggy.getPrimaryConfig().isIntellijIdeaTestRun() &&
-                !Buggy.isRunning()) {
-            exitRun(1, "Missing IntellijIdeaPluginListener in the Intellij IDEA" +
+        if (!IntellijIdeaTestNgPluginListener.isIntellijIdeaTestRun() && !Buggy.isRunning()) {
+            Buggy.getExitHandler().exitRun(1, "Missing IntellijIdeaPluginListener in the Intellij IDEA" +
                     " TestNG plugin configuration.");
         }
-        if (logger != null) {
-            setLog(logger);
-        }
+        setLog(logger);
     }
 
     /**

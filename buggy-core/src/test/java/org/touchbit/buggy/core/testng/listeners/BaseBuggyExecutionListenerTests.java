@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.is;
 class BaseBuggyExecutionListenerTests extends BaseUnitTest {
 
     @Test
-    @DisplayName("Check getURLEncodedLogFilePath() for artifacts url log file")
+    @DisplayName("Check get url log file where !getArtifactsUrl().endsWith(\"/\")")
     void unitTest_20181014215332() {
         String temp = PRIMARY_CONFIG.getArtifactsUrl();
         try {
@@ -28,14 +28,14 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
             PRIMARY_CONFIG.setArtifactsUrl("https://touchbit.org/artifacts");
             ITestNGMethod method = getMockITestNGMethod();
             String result = listener.getURLEncodedLogFilePath(method);
-            assertThat(result, is(" \u2B9E https://touchbit.org/artifacts/waste-unit-tests/tests/iTestResultMethodWithDetails.log"));
+            assertThat(result, is(" \u2B9E https://touchbit.org/artifacts/logs/tests/iTestResultMethodWithDetails.log"));
         } finally {
             PRIMARY_CONFIG.setArtifactsUrl(temp);
         }
     }
 
     @Test
-    @DisplayName("Check getURLEncodedLogFilePath() where getArtifactsUrl().endsWith(\"/\")")
+    @DisplayName("Check get url log file where getArtifactsUrl().endsWith(\"/\")")
     void unitTest_20181014222846() {
         String temp = PRIMARY_CONFIG.getArtifactsUrl();
         try {
@@ -48,17 +48,18 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
             PRIMARY_CONFIG.setArtifactsUrl("https://touchbit.org/artifacts/");
             ITestNGMethod method = getMockITestNGMethod();
             String result = listener.getURLEncodedLogFilePath(method);
-            assertThat(result, is(" \u2B9E https://touchbit.org/artifacts/waste-unit-tests/tests/iTestResultMethodWithDetails.log"));
+            assertThat(result, is(" \u2B9E https://touchbit.org/artifacts/logs/tests/iTestResultMethodWithDetails.log"));
         } finally {
             PRIMARY_CONFIG.setArtifactsUrl(temp);
         }
     }
 
     @Test
-    @DisplayName("Check getURLEncodedLogFilePath() for local log file")
+    @DisplayName("Check get local log file if ArtifactsUrl == null")
     void unitTest_20181014223022() {
         String temp = PRIMARY_CONFIG.getArtifactsUrl();
         try {
+            PRIMARY_CONFIG.setArtifactsUrl(null);
             BaseBuggyExecutionListener listener = new BaseBuggyExecutionListener() {
                 @Override
                 public boolean isEnable() {
@@ -68,7 +69,30 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
             PRIMARY_CONFIG.setArtifactsUrl(null);
             ITestNGMethod method = getMockITestNGMethod();
             String result = listener.getURLEncodedLogFilePath(method);
-            assertThat(result, is(" \u2B9E file://" + WASTE + "/tests/iTestResultMethodWithDetails.log"));
+            assertThat(result, is(" \u2B9E file://" + PRIMARY_CONFIG.getAbsoluteLogPath() +
+                    "/tests/iTestResultMethodWithDetails.log"));
+        } finally {
+            PRIMARY_CONFIG.setArtifactsUrl(temp);
+        }
+    }
+
+    @Test
+    @DisplayName("Check get local log file if ArtifactsUrl == \"null\"")
+    void unitTest_20181016135040() {
+        String temp = PRIMARY_CONFIG.getArtifactsUrl();
+        try {
+            PRIMARY_CONFIG.setArtifactsUrl("null");
+            BaseBuggyExecutionListener listener = new BaseBuggyExecutionListener() {
+                @Override
+                public boolean isEnable() {
+                    return false;
+                }
+            };
+            PRIMARY_CONFIG.setArtifactsUrl(null);
+            ITestNGMethod method = getMockITestNGMethod();
+            String result = listener.getURLEncodedLogFilePath(method);
+            assertThat(result, is(" \u2B9E file://" + PRIMARY_CONFIG.getAbsoluteLogPath() +
+                    "/tests/iTestResultMethodWithDetails.log"));
         } finally {
             PRIMARY_CONFIG.setArtifactsUrl(temp);
         }

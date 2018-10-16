@@ -6,10 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.BaseUnitTest;
 import org.touchbit.buggy.core.config.jcommander.*;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
-import org.touchbit.buggy.core.indirect.SuppressException;
-import org.touchbit.buggy.core.indirect.TestComponent;
-import org.touchbit.buggy.core.indirect.TestInterface;
-import org.touchbit.buggy.core.indirect.TestService;
+import org.touchbit.buggy.core.indirect.*;
 import org.touchbit.buggy.core.process.Component;
 import org.touchbit.buggy.core.process.Interface;
 import org.touchbit.buggy.core.process.Service;
@@ -171,26 +168,32 @@ class JCommanderTests extends BaseUnitTest {
     @Test
     @DisplayName("Check ValueValidator.validate(QUESTION_MARK & HELP)")
     void unitTest_20180917001718() {
-        suppressSystemExit(true);
         ValueValidator validator = new ValueValidator();
-        execute(() -> validator.validate(QUESTION_MARK, "true"), SuppressException.class);
-        execute(() -> validator.validate(HELP, "true"), SuppressException.class);
+        validator.validate(QUESTION_MARK, "true");
+        assertExitCode(0);
+        validator.validate(HELP, "true");
+        assertExitCode(0);
         validator.validate(QUESTION_MARK, "false");
+        assertExitCode(null);
         validator.validate(HELP, "false");
+        assertExitCode(null);
     }
 
     @Test
     @DisplayName("Check ValueValidator.validate(VERSION & V)")
     void unitTest_20180917003731() throws IOException {
-        suppressSystemExit(0, true);
         File testManifest = new File(TEST_CLASSES + "/META-INF", "MANIFEST.MF");
         File srcManifest = new File(CLASSES + "/META-INF", "MANIFEST.MF");
         IOHelper.copyFile(testManifest, srcManifest);
         ValueValidator validator = new ValueValidator();
-        execute(() -> validator.validate(VERSION, "true"), SuppressException.class);
-        execute(() -> validator.validate(V, "true"), SuppressException.class);
+        validator.validate(VERSION, "true");
+        assertExitCode(0);
+        validator.validate(V, "true");
+        assertExitCode(0);
         validator.validate(VERSION, "false");
+        assertExitCode(null);
         validator.validate(V, "false");
+        assertExitCode(null);
     }
 
     @Test

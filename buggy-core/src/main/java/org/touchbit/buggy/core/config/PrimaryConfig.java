@@ -59,10 +59,6 @@ public interface PrimaryConfig {
         return new DefaultValueProvider();
     }
 
-    default Boolean isIntellijIdeaTestRun() {
-        return Boolean.valueOf(System.getProperty(INTELLIJ_IDEA_TEST_RUN, "false"));
-    }
-
     @Parameter(names = {QUESTION_MARK, HELP}, help = true, validateValueWith = ValueValidator.class,
             description = "Print usage.")
     default void setHelp(Boolean help) {
@@ -222,28 +218,28 @@ public interface PrimaryConfig {
         return false;
     }
 
-    default void setAbsolutePath(String path) {
+    default void setAbsoluteLogPath(String path) {
         DefaultValueProvider.absoluteLogPath = path;
     }
 
-    default String getAbsolutePath() {
+    default String getAbsoluteLogPath() {
         return DefaultValueProvider.absoluteLogPath;
     }
 
     default File getErrorLogDir() {
-        return new File(getAbsolutePath(), "errors");
+        return new File(getAbsoluteLogPath(), "errors");
     }
 
     default File getTestLogDir() {
-        return new File(getAbsolutePath(), "tests");
+        return new File(getAbsoluteLogPath(), "tests");
     }
 
     default File getFixedLogDir() {
-        return new File(getAbsolutePath(), "fixed");
+        return new File(getAbsoluteLogPath(), "fixed");
     }
 
     default File getImplementedLogDir() {
-        return new File(getAbsolutePath(), "implemented");
+        return new File(getAbsoluteLogPath(), "implemented");
     }
 
     default File getNewErrorLogDir() {

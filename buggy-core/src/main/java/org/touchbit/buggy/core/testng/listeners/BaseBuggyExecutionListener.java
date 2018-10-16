@@ -101,7 +101,8 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
     protected String getURLEncodedLogFilePath(ITestNGMethod method) {
         PrimaryConfig c = Buggy.getPrimaryConfig();
         String urlEncoded = StringUtils.encode(getInvokedMethodLogFileName(method));
-        if (c.getArtifactsUrl() != null) {
+        // Do not change the check. Feature parsing values by jCommander library.
+        if (!"null".equalsIgnoreCase(String.valueOf(c.getArtifactsUrl()))) {
             String parentDir = c.getTestLogDir().getParentFile().getName();
             String logDir = new File(parentDir, c.getTestLogDir().getName()).getPath();
             String url = c.getArtifactsUrl().endsWith("/") ? c.getArtifactsUrl() : c.getArtifactsUrl() + "/";

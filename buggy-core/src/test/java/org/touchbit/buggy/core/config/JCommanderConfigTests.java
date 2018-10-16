@@ -52,18 +52,6 @@ class JCommanderConfigTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check PrimaryConfig.isIntellijIdeaTestRun()")
-    void unitTest_20180919192340() {
-        assertThat(PRIMARY_CONFIG.isIntellijIdeaTestRun(), is(false));
-        System.setProperty(INTELLIJ_IDEA_TEST_RUN, Boolean.TRUE.toString());
-        assertThat(PRIMARY_CONFIG.isIntellijIdeaTestRun(), is(true));
-        System.setProperty(INTELLIJ_IDEA_TEST_RUN, "false");
-        assertThat(PRIMARY_CONFIG.isIntellijIdeaTestRun(), is(false));
-        System.setProperty(INTELLIJ_IDEA_TEST_RUN, "");
-        assertThat(PRIMARY_CONFIG.isIntellijIdeaTestRun(), is(false));
-    }
-
-    @Test
     @DisplayName("Check PrimaryConfig.getDefaultValueProvider()")
     void unitTest_20180919192728() {
         assertThat(PRIMARY_CONFIG.getDefaultValueProvider(), instanceOf(PrimaryConfig.DefaultValueProvider.class));
@@ -268,15 +256,15 @@ class JCommanderConfigTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check PrimaryConfig.setAbsolutePath(String path)")
+    @DisplayName("Check PrimaryConfig.setAbsoluteLogPath(String path)")
     void unitTest_20180919202117() {
-        String absolutePath = PRIMARY_CONFIG.getAbsolutePath();
+        String absolutePath = PRIMARY_CONFIG.getAbsoluteLogPath();
         try {
             assertThat(absolutePath, is(WASTE));
-            PRIMARY_CONFIG.setAbsolutePath("AbsolutePath");
-            assertThat(PRIMARY_CONFIG.getAbsolutePath(), is("AbsolutePath"));
+            PRIMARY_CONFIG.setAbsoluteLogPath("AbsolutePath");
+            assertThat(PRIMARY_CONFIG.getAbsoluteLogPath(), is("AbsolutePath"));
         } finally {
-            PRIMARY_CONFIG.setAbsolutePath(absolutePath);
+            PRIMARY_CONFIG.setAbsoluteLogPath(absolutePath);
         }
     }
 

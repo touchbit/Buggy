@@ -63,11 +63,16 @@ class BaseBuggyTestTests extends BaseUnitTest {
     @Test
     @DisplayName("Check Missing IntellijIdeaPluginListener")
     void unitTest_20180920000012() {
-        suppressSystemExit();
-        Logger logger = mock(Logger.class);
-        BuggyTest buggyTest = new BuggyTest();
-        buggyTest.setLogger(logger);
-        buggyTest.test();
+        System.setProperty(INTELLIJ_IDEA_TEST_RUN, Boolean.FALSE.toString());
+        try {
+            Logger logger = mock(Logger.class);
+            BuggyTest buggyTest = new BuggyTest();
+            buggyTest.setLogger(logger);
+            buggyTest.test();
+            assertExitCode(1, "Missing IntellijIdeaPluginListener in the Intellij IDEA TestNG plugin configuration.");
+        } finally {
+            System.setProperty(INTELLIJ_IDEA_TEST_RUN, Boolean.FALSE.toString());
+        }
     }
 
     private static class BuggyTest extends BaseBuggyTest {

@@ -116,7 +116,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
             testLog.info("Steps:\n{}", sb);
         } else {
             Buggy.incrementBuggyWarns();
-            frameworkLog.warn("There are no playback STEPS in the test method {}", method.getName());
+            frameworkLog.warn("There are no playback steps in the test method {}", method.getName());
         }
         testLog.info("Date: {}", new Date());
     }
@@ -165,7 +165,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
             for (Annotation annotation : getRealMethod(method).getAnnotations()) {
                 sj.add(annotation.toString());
             }
-            testLog.debug("Declared method annotations:{}", sj);
+            testLog.trace("Declared method annotations:{}", sj);
         }
     }
 
@@ -385,34 +385,32 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         }
     }
 
-
-
     public void copyConfigurationMethodLogFle(IInvokedMethod method) throws IOException {
         PrimaryConfig c = Buggy.getPrimaryConfig();
         String fileName = "conf_" + getClassSimpleName(method) + "." + getMethodName(method) + "().log";
         copyFile(new File(c.getTestLogDir(), fileName), new File(c.getNewErrorLogDir(), fileName));
     }
 
-    public void resultLog(ITestNGMethod method, Status status, String msg) {
+    public void resultLog(ITestNGMethod method, Status status, String details) {
         String methodName = method.getMethodName();
         Suite suite = getSuite(method);
         String statusName = status.name();
+        String msg = "";
         if (Buggy.getPrimaryConfig().isPrintSuite()) {
             StringJoiner sj = new StringJoiner(" ", " \u2B9E [", "] ");
             sj.add(BuggyUtils.getService(suite).getName().trim());
             sj.add(BuggyUtils.getInterface(suite).getName().trim());
             sj.add(suite.task().trim());
-            msg = sj + msg;
+            msg += sj;
         }
         testLog.info("{} - {} {}", methodName, statusName, method.getDescription());
-        if (Buggy.getPrimaryConfig().isPrintLogFile() && method.getInvocationCount() > 0) {
-            msg = msg + getURLEncodedLogFilePath(method);
-        }
         if (Buggy.getPrimaryConfig().isPrintCause()) {
-            printASCIIStatus(status, StringUtils.dotFiller(methodName, 47, statusName) + msg);
-        } else {
-            printASCIIStatus(status, StringUtils.dotFiller(methodName, 47, statusName));
+            msg += details;
         }
+        if (Buggy.getPrimaryConfig().isPrintLogFile() && method.getInvocationCount() > 0) {
+            msg += getURLEncodedLogFilePath(method);
+        }
+        printASCIIStatus(status, StringUtils.dotFiller(methodName, 47, statusName) + msg);
         if (method.getCurrentInvocationCount() > 0) {
             increment(status);
         }

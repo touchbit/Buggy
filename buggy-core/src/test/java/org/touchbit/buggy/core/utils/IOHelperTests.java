@@ -128,7 +128,7 @@ class IOHelperTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check copyFile(existFile.getAbsolutePath(), target.getAbsolutePath()")
+    @DisplayName("Check copyFile(existFile.getAbsoluteLogPath(), target.getAbsoluteLogPath()")
     void unitTest_20180916001820() throws IOException {
         String fileName = "unitTest_20180916001820.txt";
         File existFile = new File(WASTE, fileName);

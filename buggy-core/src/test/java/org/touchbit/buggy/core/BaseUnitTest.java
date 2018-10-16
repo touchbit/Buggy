@@ -1,6 +1,5 @@
 package org.touchbit.buggy.core;
 
-import mockit.Expectations;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.function.Executable;
@@ -10,9 +9,10 @@ import org.testng.IInvokedMethod;
 import org.testng.ITestClass;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
+import org.testng.annotations.Test;
 import org.testng.internal.ConstructorOrMethod;
 import org.touchbit.buggy.core.config.PrimaryConfig;
-import org.touchbit.buggy.core.indirect.SuppressException;
+import org.touchbit.buggy.core.indirect.TestExitHandler;
 import org.touchbit.buggy.core.indirect.TestInterface;
 import org.touchbit.buggy.core.indirect.TestService;
 import org.touchbit.buggy.core.indirect.UnitTestPrimaryConfig;
@@ -49,10 +49,12 @@ public abstract class BaseUnitTest {
     protected static final String WASTE;
     protected static final String CLASSES;
     protected static final String TEST_CLASSES;
+    protected static final TestExitHandler EXIT_HANDLER = new TestExitHandler();
 
     protected static final PrimaryConfig PRIMARY_CONFIG;
 
     static {
+        Buggy.setExitHandler(EXIT_HANDLER);
         Buggy.setPrimaryConfigClass(UnitTestPrimaryConfig.class);
         Buggy.initBuggyConfiguration();
         WASTE = Buggy.getRunDir() + "/waste-unit-tests";
@@ -61,7 +63,7 @@ public abstract class BaseUnitTest {
         System.setProperty(LOG_DIRECTORY, WASTE + "/");
         Buggy.initJCommander();
         PRIMARY_CONFIG = Buggy.getPrimaryConfig();
-        PRIMARY_CONFIG.setAbsolutePath(WASTE);
+        PRIMARY_CONFIG.setAbsoluteLogPath(WASTE);
         File wasteDir = new File(WASTE);
         File logFile = new File(WASTE, "console.txt");
         delete(wasteDir);
@@ -77,39 +79,39 @@ public abstract class BaseUnitTest {
     }
 
     @BeforeEach
-    public void stepReset() {
+    public void clean() {
+        EXIT_HANDLER.clean();
         BuggyExecutionListener.setSteps(new ArrayList<>());
+    }
+
+    protected void assertExitCode(Integer code) {
+        assertExitCode(code, null, null);
+    }
+
+    protected void assertExitCode(Integer code, String msg) {
+        assertExitCode(code, msg, null);
+    }
+
+    protected void assertExitCode(Integer code, String msg, Class<Throwable> throwableClass) {
+        if (code == null) {
+            assertThat(EXIT_HANDLER.getStatus(), is(nullValue()));
+        } else {
+            assertThat(EXIT_HANDLER.getStatus(), is(code));
+        }
+        if (msg == null) {
+            assertThat(EXIT_HANDLER.getMsg(), is(nullValue()));
+        } else {
+            assertThat(EXIT_HANDLER.getMsg(), is(msg));
+        }
+        if (throwableClass == null) {
+            assertThat(EXIT_HANDLER.getThrowable(), is(nullValue()));
+        } else {
+            assertThat(EXIT_HANDLER.getThrowable(), is(instanceOf(throwableClass)));
+        }
     }
 
     private static PrintStream outputFile(File f) throws FileNotFoundException {
         return new PrintStream(new BufferedOutputStream(new FileOutputStream(f)), true);
-    }
-
-    protected void suppressSystemExit() {
-        suppressSystemExit(false);
-    }
-
-    protected void suppressSystemExit(boolean withSuppressException) {
-        new Expectations(System.class) {{
-            System.exit(anyInt);
-            if (withSuppressException) {
-                result = new SuppressException();
-            }
-        }};
-    }
-
-    @SuppressWarnings("unused")
-    protected void suppressSystemExit(int status) {
-        suppressSystemExit(status, false);
-    }
-
-    protected void suppressSystemExit(int status, boolean withSuppressException) {
-        new Expectations(System.class) {{
-            System.exit(status);
-            if (withSuppressException) {
-                result = new SuppressException();
-            }
-        }};
     }
 
     @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored"})
@@ -288,10 +290,10 @@ public abstract class BaseUnitTest {
         }
 
         @Override
-        public void resultLog(ITestNGMethod method, Status status, String msg) {
+        public void resultLog(ITestNGMethod method, Status status, String details) {
             this.method = method;
             this.status = status;
-            this.msg = msg;
+            this.msg = details;
         }
 
         @Override
@@ -304,6 +306,7 @@ public abstract class BaseUnitTest {
     @Suite(service = TestService.class, interfaze = TestInterface.class)
     public static class MockITestClass {
         @SuppressWarnings("WeakerAccess")
+        @Test
         @Details
         public void iTestResultMethodWithDetails() { }
         @SuppressWarnings({"WeakerAccess", "unused"})

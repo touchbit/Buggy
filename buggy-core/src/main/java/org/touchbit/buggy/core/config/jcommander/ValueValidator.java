@@ -38,11 +38,11 @@ public class ValueValidator implements IValueValidator {
     public void validate(String name, Object value) {
         String stringValue = String.valueOf(value);
         if ((name.equals(QUESTION_MARK) || name.equals(HELP)) && Boolean.valueOf(stringValue)) {
-            Buggy.exitRunWithUsage(0);
+            Buggy.getExitHandler().exitRunWithUsage(0);
         }
         if ((name.equals(V) || name.equals(VERSION)) && Boolean.valueOf(String.valueOf(stringValue))) {
             printManifestInfo();
-            Buggy.exitRun(0);
+            Buggy.getExitHandler().exitRun(0);
         }
     }
 
