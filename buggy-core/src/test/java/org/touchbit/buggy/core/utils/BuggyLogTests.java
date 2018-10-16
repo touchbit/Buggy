@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.touchbit.buggy.core.BaseUnitTest;
+import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
-import org.touchbit.buggy.core.utils.IOHelper;
 import org.touchbit.buggy.core.utils.log.BuggyLog;
 import org.touchbit.buggy.core.utils.log.XMLLogConfigurator;
 
@@ -31,38 +31,38 @@ class BuggyLogTests extends BaseUnitTest {
     @Test
     @DisplayName("Check LogManager")
     void unitTest_20180916003840() {
-        BuggyLog.getLogPath();
+        BuggyLog.getLogsDirPath();
         assertThat(System.getProperty("java.util.logging.manager"),
                 is("org.apache.logging.log4j.jul.LogManager"));
     }
 
     @Test
-    @DisplayName("Check setLogPath(logPath)")
+    @DisplayName("Check setLogsDirPath(logPath)")
     void unitTest_20180916011731() {
         String logPath = WASTE + "/logs";
-        BuggyLog.setLogPath(logPath);
-        assertThat(BuggyLog.getLogPath(), is(logPath));
+        BuggyLog.setLogsDirPath(logPath);
+        assertThat(BuggyLog.getLogsDirPath(), is(logPath));
         assertThat(System.getProperty(LOG_DIRECTORY), is(logPath));
     }
 
     @Test
-    @DisplayName("Check setLogPath(null)")
+    @DisplayName("Check setLogsDirPath(null)")
     void unitTest_20180916012313() {
-        BuggyConfigurationException e = execute(() -> BuggyLog.setLogPath(null), BuggyConfigurationException.class);
+        BuggyConfigurationException e = execute(() -> BuggyLog.setLogsDirPath(null), BuggyConfigurationException.class);
         assertThat(e.getMessage(), is("The path to the log directory can not be empty"));
     }
 
     @Test
-    @DisplayName("Check setTestName(String logName)")
+    @DisplayName("Check setTestLogFileName(String logName)")
     void unitTest_20180916015450() {
-        BuggyLog.setTestName("unitTest_20180916015450");
+        BuggyLog.setTestLogFileName("unitTest_20180916015450");
         assertThat(MDC.get(LOG_FILE_NAME), is("unitTest_20180916015450"));
     }
 
     @Test
     @DisplayName("Check reloadConfig() with root logger")
     void unitTest_20180916015619() throws IOException {
-        BuggyLog.setLogPath(WASTE);
+        BuggyLog.setLogsDirPath(WASTE);
         File testResourcesWaste = new File(WASTE, "log4j2.xml");
         File srcResourcesWaste = new File(WASTE, "buggy-log4j2.xml");
         File testResources = new File(TEST_CLASSES, "log4j2.xml");
@@ -80,14 +80,14 @@ class BuggyLogTests extends BaseUnitTest {
     @Test
     @DisplayName("Check reloadConfig() with log4j2.xml")
     void unitTest_20180916212753() {
-        BuggyLog.setLogPath(WASTE);
+        BuggyLog.setLogsDirPath(WASTE);
         BuggyLog.reloadConfig();
     }
 
     @Test
     @DisplayName("Check reloadConfig() with buggy-log4j2.xml")
     void unitTest_20180916212008() throws IOException {
-        BuggyLog.setLogPath(WASTE);
+        BuggyLog.setLogsDirPath(WASTE);
         File waste = new File(WASTE, "log4j2.xml");
         File resources = new File(TEST_CLASSES, "log4j2.xml");
         try {
@@ -116,6 +116,14 @@ class BuggyLogTests extends BaseUnitTest {
     @DisplayName("Check XMLLogConfigurator constructor")
     void unitTest_20180916214825() throws NoSuchMethodException {
         checkUtilityClassConstructor(XMLLogConfigurator.class);
+    }
+
+    @Test
+    @DisplayName("Check init logger before Buggy")
+    void unitTest_20181017010157() {
+        Buggy.setDefault();
+        new BuggyLog(null, null, null);
+        assertExitCode(1, "The logger cannot be initialized before the Buggy configuration.");
     }
 
 }

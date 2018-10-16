@@ -34,7 +34,7 @@ class ExitHandlerTests {
     void unitTest_20181016215216() {
         suppressSystemExit(0);
         TestExitHandler handler = new TestExitHandler();
-        handler.exitRun(0, "", new Exception());
+        handler.exitRun(0, "unitTest_20181016215258", new Exception("unitTest_20181016215258"));
     }
 
     @Test

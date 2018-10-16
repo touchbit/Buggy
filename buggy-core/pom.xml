@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.2.10</version>
+        <version>0.2.11</version>
     </parent>
 
     <artifactId>buggy-core</artifactId>
     <name>Core module</name>
-    <version>0.2.10</version>
+    <version>0.2.11</version>
     <packaging>jar</packaging>
 
     <properties>

@@ -154,7 +154,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         STEPS.set(new ArrayList<>());
         String methodName = getMethodName(method);
-        BuggyLog.setTestName(getInvokedMethodLogFileName(method));
+        BuggyLog.setTestLogFileName(getInvokedMethodLogFileName(method));
         if (method.isTestMethod()) {
             testLog.info("Test method is running:\n{} - {}", methodName, getDescription(method));
         } else {
