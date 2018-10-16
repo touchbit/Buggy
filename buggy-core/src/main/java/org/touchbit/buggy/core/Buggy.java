@@ -43,7 +43,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static java.lang.System.exit;
 import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
 
 /**
@@ -57,13 +56,16 @@ public abstract class Buggy {
     private static AtomicInteger buggyErrors = new AtomicInteger(0);
     private static AtomicInteger buggyWarns = new AtomicInteger(0);
 
-    private static final TestNG testNG = new TestNG();
+    private static TestNG testNG;
     private static JCommander jCommander;
+    private static Class<? extends BuggyLog> buggyLogClass;
     private static String programName;
     private static String runDir;
     private static String reportsOutputDirectory;
     private static PrimaryConfig primaryConfig;
     private static Class<? extends PrimaryConfig> primaryConfigClass;
+    private static ExitHandler exitHandler = new BuggyExitHandler();
+
     private static boolean configurationInitialized = false;
     private static boolean running = false;
 
@@ -71,9 +73,14 @@ public abstract class Buggy {
         StatusLogger.getLogger().setLevel(Level.OFF);
     }
 
-    protected Buggy() {}
-
     public static void main(String[] args) {
+        main(args, new TestNG());
+        initConfiguration(args);
+        run();
+    }
+
+    public static void main(String[] args, TestNG tng) {
+        testNG = tng;
         initConfiguration(args);
         run();
     }
@@ -105,7 +112,7 @@ public abstract class Buggy {
         try {
             primaryConfig = primaryConfigClass.newInstance();
         } catch (Exception e) {
-            exitRun(1, "Unable to create a new instance of PrimaryConfig class: " + primaryConfig, e);
+            exitHandler.exitRun(1, "Unable to create a new instance of PrimaryConfig class: " + primaryConfig, e);
         }
         jCommander = new JCommander(primaryConfig);
         jCommander.setProgramName(programName);
@@ -113,21 +120,21 @@ public abstract class Buggy {
             try {
                 jCommander.addCommand(c.newInstance());
             } catch (Exception e) {
-                exitRun(1, UNABLE_CREATE_CLASS + c, e);
+                exitHandler.exitRun(1, UNABLE_CREATE_CLASS + c, e);
             }
         });
         jCommander.setDefaultProvider(primaryConfig.getDefaultValueProvider());
         try {
             jCommander.parse(args);
         } catch (ParameterException e) {
-            exitRunWithUsage(1, e.getMessage());
+            exitHandler.exitRunWithUsage(1, e.getMessage());
         }
     }
 
-    protected static void run() {
+    public static void run() {
         List<XmlSuite> xmlSuites = getXmlSuites();
         if (xmlSuites.isEmpty()) {
-            exitRun(1, "There are no test suites for the current configuration.");
+            exitHandler.exitRun(1, "There are no test suites for the current configuration.");
         }
         try {
             testNG.setXmlSuites(xmlSuites);
@@ -137,26 +144,28 @@ public abstract class Buggy {
             running = true;
             testNG.run();
             if (primaryConfig.getStatus() != null) {
-                exitRun(primaryConfig.getStatus());
+                exitHandler.exitRun(primaryConfig.getStatus());
             }
-            exitRun(testNG.getStatus());
+            exitHandler.exitRun(testNG.getStatus());
         } catch (Throwable t) {
-            exitRun(60, "TestNG safely died.", t);
+            exitHandler.exitRun(60, "TestNG safely died.", t);
+        } finally {
+            running = false;
         }
     }
 
     public static void initLogs() {
         if (primaryConfig.getLogPath().startsWith("/")) {
-            primaryConfig.setAbsolutePath(primaryConfig.getLogPath());
+            primaryConfig.setAbsoluteLogPath(primaryConfig.getLogPath());
         } else {
-            primaryConfig.setAbsolutePath(runDir.endsWith("/") ? "" : runDir + "/" + primaryConfig.getLogPath());
+            primaryConfig.setAbsoluteLogPath(runDir.endsWith("/") ? "" : runDir + "/" + primaryConfig.getLogPath());
         }
-        File absoluteLogDir = new File(primaryConfig.getAbsolutePath());
+        File absoluteLogDir = new File(primaryConfig.getAbsoluteLogPath());
         if (!absoluteLogDir.mkdirs() && !absoluteLogDir.exists() && !absoluteLogDir.canWrite()) {
-            exitRun(1, "There is no write permission for the log directory or the path to the file is specified: " +
+            exitHandler.exitRun(1, "There is no write permission for the log directory or the path to the file is specified: " +
                     absoluteLogDir.getAbsolutePath());
         }
-        BuggyLog.setLogPath(primaryConfig.getAbsolutePath());
+        BuggyLog.setLogPath(primaryConfig.getAbsoluteLogPath());
         Iterable<Class<? extends BuggyLog>> subclasses = ClassIndex.getSubclasses(BuggyLog.class);
         List<Class<? extends BuggyLog>> logList = new ArrayList<>();
         for (Class<? extends BuggyLog> c : subclasses) {
@@ -169,15 +178,18 @@ public abstract class Buggy {
             StringUtils.println(CONSOLE_DELIMITER);
             return;
         }
-        if (logList.size() > 1) {
+        if (logList.size() > 1 && buggyLogClass == null) {
             StringJoiner sj = new StringJoiner("\n");
             logList.forEach(c -> sj.add(c.toString()));
-            exitRun(1, "Found more than 1 inherited class from BaseLog.class: " + logList);
+            exitHandler.exitRun(1, "Found more than 1 inherited class from BaseLog.class: " + logList);
+        }
+        if (buggyLogClass == null) {
+            buggyLogClass = logList.get(0);
         }
         try {
-            logList.get(0).newInstance();
+            buggyLogClass.newInstance();
         } catch (Exception e) {
-            exitRun(1, UNABLE_CREATE_CLASS + logList.get(0), e);
+            exitHandler.exitRun(1, UNABLE_CREATE_CLASS + logList.get(0), e);
         }
     }
 
@@ -203,7 +215,7 @@ public abstract class Buggy {
                 .stream(ClassIndex.getSubclasses(BuggyListener.class).spliterator(), false)
                 .filter(l -> !Modifier.isAbstract(l.getModifiers()))
                 .collect(Collectors.toList());
-        if (primaryConfig.isIntellijIdeaTestRun()) {
+        if (IntellijIdeaTestNgPluginListener.isIntellijIdeaTestRun()) {
             List<Class<? extends BuggyListener>> intellijIdeaTestNgPluginListener = buggyListenerImpl.stream()
                     .filter(l -> isAssignableFrom(l, IntellijIdeaTestNgPluginListener.class))
                     .collect(Collectors.toList());
@@ -215,17 +227,19 @@ public abstract class Buggy {
         } else {
             buggyListenerImpl.remove(IntellijIdeaTestNgPluginListener.class);
             StringUtils.println(StringUtils
-                    .dotFiller(IntellijIdeaTestNgPluginListener.class.getSimpleName(), 47, "IGNORED"));
+                    .dotFiller(IntellijIdeaTestNgPluginListener.class.getSimpleName(), 47, "DISABLED"));
             buggyListenerImpl.forEach(l -> {
                 try {
-                    BuggyListener listener = l.newInstance();
-                    if (listener.isEnable()) {
-                        testNG.addListener(listener);
-                        StringUtils.println(StringUtils
-                                .dotFiller(l.getSimpleName(), 47, "ENABLED"));
-                    } else {
-                        StringUtils.println(StringUtils
-                                .dotFiller(l.getSimpleName(), 47, "DISABLED"));
+                    if (Modifier.isPublic(l.getModifiers()) && !Modifier.isAbstract(l.getModifiers())) {
+                        BuggyListener listener = l.newInstance();
+                        if (listener.isEnable()) {
+                            testNG.addListener(listener);
+                            StringUtils.println(StringUtils
+                                    .dotFiller(l.getSimpleName(), 47, "ENABLED"));
+                        } else {
+                            StringUtils.println(StringUtils
+                                    .dotFiller(l.getSimpleName(), 47, "DISABLED"));
+                        }
                     }
                 } catch (Exception e) {
                     throw new BuggyException(UNABLE_CREATE_CLASS + l, e);
@@ -260,12 +274,12 @@ public abstract class Buggy {
             }
         }
         if (primaryConfigList.isEmpty()) {
-            exitRun(1, "PrimaryConfig implementation not found. See: \n" + PrimaryConfig.class);
+            exitHandler.exitRun(1, "PrimaryConfig implementation not found. See: \n" + PrimaryConfig.class);
         }
         if (primaryConfigList.size() > 1 && primaryConfig == null) {
             StringJoiner sj = new StringJoiner("\n");
             primaryConfigList.forEach(c -> sj.add(c.toString()));
-            exitRun(1, "Found more than 1 inherited class from BaseConfig.class: " + primaryConfigList);
+            exitHandler.exitRun(1, "Found more than 1 inherited class from BaseConfig.class: " + primaryConfigList);
         }
         return primaryConfigList.get(0);
     }
@@ -286,13 +300,13 @@ public abstract class Buggy {
         Iterable<Class<? extends TestSuite>> subclasses = ClassIndex.getSubclasses(TestSuite.class);
         for (Class<? extends TestSuite> c : subclasses) {
             if (!c.isAnnotationPresent(Suite.class)) {
-                exitRun(1, "The " + c + " does not contain the annotation @Suite");
+                exitHandler.exitRun(1, "The " + c + " does not contain the annotation @Suite");
             }
             if (!Modifier.isAbstract(c.getModifiers())) {
                 try {
                     testSuites.add(c.newInstance());
                 } catch (Exception e) {
-                    exitRun(1, "Unable to create a new instance of TestSuite class: " + c, e);
+                    exitHandler.exitRun(1, "Unable to create a new instance of TestSuite class: " + c, e);
                 }
             }
         }
@@ -328,39 +342,12 @@ public abstract class Buggy {
         testSuites.addAll(testClassSuites);
     }
 
-    public static void exitRunWithUsage(int status) {
-        exitRunWithUsage(status, null);
+    public static ExitHandler getExitHandler() {
+        return exitHandler;
     }
 
-    public static void exitRunWithUsage(int status, String msg) {
-        if(jCommander != null) {
-            jCommander.usage();
-        } else {
-            exitRun(1, "JCommander not initialized.");
-        }
-        exitRun(status, msg);
-    }
-
-    public static void exitRun(int status) {
-        exitRun(status, null, null);
-    }
-
-    public static void exitRun(int status, String msg) {
-        exitRun(status, msg, null);
-    }
-
-    public static void exitRun(int status, String msg, Throwable t) {
-        if (msg !=null) {
-            if (t != null) {
-                StringUtils.println(msg, t);
-            } else {
-                StringUtils.println(msg);
-            }
-            StringUtils.println(CONSOLE_DELIMITER);
-        }
-        StringUtils.println(StringUtils.dotFiller("Exit code", 47, status));
-        StringUtils.println(CONSOLE_DELIMITER);
-        exit(status);
+    public static void setExitHandler(ExitHandler exitHandler) {
+        Buggy.exitHandler = exitHandler;
     }
 
     public static PrimaryConfig getPrimaryConfig() {
@@ -403,6 +390,24 @@ public abstract class Buggy {
 
     public static int getBuggyErrors() {
         return buggyErrors.get();
+    }
+
+    public static void setBuggyLogClass(Class<? extends BuggyLog> logClass) {
+        buggyLogClass = logClass;
+    }
+
+    private static final class BuggyExitHandler implements ExitHandler {
+
+        @Override
+        public void exitRunWithUsage(int status, String msg) {
+            if(jCommander != null) {
+                jCommander.usage();
+            } else {
+                exitRun(1, "JCommander not initialized.");
+            }
+            exitRun(status, msg);
+        }
+
     }
 
 }

@@ -42,7 +42,7 @@
         <Logger name= "Console" level="all" additivity="false">
             <AppenderRef ref="ASCII-Console"/>
         </Logger>
-        <Logger name="Routing" level="all" additivity="false">
+        <Logger name="Routing" level="debug" additivity="false">
             <AppenderRef ref="Routing"/>
         </Logger>
         <Logger name="Framework" level="all" additivity="false">

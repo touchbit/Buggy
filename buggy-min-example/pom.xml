@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.2.9</version>
+        <version>0.2.10</version>
     </parent>
 
     <artifactId>buggy-min-example</artifactId>
     <name>Buggy minimal example</name>
-    <version>0.2.9</version>
+    <version>0.2.10</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>org.touchbit.buggy</groupId>
             <artifactId>buggy-core</artifactId>
-            <version>0.2.9</version>
+            <version>0.2.10</version>
         </dependency>
     </dependencies>
 
