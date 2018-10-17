@@ -19,7 +19,7 @@ package org.touchbit.buggy.feign;
 import feign.RequestTemplate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.buggy.core.BaseUnitTest;
+import org.touchbit.buggy.core.tests.BaseUnitTest;
 
 import java.util.*;
 
