@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.2.11</version>
+        <version>0.2.12</version>
     </parent>
 
     <artifactId>buggy-feign</artifactId>
     <name>Feign utils</name>
     <description>Feign client utils</description>
-    <version>0.2.11</version>
+    <version>0.2.12</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -36,6 +36,11 @@
             <artifactId>buggy-core</artifactId>
         </dependency>
         <!-- Test -->
+        <dependency>
+            <groupId>org.touchbit.buggy</groupId>
+            <artifactId>buggy-core</artifactId>
+            <type>test-jar</type>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -65,6 +70,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

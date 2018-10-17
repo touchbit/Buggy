@@ -12,7 +12,8 @@ Build Buggy:
   tags:
     - touchbit-shell
   script:
-    - mvn clean install -Dmaven.test.skip=true
+    # do not use -Dmaven.test.skip=true
+    - mvn clean install -DskipTests
 
 Buggy-core test:
   stage: test

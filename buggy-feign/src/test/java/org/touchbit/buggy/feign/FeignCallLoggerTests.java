@@ -2,6 +2,7 @@ package org.touchbit.buggy.feign;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.buggy.core.BaseUnitTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

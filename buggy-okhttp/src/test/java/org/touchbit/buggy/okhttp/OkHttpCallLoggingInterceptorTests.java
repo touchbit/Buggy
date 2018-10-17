@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import okio.Buffer;
+import org.touchbit.buggy.core.BaseUnitTest;
 
 import static okhttp3.Protocol.HTTP_1_1;
 import static org.hamcrest.MatcherAssert.assertThat;

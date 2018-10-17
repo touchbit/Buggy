@@ -19,6 +19,7 @@ package org.touchbit.buggy.okhttp;
 import okhttp3.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.buggy.core.BaseUnitTest;
 
 import java.io.IOException;
 
