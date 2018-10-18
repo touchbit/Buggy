@@ -39,6 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class BaseBuggyExecutionListener implements BuggyListener, IExecutionListener {
 
     protected static AtomicInteger testCount = new AtomicInteger(0);
+    protected static AtomicInteger skippedTests = new AtomicInteger(0);
     protected static AtomicInteger corruptedError = new AtomicInteger(0);
     protected static AtomicInteger expFixError = new AtomicInteger(0);
     protected static AtomicInteger expImplError = new AtomicInteger(0);
@@ -180,11 +181,48 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         for (Object o : appends) {
             stringJoiner.add(String.valueOf(o));
         }
-        String ref = isIssuesPresent(details) ? arrow + getIssues(details) : "";
+        String ref = isIssuesPresent(details) ? arrow + getIssues(details).trim() : "";
+        String appendsResult = stringJoiner.toString().trim();
         if (ref.length() != 0) {
-            return ref + " " + stringJoiner;
+            return ref + (appendsResult.length() > 0 ? " " + appendsResult : "");
         }
         return stringJoiner.length() != 0 ? arrow + stringJoiner : "";
+    }
+
+    public int getTestCount() {
+        return testCount.get();
+    }
+
+    public int getSkippedTests() {
+        return skippedTests.get();
+    }
+
+    public int getCorruptedError() {
+        return corruptedError.get();
+    }
+
+    public int getExpFixError() {
+        return expFixError.get();
+    }
+
+    public int getExpImplError() {
+        return expImplError.get();
+    }
+
+    public int getBlockedError() {
+        return blockedError.get();
+    }
+
+    public int getNewError() {
+        return newError.get();
+    }
+
+    public int getFixed() {
+        return fixed.get();
+    }
+
+    public int getImplemented() {
+        return implemented.get();
     }
 
 }

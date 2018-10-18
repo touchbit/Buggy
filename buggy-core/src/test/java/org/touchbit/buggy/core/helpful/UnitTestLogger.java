@@ -19,7 +19,14 @@ import static org.apache.logging.log4j.Level.ALL;
  */
 public class UnitTestLogger extends SubstituteLogger {
 
+    private boolean isDebug = true;
+    private boolean isError = true;
+    private boolean isTrace = true;
+    private boolean isWarn = true;
+    private boolean isInfo = true;
+
     private List<String> loggedMessages = Collections.synchronizedList(new ArrayList<>());
+    private List<String> loggedMessagesWithLevel = Collections.synchronizedList(new ArrayList<>());
 
     public UnitTestLogger() {
         super("UnitTestLogger", null, false);
@@ -32,8 +39,20 @@ public class UnitTestLogger extends SubstituteLogger {
         return tmp;
     }
 
-    public void clear() {
-        loggedMessages.clear();
+    public List<String> takeLoggedMessagesWithLevel() {
+        List<String> tmp = new ArrayList<>(loggedMessagesWithLevel);
+        loggedMessagesWithLevel.clear();
+        return tmp;
+    }
+
+    public void reset() {
+        this.loggedMessages.clear();
+        this.loggedMessagesWithLevel.clear();
+        this.isDebug = true;
+        this.isError = true;
+        this.isTrace = true;
+        this.isWarn = true;
+        this.isInfo = true;
     }
 
     private class UnitTestLog4jLogger extends AbstractLogger {
@@ -41,6 +60,7 @@ public class UnitTestLogger extends SubstituteLogger {
         @Override
         public void logMessage(String fqcn, Level level, Marker marker, Message message, Throwable t) {
             loggedMessages.add(message.getFormattedMessage());
+            loggedMessagesWithLevel.add(level + " " + message.getFormattedMessage());
         }
 
         @Override
@@ -127,6 +147,56 @@ public class UnitTestLogger extends SubstituteLogger {
         public Level getLevel() {
             return ALL;
         }
+    }
+
+    @Override
+    public boolean isDebugEnabled() {
+        return this.isDebug;
+    }
+
+    public UnitTestLogger whenDebugEnabled(boolean isDebug) {
+        this.isDebug = isDebug;
+        return this;
+    }
+
+    @Override
+    public boolean isTraceEnabled() {
+        return isTrace;
+    }
+
+    public UnitTestLogger whenTraceEnabled(boolean isTrace) {
+        this.isTrace = isTrace;
+        return this;
+    }
+
+    @Override
+    public boolean isInfoEnabled() {
+        return isInfo;
+    }
+
+    public UnitTestLogger whenInfoEnabled(boolean isInfo) {
+        this.isInfo = isInfo;
+        return this;
+    }
+
+    @Override
+    public boolean isWarnEnabled() {
+        return isWarn;
+    }
+
+    public UnitTestLogger whenWarnEnabled(boolean isWarn) {
+        this.isWarn = isWarn;
+        return this;
+    }
+
+    @Override
+    public boolean isErrorEnabled() {
+        return this.isError;
+    }
+
+    public UnitTestLogger whenErrorEnabled(boolean isError) {
+        this.isError = isError;
+        return this;
     }
 
 }

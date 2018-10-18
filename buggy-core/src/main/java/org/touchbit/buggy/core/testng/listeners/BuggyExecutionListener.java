@@ -27,6 +27,7 @@ import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.model.Type;
 import org.touchbit.buggy.core.utils.BuggyUtils;
+import org.touchbit.buggy.core.utils.IOHelper;
 import org.touchbit.buggy.core.utils.StringUtils;
 import org.touchbit.buggy.core.utils.log.BuggyLog;
 
@@ -41,7 +42,6 @@ import static org.touchbit.buggy.core.model.Status.BLOCKED;
 import static org.touchbit.buggy.core.model.Status.EXP_FIX;
 import static org.touchbit.buggy.core.model.Status.EXP_IMPL;
 import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
-import static org.touchbit.buggy.core.utils.IOHelper.copyFile;
 import static org.touchbit.buggy.core.utils.StringUtils.*;
 
 /**
@@ -77,7 +77,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     @Override
     public void onExecutionFinish() {
         super.onExecutionFinish();
-        finalization();
+        printTestStatistic();
     }
 
     @Override
@@ -142,7 +142,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         suite.getAllInvokedMethods()
                 .forEach(m -> {
                     try {
-                        copyTestMethodLogFle(m);
+                        copyTestMethodLogFile(m);
                     } catch (Exception e) {
                         Buggy.incrementBuggyErrors();
                         frameworkLog.error(e.getMessage(), e);
@@ -173,9 +173,9 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         Throwable throwable = testResult.getThrowable();
         String methodName = getMethodName(method);
-        if (throwable != null && method.isTestMethod()) {
+        if (throwable != null) {
             List<String> stepList = getSteps();
-            if (stepList != null && !stepList.isEmpty()) {
+            if (!stepList.isEmpty()) {
                 int lastIndex = stepList.size() - 1;
                 stepList.set(lastIndex, stepList.get(lastIndex) + " - ERROR");
                 setSteps(stepList);
@@ -183,7 +183,9 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
             testLog.error("Execution of {} resulted in an error.", methodName, throwable);
         }
         if (method.isTestMethod()) {
-            testCount.incrementAndGet();
+            if (testResult.getStatus() != SKIP) {
+                testCount.incrementAndGet();
+            }
             Details details = getDetails(method);
             if (details != null) {
                 processTestMethodResult(method, testResult, details);
@@ -208,7 +210,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         }
         String stepInfo = "Step " + stepNum + ". " + msgBody;
         logger.info(" -----------\u2B9E {}", stepInfo);
-        STEPS.get().add(stepInfo);
+        getSteps().add(stepInfo);
     }
 
     public static List<String> getSteps() {
@@ -219,11 +221,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     }
 
     public static void setSteps(List<String> stepList) {
-        if (stepList == null) {
-            STEPS.set(new ArrayList<>());
-        } else {
-            STEPS.set(stepList);
-        }
+        STEPS.set(stepList);
     }
 
     public void processTestMethodResult(IInvokedMethod m, ITestResult testResult, Details details) {
@@ -310,7 +308,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
                         case BLOCKED:
                         case CORRUPTED:
                             method.setInvocationCount(0);
-                            resultLog(method, details.status(), buildDetailsMessage(details, "forced run disabled"));
+                            resultLog(method, details.status(), buildDetailsMessage(details, "forced test run disabled"));
                             break;
                         default:
                             // do nothing
@@ -336,7 +334,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         });
     }
 
-    public void copyTestMethodLogFle(IInvokedMethod method) throws IOException {
+    public void copyTestMethodLogFile(IInvokedMethod method) throws IOException {
         PrimaryConfig c = Buggy.getPrimaryConfig();
         Details details = getDetails(method);
         int iTestResultStatus = method.getTestResult().getStatus();
@@ -385,72 +383,58 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         }
     }
 
-    public void copyConfigurationMethodLogFle(IInvokedMethod method) throws IOException {
-        PrimaryConfig c = Buggy.getPrimaryConfig();
-        String fileName = "conf_" + getClassSimpleName(method) + "." + getMethodName(method) + "().log";
-        copyFile(new File(c.getTestLogDir(), fileName), new File(c.getNewErrorLogDir(), fileName));
-    }
-
     public void resultLog(ITestNGMethod method, Status status, String details) {
         String methodName = method.getMethodName();
         Suite suite = getSuite(method);
         String statusName = status.name();
-        String msg = "";
+        StringJoiner resultMsg = new StringJoiner(" ");
         if (Buggy.getPrimaryConfig().isPrintSuite()) {
             StringJoiner sj = new StringJoiner(" ", " \u2B9E [", "] ");
             sj.add(BuggyUtils.getService(suite).getName().trim());
             sj.add(BuggyUtils.getInterface(suite).getName().trim());
             sj.add(suite.task().trim());
-            msg += sj;
+            resultMsg.add(sj.toString().trim());
         }
         testLog.info("{} - {} {}", methodName, statusName, method.getDescription());
-        if (Buggy.getPrimaryConfig().isPrintCause()) {
-            msg += details;
+        if (Buggy.getPrimaryConfig().isPrintCause() || method.getInvocationCount() < 1) {
+            resultMsg.add(details.trim());
         }
         if (Buggy.getPrimaryConfig().isPrintLogFile() && method.getInvocationCount() > 0) {
-            msg += getURLEncodedLogFilePath(method);
+            resultMsg.add(getURLEncodedLogFilePath(method).trim());
         }
-        printASCIIStatus(status, StringUtils.dotFiller(methodName, 47, statusName) + msg);
-        if (method.getCurrentInvocationCount() > 0) {
-            increment(status);
+        printASCIIStatus(status, StringUtils.dotFiller(methodName, 47, statusName) +
+                (resultMsg.length() > 0 ? " " + resultMsg.toString().trim() : ""));
+        if (method.isTest()) {
+            if (method.getInvocationCount() > 0) {
+                increment(status);
+            } else {
+                increment(Status.SKIP);
+            }
         }
     }
 
-    public void printASCIIStatus(Status status, String msg) {
+    protected void printASCIIStatus(Status status, String msg) {
         switch (status) {
             case FAILED:
-                consoleLog.error(msg);
-                break;
             case CORRUPTED:
                 consoleLog.error(msg);
                 break;
             case EXP_IMPL:
-                consoleLog.warn(msg);
-                break;
             case EXP_FIX:
-                consoleLog.warn(msg);
-                break;
             case BLOCKED:
-                consoleLog.warn(msg);
-                break;
             case SKIP:
                 consoleLog.warn(msg);
                 break;
-            case SUCCESS:
-                consoleLog.info(msg);
-                break;
             case IMPLEMENTED:
-                consoleLog.debug(msg);
-                break;
             case FIXED:
                 consoleLog.debug(msg);
                 break;
             default:
-                // do nothing
+                consoleLog.info(msg);
         }
     }
 
-    private void increment(Status status) {
+    protected void increment(Status status) {
         switch (status) {
             case FAILED:
                 newError.incrementAndGet();
@@ -473,12 +457,15 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
             case FIXED:
                 fixed.incrementAndGet();
                 break;
+            case SKIP:
+                skippedTests.incrementAndGet();
+                break;
             default:
                 // do nothing
         }
     }
 
-    private void finalization() {
+    protected void printTestStatistic() {
         println(CONSOLE_DELIMITER);
         if (Buggy.getBuggyErrors() > 0) {
             consoleLog.error(StringUtils.dotFiller("Framework errors", 47, Buggy.getBuggyErrors()));
@@ -494,6 +481,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
                 corruptedError.get() + blockedError.get();
         consoleLog.info(StringUtils.dotFiller("Total tests run", 47, testCount.get()));
         consoleLog.info(StringUtils.dotFiller("Successful tests", 47, testCount.get() - errorCount));
+        checkWarnAndPrint("Skipped tests", skippedTests.get());
         if (errorCount > 0 ) {
             checkWarnAndPrint("Failed tests", errorCount);
             checkErrorAndPrint("New Errors", newError.get());
@@ -517,7 +505,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         println(CONSOLE_DELIMITER);
     }
 
-    private void checkDebugAndPrint(String msg, int count) {
+    protected void checkDebugAndPrint(String msg, int count) {
         String result = StringUtils.dotFiller(msg, 47, count);
         if (count > 0) {
             consoleLog.debug(result);
@@ -526,7 +514,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         }
     }
 
-    private void checkErrorAndPrint(String msg, int count) {
+    protected void checkErrorAndPrint(String msg, int count) {
         String result = StringUtils.dotFiller(msg, 47, count);
         if (count > 0) {
             consoleLog.error(result);
@@ -535,7 +523,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         }
     }
 
-    private void checkWarnAndPrint(String msg, int count) {
+    protected void checkWarnAndPrint(String msg, int count) {
         String result = StringUtils.dotFiller(msg, 47, count);
         if (count > 0) {
             consoleLog.warn(result);
@@ -545,13 +533,17 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void checkTraceAndPrint(String msg, int count) {
+    protected void checkTraceAndPrint(String msg, int count) {
         String result = StringUtils.dotFiller(msg, 47, count);
         if (count > 0) {
             consoleLog.trace(result);
         } else {
             consoleLog.info(result);
         }
+    }
+
+    protected void copyFile(File sourceFile, File destFile) throws IOException {
+        IOHelper.copyFile(sourceFile, destFile);
     }
 
     @Override

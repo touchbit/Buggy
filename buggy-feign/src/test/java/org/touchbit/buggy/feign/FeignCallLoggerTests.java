@@ -17,9 +17,9 @@ class FeignCallLoggerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check FeignCallLogger().log")
     void unitTest_20181013222513() {
-        FeignCallLogger feignCallLogger = new FeignCallLogger(UNIT_TEST_LOGGER);
+        FeignCallLogger feignCallLogger = new FeignCallLogger(TEST_LOGGER);
         feignCallLogger.log("Class.method()", "format %s", "object");
-        assertThat(UNIT_TEST_LOGGER.takeLoggedMessages(), contains("[Class.method] format object"));
+        assertThat(TEST_LOGGER.takeLoggedMessages(), contains("[Class.method] format object"));
     }
 
 }

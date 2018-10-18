@@ -1,10 +1,8 @@
 package org.touchbit.buggy.core.tests.common;
 
-import org.apache.logging.slf4j.Log4jLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.buggy.core.helpful.UnitTestLogger;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.config.*;
@@ -38,7 +36,7 @@ class BuggyTests extends BaseUnitTest {
     void unitTest_20181016141402() {
         Buggy.main(new String[]{});
         Buggy.run();
-        assertThat(UNIT_TEST_LOGGER.takeLoggedMessages(),
+        assertThat(TEST_LOGGER.takeLoggedMessages(),
                 is(hasItems("test_20181016172050.....................SUCCESS")));
     }
 
@@ -47,7 +45,7 @@ class BuggyTests extends BaseUnitTest {
     void unitTest_20181016212852() {
         Buggy.main(new String[]{"--print-log"});
         Buggy.run();
-        assertThat(UNIT_TEST_LOGGER.takeLoggedMessages(),
+        assertThat(TEST_LOGGER.takeLoggedMessages(),
                 is(hasItems("test_20181016172050.....................SUCCESS \u2B9E " +
                         "file://" + Buggy.getPrimaryConfig().getAbsoluteLogPath() + "/tests/test_20181016172050.log")));
     }
@@ -64,7 +62,7 @@ class BuggyTests extends BaseUnitTest {
     public static class TestBuggyLog extends BuggyLog {
 
         public TestBuggyLog() {
-            super(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
+            super(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
         }
 
     }

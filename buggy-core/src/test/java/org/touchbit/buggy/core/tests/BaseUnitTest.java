@@ -11,7 +11,6 @@ import org.testng.ITestResult;
 import org.testng.annotations.Test;
 import org.testng.internal.ConstructorOrMethod;
 import org.touchbit.buggy.core.Buggy;
-import org.touchbit.buggy.core.config.PrimaryConfig;
 import org.touchbit.buggy.core.config.TestExitHandler;
 import org.touchbit.buggy.core.config.TestInterface;
 import org.touchbit.buggy.core.config.TestService;
@@ -35,6 +34,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.touchbit.buggy.core.model.Status.SUCCESS;
+import static org.touchbit.buggy.core.model.Type.MODULE;
 import static org.touchbit.buggy.core.model.Type.SYSTEM;
 import static org.touchbit.buggy.core.utils.log.BuggyLog.LOG_DIRECTORY;
 
@@ -49,9 +49,8 @@ public abstract class BaseUnitTest {
     protected static final String WASTE;
     protected static final String CLASSES;
     protected static final String TEST_CLASSES;
-    protected static final PrimaryConfig PRIMARY_CONFIG;
     protected static final UnitTestLogger SYSTEM_OUT_LOGGER;
-    protected static final UnitTestLogger UNIT_TEST_LOGGER = new UnitTestLogger();
+    protected static final UnitTestLogger TEST_LOGGER = new UnitTestLogger();
     protected static final TestExitHandler EXIT_HANDLER = new TestExitHandler();
 
     static {
@@ -63,8 +62,7 @@ public abstract class BaseUnitTest {
         TEST_CLASSES = Buggy.getRunDir() + "/test-classes";
         System.setProperty(LOG_DIRECTORY, WASTE + "/");
         Buggy.initJCommander();
-        PRIMARY_CONFIG = Buggy.getPrimaryConfig();
-        PRIMARY_CONFIG.setAbsoluteLogPath(WASTE);
+        Buggy.getPrimaryConfig().setAbsoluteLogPath(WASTE);
         File wasteDir = new File(WASTE);
         File logFile = new File(WASTE, "console.txt");
         delete(wasteDir);
@@ -74,10 +72,18 @@ public abstract class BaseUnitTest {
 
     @BeforeEach
     public void clean() {
+        Buggy.setDefault();
         EXIT_HANDLER.clean();
-        UNIT_TEST_LOGGER.clear();
-        SYSTEM_OUT_LOGGER.clear();
+        TEST_LOGGER.reset();
+        SYSTEM_OUT_LOGGER.reset();
+        Buggy.getPrimaryConfig().setAbsoluteLogPath(WASTE);
+        Buggy.getPrimaryConfig().setPrintAllParameters(false);
+        Buggy.getPrimaryConfig().setPrintCause(false);
+        Buggy.getPrimaryConfig().setPrintSuite(false);
+        Buggy.getPrimaryConfig().setPrintLogFile(false);
+        Buggy.getPrimaryConfig().setArtifactsUrl(null);
         BuggyExecutionListener.setSteps(new ArrayList<>());
+        new BuggyExecutionListener() {};
     }
 
     protected void assertExitCode(Integer code) {
@@ -148,33 +154,6 @@ public abstract class BaseUnitTest {
         }
         assertThat(throwable, instanceOf(exceptionClass));
         return (T) throwable;
-    }
-
-    protected static Details getDetails(Type type) {
-        return getDetails(SUCCESS, type);
-    }
-
-    protected static Details getDetails(Status status, String... issue) {
-        return getDetails(status, SYSTEM, issue);
-    }
-
-    protected static Details getDetails(Status status, Type type, String... issue) {
-        return getDetails(new int[0], status, type, issue);
-    }
-
-    protected static Details getDetails(int[] ids, Status status, Type type, String... issue) {
-        return new Details() {
-            @Override
-            public int[] id() { return ids; }
-            @Override
-            public Status status() { return status; }
-            @Override
-            public String[] issue() { return issue; }
-            @Override
-            public Type type() { return type; }
-            @Override
-            public Class<? extends Annotation> annotationType() { return Details.class; }
-        };
     }
 
     protected static IInvokedMethod getMockIInvokedMethod() {
@@ -248,24 +227,60 @@ public abstract class BaseUnitTest {
         return iTestResult;
     }
 
+    protected BuggyExecutionListener getBuggyExecutionListener() {
+        return getBuggyExecutionListener(true);
+    }
+
+    protected BuggyExecutionListener getBuggyExecutionListener(boolean withOverrideCopyFile) {
+
+        return new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER) {
+
+            @Override
+            public void copyFile(File sourceFile, File destFile) throws IOException {
+                if (withOverrideCopyFile) {
+                    // do nothing
+                } else {
+                    super.copyFile(sourceFile, destFile);
+                }
+            }
+
+        };
+
+    }
+
     protected class UnitTestBuggyExecutionListener extends BuggyExecutionListener {
 
         public ITestNGMethod method;
         public Status status;
         public String msg;
         public Details details;
+        public File sourceFile;
+        public File targetFile;
 
         public UnitTestBuggyExecutionListener() {
-            super(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
+            this(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
         }
 
         public UnitTestBuggyExecutionListener(Details details) {
-            super(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
-            this.details = details;
+            this(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER, details);
         }
 
         public UnitTestBuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger) {
+            this(testLogger, frameworkLogger, consoleLogger, null);
+        }
+
+        public UnitTestBuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger, Details details) {
             super(testLogger, frameworkLogger, consoleLogger);
+            this.details = details;
+            testCount.set(0);
+            skippedTests.set(0);
+            corruptedError.set(0);
+            expFixError.set(0);
+            expImplError.set(0);
+            blockedError.set(0);
+            newError.set(0);
+            fixed.set(0);
+            implemented.set(0);
         }
 
         @Override
@@ -279,6 +294,23 @@ public abstract class BaseUnitTest {
         protected @Nullable Details getDetails(Method method) {
             return details;
         }
+
+        @Override
+        public void copyFile(File sourceFile, File destFile) throws IOException {
+            this.sourceFile = sourceFile;
+            this.targetFile = destFile;
+        }
+
+        @Override
+        public void printASCIIStatus(Status status, String msg) {
+            super.printASCIIStatus(status, msg);
+        }
+
+        @Override
+        public void increment(Status status) {
+            super.increment(status);
+        }
+
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -292,6 +324,37 @@ public abstract class BaseUnitTest {
         public void iTestResultMethodWithoutDetails() {
             // for getMockITestResult()
         }
+    }
+
+    protected static Details getDetails() {
+        return getDetails(SUCCESS, MODULE);
+    }
+
+    protected static Details getDetails(Type type) {
+        return getDetails(SUCCESS, type);
+    }
+
+    protected static Details getDetails(Status status, String... issue) {
+        return getDetails(status, SYSTEM, issue);
+    }
+
+    protected static Details getDetails(Status status, Type type, String... issue) {
+        return getDetails(new int[0], status, type, issue);
+    }
+
+    protected static Details getDetails(int[] ids, Status status, Type type, String... issue) {
+        return new Details() {
+            @Override
+            public int[] id() { return ids; }
+            @Override
+            public Status status() { return status; }
+            @Override
+            public String[] issue() { return issue; }
+            @Override
+            public Type type() { return type; }
+            @Override
+            public Class<? extends Annotation> annotationType() { return Details.class; }
+        };
     }
 
 }

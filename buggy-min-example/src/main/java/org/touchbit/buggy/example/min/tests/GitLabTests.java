@@ -19,6 +19,7 @@ package org.touchbit.buggy.example.min.tests;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.test.BaseBuggyTest;
 import org.touchbit.buggy.example.min.goals.API;
@@ -45,7 +46,7 @@ public class GitLabTests extends BaseBuggyTest {
     }
 
     @Test(description = "Example description for test_20180918045754")
-    @Details()
+    @Details(status = Status.CORRUPTED)
     public void test_20180918045754() {
         step("Example step");
         log.info(DO_SOMETHING);

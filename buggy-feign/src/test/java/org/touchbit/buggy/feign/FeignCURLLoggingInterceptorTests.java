@@ -36,7 +36,7 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
     @Test
     @DisplayName("Check FeignCURLLoggingInterceptor(final Consumer<String> logMethod)")
     void unitTest_20181013143711() {
-        FeignCURLLoggingInterceptor interceptor = new FeignCURLLoggingInterceptor(UNIT_TEST_LOGGER::info);
+        FeignCURLLoggingInterceptor interceptor = new FeignCURLLoggingInterceptor(TEST_LOGGER::info);
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", new ArrayList<String>() {{
                 add("value");
@@ -49,7 +49,7 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
                 .headers(headers)
                 .body("test-body");
         interceptor.apply(rt);
-        assertThat(UNIT_TEST_LOGGER.takeLoggedMessages(),
+        assertThat(TEST_LOGGER.takeLoggedMessages(),
                 contains("Playback curl:\ncurl -i -k -X POST 'http//touchbit.org' -H 'test_header: value; charset=utf-8' -H 'Content-Length: 9' --data 'test-body'"
                 ));
     }
@@ -57,7 +57,7 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
     @Test
     @DisplayName("Check FeignCURLLoggingInterceptor(final Logger log)")
     void unitTest_20181013151037() {
-        new FeignCURLLoggingInterceptor(UNIT_TEST_LOGGER);
+        new FeignCURLLoggingInterceptor(TEST_LOGGER);
     }
 
     @Test
@@ -69,7 +69,7 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
     @Test
     @DisplayName("Check FeignCURLLoggingInterceptor if body == null")
     void unitTest_20181013162214() {
-        FeignCURLLoggingInterceptor interceptor = new FeignCURLLoggingInterceptor(UNIT_TEST_LOGGER::info);
+        FeignCURLLoggingInterceptor interceptor = new FeignCURLLoggingInterceptor(TEST_LOGGER::info);
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", new ArrayList<String>() {{
                 add("value");
@@ -82,7 +82,7 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
                 .headers(headers)
                 .body(null);
         interceptor.apply(rt);
-        assertThat(UNIT_TEST_LOGGER.takeLoggedMessages(),
+        assertThat(TEST_LOGGER.takeLoggedMessages(),
                 contains("Playback curl:\ncurl -i -k -X POST 'http//touchbit.org' -H 'test_header: value; charset=utf-8' -H 'Content-Length: 0'"
                 ));
     }

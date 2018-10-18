@@ -45,6 +45,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
             @Override
             public boolean isEnable() {
                 testCount.set(0);
+                skippedTests.set(0);
                 corruptedError.set(0);
                 expFixError.set(0);
                 expImplError.set(0);
@@ -62,6 +63,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
                 "`Running tests..................`0\n" +
                 "`--------------------------------`\n" +
                 "`Successful tests...............`0\n" +
+                "`Skipped tests..................`0\n" +
                 "`Failed tests...................`0\n" +
                 "`--------------------------------`\n" +
                 "`New Errors.....................`0\n" +
@@ -82,6 +84,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
             @Override
             public boolean isEnable() {
                 testCount.set(0);
+                skippedTests.set(0);
                 corruptedError.set(0);
                 expFixError.set(0);
                 expImplError.set(0);
@@ -99,6 +102,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
                 "`Running tests..................`0\n" +
                 "`--------------------------------`\n" +
                 "`Successful tests...............`0\n" +
+                "`Skipped tests..................`0\n" +
                 "`Failed tests...................`0\n" +
                 "`--------------------------------`\n" +
                 "`New Errors.....................`0\n" +
@@ -124,6 +128,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
             @Override
             public boolean isEnable() {
                 testCount.set(0);
+                skippedTests.set(0);
                 corruptedError.set(0);
                 expFixError.set(0);
                 expImplError.set(0);
@@ -142,6 +147,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
                 "`Running tests..................`0\n" +
                 "`--------------------------------`\n" +
                 "`Successful tests...............`0\n" +
+                "`Skipped tests..................`0\n" +
                 "`Failed tests...................`0\n" +
                 "`--------------------------------`\n" +
                 "`New Errors.....................`0\n" +
@@ -158,17 +164,18 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check ")
+    @DisplayName("Check report with ArtifactsUrl")
     void unitTest_20180920231553() {
         StringBuilder sb = new StringBuilder();
         Buggy.setProgramName("unitTest_20180920231553");
         Notifier notifier = sb::append;
-        PRIMARY_CONFIG.setArtifactsUrl("http://build.url");
+        Buggy.getPrimaryConfig().setArtifactsUrl("http://build.url");
         try {
             BaseTelegramNotifier telegram = new BaseTelegramNotifier(notifier) {
                 @Override
                 public boolean isEnable() {
                     testCount.set(6);
+                    skippedTests.set(1);
                     corruptedError.incrementAndGet();
                     expFixError.incrementAndGet();
                     expImplError.incrementAndGet();
@@ -186,6 +193,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
                     "`Running tests..................`6\n" +
                     "`--------------------------------`\n" +
                     "`Successful tests...............`1\n" +
+                    "`Skipped tests..................`1\n" +
                     "`Failed tests...................`5\n" +
                     "`--------------------------------`\n" +
                     "`New Errors.....................`[1](http://build.url/errors/new/)\n" +
@@ -200,7 +208,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
                     "Test execution time: *00:00:00*\n" +
                     "[Logs](http://build.url)\n"));
         } finally {
-            PRIMARY_CONFIG.setArtifactsUrl(null);
+            Buggy.getPrimaryConfig().setArtifactsUrl(null);
         }
     }
 

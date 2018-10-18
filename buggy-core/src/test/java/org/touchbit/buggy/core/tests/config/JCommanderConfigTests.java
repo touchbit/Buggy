@@ -19,6 +19,7 @@ package org.touchbit.buggy.core.tests.config;
 import com.beust.jcommander.Parameter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.config.Parameters;
 import org.touchbit.buggy.core.config.PrimaryConfig;
@@ -55,291 +56,291 @@ class JCommanderConfigTests extends BaseUnitTest {
     @Test
     @DisplayName("Check PrimaryConfig.getDefaultValueProvider()")
     void unitTest_20180919192728() {
-        assertThat(PRIMARY_CONFIG.getDefaultValueProvider(), instanceOf(PrimaryConfig.DefaultValueProvider.class));
+        assertThat(Buggy.getPrimaryConfig().getDefaultValueProvider(), instanceOf(PrimaryConfig.DefaultValueProvider.class));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.isHelp()")
     void unitTest_20180919193201() {
-        assertThat(PRIMARY_CONFIG.isHelp(), is(false));
-        PRIMARY_CONFIG.setHelp(true);
-        assertThat(PRIMARY_CONFIG.isHelp(), is(false));
+        assertThat(Buggy.getPrimaryConfig().isHelp(), is(false));
+        Buggy.getPrimaryConfig().setHelp(true);
+        assertThat(Buggy.getPrimaryConfig().isHelp(), is(false));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.isSmoke()")
     void unitTest_20180919193410() {
-        boolean isSmoke = PRIMARY_CONFIG.isSmoke();
+        boolean isSmoke = Buggy.getPrimaryConfig().isSmoke();
         try {
             assertThat(isSmoke, is(false));
-            PRIMARY_CONFIG.setSmoke(true);
-            assertThat(PRIMARY_CONFIG.isSmoke(), is(true));
+            Buggy.getPrimaryConfig().setSmoke(true);
+            assertThat(Buggy.getPrimaryConfig().isSmoke(), is(true));
         } finally {
-            PRIMARY_CONFIG.setSmoke(isSmoke);
+            Buggy.getPrimaryConfig().setSmoke(isSmoke);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setPrintAllParameters(true)")
     void unitTest_20180919193619() {
-        boolean isPrintAllParameters = PRIMARY_CONFIG.isPrintAllParameters();
+        boolean isPrintAllParameters = Buggy.getPrimaryConfig().isPrintAllParameters();
         try {
             assertThat(isPrintAllParameters, is(false));
-            PRIMARY_CONFIG.setPrintAllParameters(true);
-            assertThat(PRIMARY_CONFIG.isPrintAllParameters(), is(true));
+            Buggy.getPrimaryConfig().setPrintAllParameters(true);
+            assertThat(Buggy.getPrimaryConfig().isPrintAllParameters(), is(true));
         } finally {
-            PRIMARY_CONFIG.setPrintAllParameters(isPrintAllParameters);
+            Buggy.getPrimaryConfig().setPrintAllParameters(isPrintAllParameters);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setForceRun(true)")
     void unitTest_20180919193913() {
-        boolean isForceRun = PRIMARY_CONFIG.isForceRun();
+        boolean isForceRun = Buggy.getPrimaryConfig().isForceRun();
         try {
             assertThat(isForceRun, is(false));
-            PRIMARY_CONFIG.setForceRun(true);
-            assertThat(PRIMARY_CONFIG.isForceRun(), is(true));
+            Buggy.getPrimaryConfig().setForceRun(true);
+            assertThat(Buggy.getPrimaryConfig().isForceRun(), is(true));
         } finally {
-            PRIMARY_CONFIG.setForceRun(isForceRun);
+            Buggy.getPrimaryConfig().setForceRun(isForceRun);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setThreads(10)")
     void unitTest_20180919194007() {
-        Integer threads = PRIMARY_CONFIG.getThreads();
+        Integer threads = Buggy.getPrimaryConfig().getThreads();
         try {
             assertThat(threads, is(50));
-            PRIMARY_CONFIG.setThreads(10);
-            assertThat(PRIMARY_CONFIG.getThreads(), is(10));
+            Buggy.getPrimaryConfig().setThreads(10);
+            assertThat(Buggy.getPrimaryConfig().getThreads(), is(10));
         } finally {
-            PRIMARY_CONFIG.setThreads(threads);
+            Buggy.getPrimaryConfig().setThreads(threads);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setLogPath(\"testLogs\")")
     void unitTest_20180919194154() {
-        String log = PRIMARY_CONFIG.getLogPath();
+        String log = Buggy.getPrimaryConfig().getLogPath();
         try {
             assertThat(log, is("logs"));
-            PRIMARY_CONFIG.setLogPath("testLogs");
-            assertThat(PRIMARY_CONFIG.getLogPath(), is("testLogs"));
+            Buggy.getPrimaryConfig().setLogPath("testLogs");
+            assertThat(Buggy.getPrimaryConfig().getLogPath(), is("testLogs"));
         } finally {
-            PRIMARY_CONFIG.setLogPath(log);
+            Buggy.getPrimaryConfig().setLogPath(log);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setServices(List<Service> services)")
     void unitTest_20180919194549() {
-        List<Service> services = PRIMARY_CONFIG.getServices();
+        List<Service> services = Buggy.getPrimaryConfig().getServices();
         try {
             List<Service> newServices = new ArrayList<Service>() {{ add(new TestService()); }};
-            PRIMARY_CONFIG.setServices(newServices);
-            assertThat(PRIMARY_CONFIG.getServices(), is(newServices));
+            Buggy.getPrimaryConfig().setServices(newServices);
+            assertThat(Buggy.getPrimaryConfig().getServices(), is(newServices));
         } finally {
-            PRIMARY_CONFIG.setServices(services);
+            Buggy.getPrimaryConfig().setServices(services);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setInterfaces(List<Interface> interfaces)")
     void unitTest_20180919195248() {
-        List<Interface> interfaces = PRIMARY_CONFIG.getInterfaces();
+        List<Interface> interfaces = Buggy.getPrimaryConfig().getInterfaces();
         try {
             List<Interface> newInterfaces = new ArrayList<Interface>() {{ add(new TestInterface()); }};
-            PRIMARY_CONFIG.setInterfaces(newInterfaces);
-            assertThat(PRIMARY_CONFIG.getInterfaces(), is(newInterfaces));
+            Buggy.getPrimaryConfig().setInterfaces(newInterfaces);
+            assertThat(Buggy.getPrimaryConfig().getInterfaces(), is(newInterfaces));
         } finally {
-            PRIMARY_CONFIG.setInterfaces(interfaces);
+            Buggy.getPrimaryConfig().setInterfaces(interfaces);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setType(Type type)")
     void unitTest_20180919195515() {
-        Type type = PRIMARY_CONFIG.getType();
+        Type type = Buggy.getPrimaryConfig().getType();
         try {
             assertThat(type, is(INTEGRATION));
-            PRIMARY_CONFIG.setType(SYSTEM);
-            assertThat(PRIMARY_CONFIG.getType(), is(SYSTEM));
+            Buggy.getPrimaryConfig().setType(SYSTEM);
+            assertThat(Buggy.getPrimaryConfig().getType(), is(SYSTEM));
         } finally {
-            PRIMARY_CONFIG.setType(type);
+            Buggy.getPrimaryConfig().setType(type);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setStatus(Integer status)")
     void unitTest_20180919195706() {
-        Integer status = PRIMARY_CONFIG.getStatus();
+        Integer status = Buggy.getPrimaryConfig().getStatus();
         try {
             assertThat(status, is(nullValue()));
-            PRIMARY_CONFIG.setStatus(10);
-            assertThat(PRIMARY_CONFIG.getStatus(), is(10));
+            Buggy.getPrimaryConfig().setStatus(10);
+            assertThat(Buggy.getPrimaryConfig().getStatus(), is(10));
         } finally {
-            PRIMARY_CONFIG.setStatus(status);
+            Buggy.getPrimaryConfig().setStatus(status);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setNotify(Boolean notify)")
     void unitTest_20180919201358() {
-        boolean notify = PRIMARY_CONFIG.isNotify();
+        boolean notify = Buggy.getPrimaryConfig().isNotify();
         try {
             assertThat(notify, is(false));
-            PRIMARY_CONFIG.setNotify(true);
-            assertThat(PRIMARY_CONFIG.isNotify(), is(true));
+            Buggy.getPrimaryConfig().setNotify(true);
+            assertThat(Buggy.getPrimaryConfig().isNotify(), is(true));
         } finally {
-            PRIMARY_CONFIG.setNotify(notify);
+            Buggy.getPrimaryConfig().setNotify(notify);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setArtifactsUrl(String buildsUrl)")
     void unitTest_20180919201516() {
-        String buildLogUrl = PRIMARY_CONFIG.getArtifactsUrl();
+        String buildLogUrl = Buggy.getPrimaryConfig().getArtifactsUrl();
         try {
-            assertThat(buildLogUrl, is("null"));
-            PRIMARY_CONFIG.setArtifactsUrl("BuildUrl");
-            assertThat(PRIMARY_CONFIG.getArtifactsUrl(), is("BuildUrl"));
+            assertThat(String.valueOf(buildLogUrl), is("null"));
+            Buggy.getPrimaryConfig().setArtifactsUrl("BuildUrl");
+            assertThat(Buggy.getPrimaryConfig().getArtifactsUrl(), is("BuildUrl"));
         } finally {
-            PRIMARY_CONFIG.setArtifactsUrl(buildLogUrl);
+            Buggy.getPrimaryConfig().setArtifactsUrl(buildLogUrl);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setPrintSuite(Boolean printSuite)")
     void unitTest_20180919201621() {
-        boolean printSuite = PRIMARY_CONFIG.isPrintSuite();
+        boolean printSuite = Buggy.getPrimaryConfig().isPrintSuite();
         try {
             assertThat(printSuite, is(false));
-            PRIMARY_CONFIG.setPrintSuite(true);
-            assertThat(PRIMARY_CONFIG.isPrintSuite(), is(true));
+            Buggy.getPrimaryConfig().setPrintSuite(true);
+            assertThat(Buggy.getPrimaryConfig().isPrintSuite(), is(true));
         } finally {
-            PRIMARY_CONFIG.setPrintSuite(printSuite);
+            Buggy.getPrimaryConfig().setPrintSuite(printSuite);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setPrintCause(Boolean printCause)")
     void unitTest_20180919201754() {
-        boolean printCause = PRIMARY_CONFIG.isPrintCause();
+        boolean printCause = Buggy.getPrimaryConfig().isPrintCause();
         try {
             assertThat(printCause, is(false));
-            PRIMARY_CONFIG.setPrintCause(true);
-            assertThat(PRIMARY_CONFIG.isPrintCause(), is(true));
+            Buggy.getPrimaryConfig().setPrintCause(true);
+            assertThat(Buggy.getPrimaryConfig().isPrintCause(), is(true));
         } finally {
-            PRIMARY_CONFIG.setPrintCause(printCause);
+            Buggy.getPrimaryConfig().setPrintCause(printCause);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setPrintLogFile(Boolean printLog)")
     void unitTest_20180919201844() {
-        boolean printLogFile = PRIMARY_CONFIG.isPrintLogFile();
+        boolean printLogFile = Buggy.getPrimaryConfig().isPrintLogFile();
         try {
             assertThat(printLogFile, is(false));
-            PRIMARY_CONFIG.setPrintLogFile(true);
-            assertThat(PRIMARY_CONFIG.isPrintLogFile(), is(true));
+            Buggy.getPrimaryConfig().setPrintLogFile(true);
+            assertThat(Buggy.getPrimaryConfig().isPrintLogFile(), is(true));
         } finally {
-            PRIMARY_CONFIG.setPrintLogFile(printLogFile);
+            Buggy.getPrimaryConfig().setPrintLogFile(printLogFile);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setVersion(Boolean version)")
     void unitTest_20180919201933() {
-        assertThat(PRIMARY_CONFIG.isVersion(), is(false));
-        PRIMARY_CONFIG.setVersion(true);
-        assertThat(PRIMARY_CONFIG.isVersion(), is(false));
+        assertThat(Buggy.getPrimaryConfig().isVersion(), is(false));
+        Buggy.getPrimaryConfig().setVersion(true);
+        assertThat(Buggy.getPrimaryConfig().isVersion(), is(false));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setAbsoluteLogPath(String path)")
     void unitTest_20180919202117() {
-        String absolutePath = PRIMARY_CONFIG.getAbsoluteLogPath();
+        String absolutePath = Buggy.getPrimaryConfig().getAbsoluteLogPath();
         try {
             assertThat(absolutePath, is(WASTE));
-            PRIMARY_CONFIG.setAbsoluteLogPath("AbsolutePath");
-            assertThat(PRIMARY_CONFIG.getAbsoluteLogPath(), is("AbsolutePath"));
+            Buggy.getPrimaryConfig().setAbsoluteLogPath("AbsolutePath");
+            assertThat(Buggy.getPrimaryConfig().getAbsoluteLogPath(), is("AbsolutePath"));
         } finally {
-            PRIMARY_CONFIG.setAbsoluteLogPath(absolutePath);
+            Buggy.getPrimaryConfig().setAbsoluteLogPath(absolutePath);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getErrorLogDir()")
     void unitTest_20180919202645() {
-        assertThat(PRIMARY_CONFIG.getErrorLogDir(), is(new File(WASTE, "errors")));
+        assertThat(Buggy.getPrimaryConfig().getErrorLogDir(), is(new File(WASTE, "errors")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getTestLogDir()")
     void unitTest_20180919202812() {
-        assertThat(PRIMARY_CONFIG.getTestLogDir(), is(new File(WASTE, "tests")));
+        assertThat(Buggy.getPrimaryConfig().getTestLogDir(), is(new File(WASTE, "tests")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getFixedLogDir()")
     void unitTest_20180919202835() {
-        assertThat(PRIMARY_CONFIG.getFixedLogDir(), is(new File(WASTE, "fixed")));
+        assertThat(Buggy.getPrimaryConfig().getFixedLogDir(), is(new File(WASTE, "fixed")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getImplementedLogDir()")
     void unitTest_20180919202856() {
-        assertThat(PRIMARY_CONFIG.getImplementedLogDir(), is(new File(WASTE, "implemented")));
+        assertThat(Buggy.getPrimaryConfig().getImplementedLogDir(), is(new File(WASTE, "implemented")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getNewErrorLogDir()")
     void unitTest_20180919202909() {
-        assertThat(PRIMARY_CONFIG.getNewErrorLogDir(), is(new File(WASTE, "errors/new")));
+        assertThat(Buggy.getPrimaryConfig().getNewErrorLogDir(), is(new File(WASTE, "errors/new")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getExpFixErrorLogDir()")
     void unitTest_20180919202937() {
-        assertThat(PRIMARY_CONFIG.getExpFixErrorLogDir(), is(new File(WASTE, "errors/exp_fix")));
+        assertThat(Buggy.getPrimaryConfig().getExpFixErrorLogDir(), is(new File(WASTE, "errors/exp_fix")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getExpImplErrorLogDir()")
     void unitTest_20180919202959() {
-        assertThat(PRIMARY_CONFIG.getExpImplErrorLogDir(), is(new File(WASTE, "errors/exp_impl")));
+        assertThat(Buggy.getPrimaryConfig().getExpImplErrorLogDir(), is(new File(WASTE, "errors/exp_impl")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getCorruptedErrorLogDir()")
     void unitTest_20180919203022() {
-        assertThat(PRIMARY_CONFIG.getCorruptedErrorLogDir(), is(new File(WASTE, "errors/corrupted")));
+        assertThat(Buggy.getPrimaryConfig().getCorruptedErrorLogDir(), is(new File(WASTE, "errors/corrupted")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.getBlockedErrorLogDir()")
     void unitTest_20180919203048() {
-        assertThat(PRIMARY_CONFIG.getBlockedErrorLogDir(), is(new File(WASTE, "errors/blocked")));
+        assertThat(Buggy.getPrimaryConfig().getBlockedErrorLogDir(), is(new File(WASTE, "errors/blocked")));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.")
     void unitTest_20180919204139() {
-        String p = PrimaryConfig.configurationToString(PRIMARY_CONFIG);
+        String p = PrimaryConfig.configurationToString(Buggy.getPrimaryConfig());
         assertThat(p.contains("[--all]"), is(false));
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.configurationToString(config) with PrintAllParameters(false)")
     void unitTest_20180919204525() {
-        boolean printAllParameters = PRIMARY_CONFIG.isPrintAllParameters();
+        boolean printAllParameters = Buggy.getPrimaryConfig().isPrintAllParameters();
         try {
-            PRIMARY_CONFIG.setPrintAllParameters(true);
-            String p = PrimaryConfig.configurationToString(PRIMARY_CONFIG);
+            Buggy.getPrimaryConfig().setPrintAllParameters(true);
+            String p = PrimaryConfig.configurationToString(Buggy.getPrimaryConfig());
             assertThat(p.contains("[--all]"), is(true));
         } finally {
-            PRIMARY_CONFIG.setPrintAllParameters(printAllParameters);
+            Buggy.getPrimaryConfig().setPrintAllParameters(printAllParameters);
         }
     }
 
