@@ -39,6 +39,11 @@ public class TestExitHandler implements ExitHandler {
         this.msg = msg;
     }
 
+    @Override
+    public void exit(int status) {
+        // do nothing
+    }
+
     public void clean() {
         throwable = null;
         status = null;

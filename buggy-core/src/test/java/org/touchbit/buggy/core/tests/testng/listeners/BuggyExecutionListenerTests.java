@@ -63,9 +63,9 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check BuggyExecutionListener(LOG, LOG, LOG)")
+    @DisplayName("Check BuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger)")
     void unitTest_20180921144624() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         listener.onExecutionStart();
         listener.onExecutionFinish();
         assertThat(listener.isEnable(), is(true));
@@ -74,7 +74,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check 'do nothing' methods")
     void unitTest_20180921145653() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestContext iTestContext = mock(ITestContext.class);
         ITestClass iTestClass = mock(ITestClass.class);
         ITestResult iTestResult = mock(ITestResult.class);
@@ -87,7 +87,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onTestSuccess(ITestResult result)")
     void unitTest_20180921150511() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(1);
         listener.onTestSuccess(iTestResult);
     }
@@ -95,7 +95,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onTestFailure(ITestResult result)")
     void unitTest_20180921150916() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(2);
         listener.onTestFailure(iTestResult);
     }
@@ -103,7 +103,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onTestSkipped(ITestResult result)")
     void unitTest_20180921151028() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(3);
         listener.onTestSkipped(iTestResult);
     }
@@ -111,7 +111,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onTestFailedButWithinSuccessPercentage(ITestResult result)")
     void unitTest_20180921151130() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(4);
         listener.onTestFailedButWithinSuccessPercentage(iTestResult);
     }
@@ -119,7 +119,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onTestFinish with ExpectedImplementationException")
     void unitTest_20180921182848() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(4);
         when(iTestResult.getThrowable()).thenReturn(new ExpectedImplementationException(""));
         listener.onTestFinish(iTestResult);
@@ -128,7 +128,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onTestFinish with Exception")
     void unitTest_20180921183436() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(4);
         when(iTestResult.getThrowable()).thenReturn(new Exception(""));
         listener.onTestFinish(iTestResult);
@@ -137,7 +137,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onTestFinish with null steps")
     void unitTest_20180921183125() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(1);
         BuggyExecutionListener.setSteps(null);
         listener.onTestFinish(iTestResult);
@@ -146,7 +146,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onTestFinish with empty steps")
     void unitTest_20180921183228() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(1);
         BuggyExecutionListener.setSteps(new ArrayList<String>() {{ add("steppp"); }});
         listener.onTestFinish(iTestResult);
@@ -155,7 +155,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onAfterClass(ITestClass iTestClass) with Suite")
     void unitTest_20180921183611() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestClass iTestClass = getMockITestClass(MockITestClass.class);
         BuggyExecutionListener.setSteps(new ArrayList<>());
         listener.onAfterClass(iTestClass);
@@ -164,7 +164,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @Test
     @DisplayName("Check onAfterClass(ITestClass iTestClass) without Suite")
     void unitTest_20180921184448() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+        BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         ITestClass iTestClass = getMockITestClass(Object.class);
         BuggyExecutionListener.setSteps(new ArrayList<>());
         listener.onAfterClass(iTestClass);
@@ -241,7 +241,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check beforeInvocation() with STARTED status")
         void unitTest_20180921191220() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod();
             ITestResult iTestResult = getMockITestResult(16);
             listener.beforeInvocation(iInvokedMethod, iTestResult);
@@ -250,7 +250,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check Check beforeInvocation() with CREATED status")
         void unitTest_20180921191657() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod();
             ITestResult iTestResult = getMockITestResult(-1);
             listener.beforeInvocation(iInvokedMethod, iTestResult);
@@ -259,7 +259,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check beforeInvocation() is test method")
         void unitTest_20180921191731() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod();
             ITestResult iTestResult = getMockITestResult(16);
             when(iInvokedMethod.isTestMethod()).thenReturn(true);
@@ -269,7 +269,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check beforeInvocation() is no test method")
         void unitTest_20180921191829() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod();
             ITestResult iTestResult = getMockITestResult(16);
             when(iInvokedMethod.isTestMethod()).thenReturn(false);
@@ -281,7 +281,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         void unitTest_20180922090145() {
             Logger log = mock(Logger.class);
             when(log.isDebugEnabled()).thenReturn(true);
-            BuggyExecutionListener listener = new BuggyExecutionListener(log, log, log);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod();
             ITestResult iTestResult = getMockITestResult(16);
             when(iInvokedMethod.isTestMethod()).thenReturn(false);
@@ -297,12 +297,12 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check afterInvocation with exception")
         void unitTest_20180921220759() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod();
             when(iInvokedMethod.isTestMethod()).thenReturn(true);
             ITestResult iTestResult = getMockITestResult(1);
             when(iTestResult.getThrowable()).thenReturn(new Exception());
-            BuggyExecutionListener.step(LOG, "with exception");
+            BuggyExecutionListener.step(UNIT_TEST_LOGGER, "with exception");
             listener.afterInvocation(iInvokedMethod, iTestResult);
             assertThat(BuggyExecutionListener.getSteps(), contains("Step 1. with exception - ERROR"));
         }
@@ -310,7 +310,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check afterInvocation without exception")
         void unitTest_20180921221233() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod();
             when(iInvokedMethod.isTestMethod()).thenReturn(true);
             ITestResult iTestResult = getMockITestResult(1);
@@ -322,7 +322,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check afterInvocation without @Details")
         void unitTest_20180921222920() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod(MockITestClass.class,
                     "iTestResultMethodWithoutDetails", true);
             when(iInvokedMethod.isTestMethod()).thenReturn(true);
@@ -335,7 +335,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check afterInvocation configuration method")
         void unitTest_20180921224011() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod iInvokedMethod = getMockIInvokedMethod();
             when(iInvokedMethod.isTestMethod()).thenReturn(false);
             listener.afterInvocation(iInvokedMethod, getMockITestResult(1));
@@ -351,30 +351,30 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check step(LOG, \"msg\")")
         void unitTest_20180921192521() {
-            BuggyExecutionListener.step(LOG, "msg");
+            BuggyExecutionListener.step(UNIT_TEST_LOGGER, "msg");
             assertThat(BuggyExecutionListener.getSteps(), contains("Step 1. msg"));
         }
 
         @Test
         @DisplayName("Check step(LOG, \"msg {}\", \"with args\")")
         void unitTest_20180921192637() {
-            BuggyExecutionListener.step(LOG, "msg {}", "with args");
+            BuggyExecutionListener.step(UNIT_TEST_LOGGER, "msg {}", "with args");
             assertThat(BuggyExecutionListener.getSteps(), contains("Step 1. msg with args"));
         }
 
         @Test
         @DisplayName("Check ignoring step() ASC")
         void unitTest_20181004002108() {
-            BuggyExecutionListener.step(LOG, "a");
-            BuggyExecutionListener.step(LOG, "b");
+            BuggyExecutionListener.step(UNIT_TEST_LOGGER, "a");
+            BuggyExecutionListener.step(UNIT_TEST_LOGGER, "b");
             assertThat(BuggyExecutionListener.getSteps().toString(), is("[Step 1. a, Step 2. b]"));
         }
 
         @Test
         @DisplayName("Check ignoring step() DESC")
         void unitTest_20181004004254() {
-            BuggyExecutionListener.step(LOG, "b");
-            BuggyExecutionListener.step(LOG, "a");
+            BuggyExecutionListener.step(UNIT_TEST_LOGGER, "b");
+            BuggyExecutionListener.step(UNIT_TEST_LOGGER, "a");
             assertThat(BuggyExecutionListener.getSteps().toString(), is("[Step 1. b, Step 2. a]"));
         }
 
@@ -387,7 +387,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details EXP_FIX Status with issues")
         void unitTest_20180922023815() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(EXP_FIX, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -398,7 +398,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details EXP_FIX Status without issues")
         void unitTest_20180922031547() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(EXP_FIX));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -409,7 +409,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details BLOCKED Status with issues")
         void unitTest_20180922031825() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(BLOCKED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -420,7 +420,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details BLOCKED Status without issues")
         void unitTest_20180922031943() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(BLOCKED));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -431,7 +431,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details EXP_IMPL Status with issues")
         void unitTest_20180922033333() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(EXP_IMPL, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -442,7 +442,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details EXP_IMPL Status without issues")
         void unitTest_20180922033338() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(EXP_IMPL));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -453,7 +453,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details CORRUPTED Status with issues")
         void unitTest_20180922033427() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(CORRUPTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -464,7 +464,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details CORRUPTED Status without issues")
         void unitTest_20180922033726() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(CORRUPTED));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -475,7 +475,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details FIXED Status with issues")
         void unitTest_20180922033959() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(FIXED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -486,7 +486,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details IMPLEMENTED Status with issues")
         void unitTest_20180922034106() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(IMPLEMENTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -497,7 +497,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details UNTESTED Status with issues")
         void unitTest_20180922034141() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(UNTESTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -508,7 +508,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details SUCCESS Status with issues")
         void unitTest_20180922034318() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(SUCCESS, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -519,7 +519,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details SKIP Status with issues")
         void unitTest_20180922034337() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(SKIP, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -530,7 +530,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS if Details FAILED Status with issues")
         void unitTest_20180922034357() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(FAILED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -541,7 +541,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS_PERCENTAGE_FAILURE if Details EXP_FIX Status with issues")
         void unitTest_20180922034704() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS_PERCENTAGE_FAILURE),
                     getDetails(EXP_FIX, "JIRA-123"));
@@ -553,7 +553,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details EXP_FIX Status with issues")
         void unitTest_20180922034924() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(EXP_FIX, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -564,7 +564,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details CORRUPTED Status with issues")
         void unitTest_20180922035053() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(CORRUPTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -575,7 +575,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details EXP_IMPL Status with issues")
         void unitTest_20180922035146() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(EXP_IMPL, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -586,7 +586,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details BLOCKED Status with issues")
         void unitTest_20180922035208() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(BLOCKED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -597,7 +597,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details FIXED Status with issues")
         void unitTest_20180922035238() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(FIXED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -608,7 +608,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details IMPLEMENTED Status with issues")
         void unitTest_20180922035331() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(IMPLEMENTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -619,7 +619,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details UNTESTED Status with issues")
         void unitTest_20180922035403() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(UNTESTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -630,7 +630,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details SUCCESS Status with issues")
         void unitTest_20180922035419() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(SUCCESS, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -641,7 +641,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details SKIP Status with issues")
         void unitTest_20180922035435() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(SKIP, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -652,7 +652,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE if Details FAILED Status with issues")
         void unitTest_20180922035529() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(FAILED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -663,7 +663,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details EXP_IMPL Status with issues")
         void unitTest_20180922035630() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(EXP_IMPL, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -674,7 +674,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details EXP_FIX Status with issues")
         void unitTest_20180922035830() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(EXP_FIX, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -685,7 +685,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details BLOCKED Status with issues")
         void unitTest_20180922035902() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(BLOCKED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -696,7 +696,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details CORRUPTED Status with issues")
         void unitTest_20180922035917() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(CORRUPTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -707,7 +707,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details FIXED Status with issues")
         void unitTest_20180922035933() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(FIXED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -718,7 +718,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details IMPLEMENTED Status with issues")
         void unitTest_20180922035950() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(IMPLEMENTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -729,7 +729,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details UNTESTED Status with issues")
         void unitTest_20180922040014() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(UNTESTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -740,7 +740,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details SUCCESS Status with issues")
         void unitTest_20180922040029() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(SUCCESS, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -751,7 +751,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details SKIP Status with issues")
         void unitTest_20180922040042() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(SKIP, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -762,7 +762,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP if Details FAILED Status with issues")
         void unitTest_20180922040055() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(FAILED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
@@ -773,7 +773,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.CREATED is not unprocessed")
         void unitTest_20180922040117() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             int expErrors = Buggy.getBuggyErrors() + 1;
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.CREATED), getDetails(SUCCESS));
@@ -786,7 +786,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.STARTED is not unprocessed")
         void unitTest_20180922040351() {
-            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(LOG, LOG, LOG);
+            UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod();
             int expErrors = Buggy.getBuggyErrors() + 1;
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.STARTED), getDetails(SUCCESS));
@@ -805,7 +805,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS")
         void unitTest_20180922043219() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod(false);
             int expErrors = Buggy.getBuggyErrors();
             listener.processConfigurationMethodResult(method, getMockITestResult(ITestResult.SUCCESS));
@@ -815,7 +815,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SKIP")
         void unitTest_20180922061334() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod(false);
             int expErrors = Buggy.getBuggyErrors();
             listener.processConfigurationMethodResult(method, getMockITestResult(ITestResult.SKIP));
@@ -825,7 +825,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.FAILURE")
         void unitTest_20180922061357() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod(false);
             int expErrors = Buggy.getBuggyErrors();
             ITestResult result = getMockITestResult(ITestResult.FAILURE);
@@ -837,7 +837,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.SUCCESS_PERCENTAGE_FAILURE")
         void unitTest_20180922061412() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod(false);
             int expErrors = Buggy.getBuggyErrors();
             ITestResult result = getMockITestResult(ITestResult.SUCCESS_PERCENTAGE_FAILURE);
@@ -849,7 +849,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.CREATED")
         void unitTest_20180922061437() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod(false);
             int expErrors = Buggy.getBuggyErrors() + 1;
             listener.processConfigurationMethodResult(method, getMockITestResult(ITestResult.CREATED));
@@ -859,7 +859,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @Test
         @DisplayName("Check ITestResult.STARTED")
         void unitTest_20180922061516() {
-            BuggyExecutionListener listener = new BuggyExecutionListener(LOG, LOG, LOG);
+            BuggyExecutionListener listener = new BuggyExecutionListener(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             IInvokedMethod method = getMockIInvokedMethod(false);
             int expErrors = Buggy.getBuggyErrors() + 1;
             listener.processConfigurationMethodResult(method, getMockITestResult(ITestResult.STARTED));

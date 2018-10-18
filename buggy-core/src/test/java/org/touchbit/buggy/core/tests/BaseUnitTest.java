@@ -4,7 +4,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.function.Executable;
 import org.slf4j.Logger;
-import org.slf4j.helpers.SubstituteLogger;
 import org.testng.IInvokedMethod;
 import org.testng.ITestClass;
 import org.testng.ITestNGMethod;
@@ -17,6 +16,8 @@ import org.touchbit.buggy.core.config.TestExitHandler;
 import org.touchbit.buggy.core.config.TestInterface;
 import org.touchbit.buggy.core.config.TestService;
 import org.touchbit.buggy.core.config.UnitTestPrimaryConfig;
+import org.touchbit.buggy.core.helpful.SystemOutLogger;
+import org.touchbit.buggy.core.helpful.UnitTestLogger;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
@@ -33,7 +34,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.slf4j.helpers.NOPLogger.NOP_LOGGER;
 import static org.touchbit.buggy.core.model.Status.SUCCESS;
 import static org.touchbit.buggy.core.model.Type.SYSTEM;
 import static org.touchbit.buggy.core.utils.log.BuggyLog.LOG_DIRECTORY;
@@ -45,13 +45,14 @@ import static org.touchbit.buggy.core.utils.log.BuggyLog.LOG_DIRECTORY;
 @SuppressWarnings("WeakerAccess")
 public abstract class BaseUnitTest {
 
-    protected static final Logger LOG = NOP_LOGGER;
+//    protected static final Logger LOG = NOP_LOGGER;
     protected static final String WASTE;
     protected static final String CLASSES;
     protected static final String TEST_CLASSES;
-    protected static final TestExitHandler EXIT_HANDLER = new TestExitHandler();
-
     protected static final PrimaryConfig PRIMARY_CONFIG;
+    protected static final UnitTestLogger SYSTEM_OUT_LOGGER;
+    protected static final UnitTestLogger UNIT_TEST_LOGGER = new UnitTestLogger();
+    protected static final TestExitHandler EXIT_HANDLER = new TestExitHandler();
 
     static {
         Buggy.setExitHandler(EXIT_HANDLER);
@@ -67,20 +68,15 @@ public abstract class BaseUnitTest {
         File wasteDir = new File(WASTE);
         File logFile = new File(WASTE, "console.txt");
         delete(wasteDir);
-        try {
-            if (wasteDir.mkdirs() && logFile.createNewFile()) {
-                System.out.println("\n\nSystem.out log file: " + logFile.getAbsolutePath() + "\n\n");
-                System.setOut(outputFile(logFile));
-                System.setErr(outputFile(logFile));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        wasteDir.mkdirs();
+        SYSTEM_OUT_LOGGER = new SystemOutLogger(logFile);
     }
 
     @BeforeEach
     public void clean() {
         EXIT_HANDLER.clean();
+        UNIT_TEST_LOGGER.clear();
+        SYSTEM_OUT_LOGGER.clear();
         BuggyExecutionListener.setSteps(new ArrayList<>());
     }
 
@@ -110,10 +106,6 @@ public abstract class BaseUnitTest {
         } else {
             assertThat(EXIT_HANDLER.getThrowable(), is(instanceOf(throwableClass)));
         }
-    }
-
-    private static PrintStream outputFile(File f) throws FileNotFoundException {
-        return new PrintStream(new BufferedOutputStream(new FileOutputStream(f)), true);
     }
 
     @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored"})
@@ -183,25 +175,6 @@ public abstract class BaseUnitTest {
             @Override
             public Class<? extends Annotation> annotationType() { return Details.class; }
         };
-    }
-
-    public static class Log extends SubstituteLogger {
-
-        public String msg;
-
-        public Log() {
-            super(null, null, true);
-        }
-
-        @Override
-        public void info(String msg) {
-            if (this.msg == null) {
-                this.msg = msg;
-            } else {
-                this.msg = this.msg + "\n" + msg;
-            }
-        }
-
     }
 
     protected static IInvokedMethod getMockIInvokedMethod() {
@@ -283,11 +256,11 @@ public abstract class BaseUnitTest {
         public Details details;
 
         public UnitTestBuggyExecutionListener() {
-            super(LOG, LOG, LOG);
+            super(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
         }
 
         public UnitTestBuggyExecutionListener(Details details) {
-            super(LOG, LOG, LOG);
+            super(UNIT_TEST_LOGGER, UNIT_TEST_LOGGER, UNIT_TEST_LOGGER);
             this.details = details;
         }
 

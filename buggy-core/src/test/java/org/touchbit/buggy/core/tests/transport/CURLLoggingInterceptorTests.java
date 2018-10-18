@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.contains;
 
 /**
  * Created by Oleg Shaburov on 13.10.2018
@@ -23,8 +23,7 @@ class CURLLoggingInterceptorTests extends BaseUnitTest {
     @Test
     @DisplayName("Check intercept() with body and headers")
     void unitTest_20181013152105() {
-        Log log = new Log();
-        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(log::info) {{}};
+        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(UNIT_TEST_LOGGER::info) {{}};
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", new ArrayList<String>() {{
                 add("value");
@@ -32,41 +31,41 @@ class CURLLoggingInterceptorTests extends BaseUnitTest {
             }});
         }};
         interceptor.intercept("GET", "http://url.test", headers, "unitTest_20181013152105");
-        assertThat(log.msg, is("Playback curl:\ncurl -i -k -X GET 'http://url.test' -h 'test_header: value; charset=utf-8' " +
-                "--data 'unitTest_20181013152105'"));
+        assertThat(UNIT_TEST_LOGGER.takeLoggedMessages(),
+                contains("Playback curl:\ncurl -i -k -X GET 'http://url.test' -H 'test_header: value; charset=utf-8' --data 'unitTest_20181013152105'"));
     }
 
     @Test
     @DisplayName("Check intercept() without body and headers")
     void unitTest_20181013152204() {
-        Log log = new Log();
-        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(log::info) {{}};
+        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(UNIT_TEST_LOGGER::info) {{}};
         interceptor.intercept("PUT", "http://url.test", null, null);
-        assertThat(log.msg, is("Playback curl:\ncurl -i -k -X PUT 'http://url.test'"));
+        assertThat(UNIT_TEST_LOGGER.takeLoggedMessages(),
+                contains("Playback curl:\ncurl -i -k -X PUT 'http://url.test'"));
     }
 
     @Test
     @DisplayName("Check intercept() header value == null")
     void unitTest_20181013161843() {
-        Log log = new Log();
-        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(log::info) {{}};
+        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(UNIT_TEST_LOGGER::info) {{}};
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", null);
         }};
         interceptor.intercept("PUT", "http://url.test", headers, null);
-        assertThat(log.msg, is("Playback curl:\ncurl -i -k -X PUT 'http://url.test'"));
+        assertThat(UNIT_TEST_LOGGER.takeLoggedMessages(),
+                contains("Playback curl:\ncurl -i -k -X PUT 'http://url.test'"));
     }
 
     @Test
     @DisplayName("Check intercept() header value is empty list")
     void unitTest_20181013162005() {
-        Log log = new Log();
-        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(log::info) {{}};
+        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(UNIT_TEST_LOGGER::info) {{}};
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", new ArrayList<>());
         }};
         interceptor.intercept("PUT", "http://url.test", headers, null);
-        assertThat(log.msg, is("Playback curl:\ncurl -i -k -X PUT 'http://url.test'"));
+        assertThat(UNIT_TEST_LOGGER.takeLoggedMessages(),
+                contains("Playback curl:\ncurl -i -k -X PUT 'http://url.test'"));
     }
 
 }

@@ -26,7 +26,7 @@ public abstract class CURLLoggingInterceptor {
                 if (h.getValue() != null && h.getValue().iterator().hasNext()) {
                     StringJoiner sj = new StringJoiner("; ", h.getKey() + ": ", "");
                     h.getValue().forEach(sj::add);
-                    curl.append(" -h '").append(sj).append("'");
+                    curl.append(" -H '").append(sj).append("'");
                 }
             }
         }

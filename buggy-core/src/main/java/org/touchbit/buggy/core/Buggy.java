@@ -423,6 +423,11 @@ public abstract class Buggy {
             exitRun(status, msg);
         }
 
+        @Override
+        public void exit(int status) {
+            java.lang.System.exit(status);
+        }
+
     }
 
 }

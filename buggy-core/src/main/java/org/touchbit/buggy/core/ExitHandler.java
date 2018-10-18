@@ -2,7 +2,6 @@ package org.touchbit.buggy.core;
 
 import org.touchbit.buggy.core.utils.StringUtils;
 
-import static java.lang.System.exit;
 import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
 
 /**
@@ -38,5 +37,7 @@ public interface ExitHandler {
         StringUtils.println(CONSOLE_DELIMITER);
         exit(status);
     }
+
+    void exit(int status);
 
 }

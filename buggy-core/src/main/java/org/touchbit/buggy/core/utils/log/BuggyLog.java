@@ -100,7 +100,9 @@ public class BuggyLog {
                             exception != null ? "FAIL" : "OK"));
         }
         if (exception == null) {
-            init();
+            setTestLog(LoggerFactory.getLogger("Routing"));
+            setConsoleLog(LoggerFactory.getLogger("Console"));
+            setFrameworkLog(LoggerFactory.getLogger("Framework"));
         }
         StringUtils.println(StringUtils.filler(null, "\u2014", 47, null));
         StringUtils.println(StringUtils.filler("Logger", " ", 47, "Level"));
@@ -155,12 +157,6 @@ public class BuggyLog {
         if (!Buggy.isPrimaryConfigInitialized()) {
             Buggy.getExitHandler().exitRun(1, "The logger cannot be initialized before the Buggy configuration.");
         }
-    }
-
-    private static void init() {
-        setConsoleLog(LoggerFactory.getLogger("Console"));
-        setFrameworkLog(LoggerFactory.getLogger("Framework"));
-        setTestLog(LoggerFactory.getLogger("Routing"));
     }
 
 }

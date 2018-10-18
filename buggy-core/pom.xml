@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.2.13</version>
+        <version>0.2.14</version>
     </parent>
 
     <artifactId>buggy-core</artifactId>
     <name>Core module</name>
-    <version>0.2.13</version>
+    <version>0.2.14</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -45,10 +45,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jmockit</groupId>
-            <artifactId>jmockit</artifactId>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
