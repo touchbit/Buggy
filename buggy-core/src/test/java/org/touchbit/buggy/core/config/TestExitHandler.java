@@ -1,12 +1,15 @@
 package org.touchbit.buggy.core.config;
 
-import org.touchbit.buggy.core.ExitHandler;
+import org.touchbit.buggy.core.Buggy;
+import org.touchbit.buggy.core.utils.StringUtils;
+
+import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
 
 /**
  * Created by Oleg Shaburov on 16.10.2018
  * shaburov.o.a@gmail.com
  */
-public class TestExitHandler implements ExitHandler {
+public class TestExitHandler extends Buggy.DefaultBuggyProcessor.DefaultBuggySystemExitHandler {
 
     private Throwable throwable = null;
     private Integer status = null;
@@ -15,6 +18,10 @@ public class TestExitHandler implements ExitHandler {
     @Override
     public void exitRunWithUsage(int status, String msg) {
         exitRun(status, msg);
+    }
+
+    public void realExitRunWithUsage(int status, String msg) {
+        super.exitRunWithUsage(status, msg);
     }
 
     @Override

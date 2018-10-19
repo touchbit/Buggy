@@ -58,6 +58,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
         };
         telegram.onExecutionFinish();
         assertThat(sb.toString(), is("" +
+                "*Buggy*\n" +
                 "Run Results:\n" +
                 "`--------------------------------`\n" +
                 "`Running tests..................`0\n" +

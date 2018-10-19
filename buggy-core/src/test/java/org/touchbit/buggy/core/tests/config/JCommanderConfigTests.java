@@ -21,9 +21,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
-import org.touchbit.buggy.core.config.Parameters;
+import org.touchbit.buggy.core.config.BParameters;
 import org.touchbit.buggy.core.config.PrimaryConfig;
-import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.config.TestInterface;
 import org.touchbit.buggy.core.config.TestService;
 import org.touchbit.buggy.core.model.Type;
@@ -50,7 +49,7 @@ class JCommanderConfigTests extends BaseUnitTest {
     @Test
     @DisplayName("Check parameters constructor")
     void unitTest_20180919162214() throws NoSuchMethodException {
-        checkUtilityClassConstructor(Parameters.class);
+        checkUtilityClassConstructor(BParameters.class);
     }
 
     @Test
@@ -258,13 +257,26 @@ class JCommanderConfigTests extends BaseUnitTest {
     }
 
     @Test
+    @DisplayName("GIVEN PrimaryConfig WHEN setCheck() THEN isCheck()")
+    void unitTest_20181020063716() {
+        boolean check = Buggy.getPrimaryConfig().isCheck();
+        try {
+            assertThat(check, is(false));
+            Buggy.getPrimaryConfig().setCheck(true);
+            assertThat(Buggy.getPrimaryConfig().isCheck(), is(true));
+        } finally {
+            Buggy.getPrimaryConfig().setCheck(check);
+        }
+    }
+
+    @Test
     @DisplayName("Check PrimaryConfig.setAbsoluteLogPath(String path)")
     void unitTest_20180919202117() {
         String absolutePath = Buggy.getPrimaryConfig().getAbsoluteLogPath();
         try {
             assertThat(absolutePath, is(WASTE));
-            Buggy.getPrimaryConfig().setAbsoluteLogPath("AbsolutePath");
-            assertThat(Buggy.getPrimaryConfig().getAbsoluteLogPath(), is("AbsolutePath"));
+            Buggy.getPrimaryConfig().setAbsoluteLogPath(WASTE + "/AbsolutePath");
+            assertThat(Buggy.getPrimaryConfig().getAbsoluteLogPath(), is(WASTE + "/AbsolutePath"));
         } finally {
             Buggy.getPrimaryConfig().setAbsoluteLogPath(absolutePath);
         }
@@ -356,49 +368,6 @@ class JCommanderConfigTests extends BaseUnitTest {
         assertThat(p.contains("[--pp]...........................publcParameter"), is(true));
         assertThat(p.contains("[--ppm]................................********"), is(true));
         assertThat(p.contains("[--ppp]................................********"), is(true));
-    }
-
-    @Test
-    @DisplayName("Check PrimaryConfig.configurationToString(config) with private parameter")
-    void unitTest_20180919211539() {
-        JCommanderPrimaryConfigFailGetField config = new JCommanderPrimaryConfigFailGetField();
-        config.setPrintAllParameters(true);
-        BuggyConfigurationException exception = execute(() -> PrimaryConfig.configurationToString(config),
-                BuggyConfigurationException.class);
-        assertThat(exception.getMessage(), is("Unable to get privateParameter value"));
-    }
-
-    @Test
-    @DisplayName("Check PrimaryConfig.")
-    void unitTest_20180919212056() {
-        JCommanderPrimaryConfigFailGetMethod config = new JCommanderPrimaryConfigFailGetMethod();
-        config.setPrintAllParameters(true);
-        BuggyConfigurationException exception = execute(() -> PrimaryConfig.configurationToString(config),
-                BuggyConfigurationException.class);
-        assertThat(exception.getMessage(), is("Unable to get getPrivateHiddenMethod method value"));
-    }
-
-    public static class JCommanderPrimaryConfigFailGetField implements PrimaryConfig {
-
-        private static final String FF = "--ff";
-        @Parameter(names = {FF})
-        private static String privateParameter = "privateParameter";
-
-    }
-
-    public static class JCommanderPrimaryConfigFailGetMethod implements PrimaryConfig {
-
-        private static final String FF = "--ff";
-
-        @Parameter(names = {FF})
-        private void setPrivateHiddenMethod(String s) {
-
-        }
-
-        private String getPrivateHiddenMethod() {
-            return "getPrivateHiddenMethod";
-        }
-
     }
 
     @SuppressWarnings("unused")

@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.touchbit.buggy.core.config.Parameters.*;
+import static org.touchbit.buggy.core.config.BParameters.*;
 
 /**
  * Created by Oleg Shaburov on 16.09.2018
@@ -197,7 +197,7 @@ class JCommanderTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check ParameterValidator.validate(SERVICES & S) with value")
+    @DisplayName("Check ParameterValidator.validate(SERVICES & Suite) with value")
     void unitTest_20180917003944() {
         ParameterValidator validator = new ParameterValidator();
         validator.validate(SERVICES, "false");
@@ -205,7 +205,7 @@ class JCommanderTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check ParameterValidator.validate(SERVICES & S) without value")
+    @DisplayName("Check ParameterValidator.validate(SERVICES & Suite) without value")
     void unitTest_20180917004113() {
         ParameterValidator validator = new ParameterValidator();
         ParameterException e = execute(() -> validator.validate(SERVICES, null), ParameterException.class);

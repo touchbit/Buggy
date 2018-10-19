@@ -16,8 +16,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.touchbit.buggy.core.utils.log.BuggyLog.LOG_DIRECTORY;
 import static org.touchbit.buggy.core.utils.log.BuggyLog.LOG_FILE_NAME;
 
@@ -63,7 +62,7 @@ class BuggyLogTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check reloadConfig() with root logger")
+    @DisplayName("Check loadDefaultConfig() with root logger")
     void unitTest_20180916015619() throws IOException {
         BuggyLog.setLogsDirPath(WASTE);
         File testResourcesWaste = new File(WASTE, "log4j2.xml");
@@ -73,7 +72,8 @@ class BuggyLogTests extends BaseUnitTest {
         try {
             IOHelper.moveFile(testResources, testResourcesWaste);
             IOHelper.moveFile(srcResources, srcResourcesWaste);
-            BuggyLog.reloadConfig();
+            Buggy.prepare();
+            BuggyLog.loadDefaultConfig();
         } finally {
             IOHelper.moveFile(testResourcesWaste, testResources);
             IOHelper.moveFile(srcResourcesWaste, srcResources);
@@ -81,21 +81,21 @@ class BuggyLogTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check reloadConfig() with log4j2.xml")
+    @DisplayName("Check loadDefaultConfig() with log4j2.xml")
     void unitTest_20180916212753() {
         BuggyLog.setLogsDirPath(WASTE);
-        BuggyLog.reloadConfig();
+        BuggyLog.loadDefaultConfig();
     }
 
     @Test
-    @DisplayName("Check reloadConfig() with buggy-log4j2.xml")
+    @DisplayName("Check loadDefaultConfig() with buggy-log4j2.xml")
     void unitTest_20180916212008() throws IOException {
         BuggyLog.setLogsDirPath(WASTE);
         File waste = new File(WASTE, "log4j2.xml");
         File resources = new File(TEST_CLASSES, "log4j2.xml");
         try {
             IOHelper.moveFile(resources, waste);
-            BuggyLog.reloadConfig();
+            BuggyLog.loadDefaultConfig();
         } finally {
             IOHelper.moveFile(waste, resources);
         }
@@ -113,6 +113,18 @@ class BuggyLogTests extends BaseUnitTest {
         assertThat(BuggyLog.console(), is(logger));
         assertThat(BuggyLog.framework(), is(logger));
         assertThat(BuggyLog.test(), is(logger));
+    }
+
+    @Test
+    @DisplayName("GIVEN BuggyLog WHEN BuggyLog() THEN no errors")
+    void unitTest_20181021171040() {
+        new BuggyLog();
+        assertThat(BuggyLog.console(), is(not(nullValue())));
+        assertThat(BuggyLog.framework(), is(not(nullValue())));
+        assertThat(BuggyLog.test(), is(not(nullValue())));
+        assertThat(BuggyLog.console(), is(instanceOf(Logger.class)));
+        assertThat(BuggyLog.framework(), is(instanceOf(Logger.class)));
+        assertThat(BuggyLog.test(), is(instanceOf(Logger.class)));
     }
 
     @Test

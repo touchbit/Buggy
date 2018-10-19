@@ -8,26 +8,28 @@ import org.testng.IInvokedMethod;
 import org.testng.ITestClass;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
-import org.testng.annotations.Test;
 import org.testng.internal.ConstructorOrMethod;
 import org.touchbit.buggy.core.Buggy;
-import org.touchbit.buggy.core.config.TestExitHandler;
-import org.touchbit.buggy.core.config.TestInterface;
-import org.touchbit.buggy.core.config.TestService;
-import org.touchbit.buggy.core.config.UnitTestPrimaryConfig;
+import org.touchbit.buggy.core.ExitHandler;
+import org.touchbit.buggy.core.config.*;
 import org.touchbit.buggy.core.helpful.SystemOutLogger;
 import org.touchbit.buggy.core.helpful.UnitTestLogger;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.model.Type;
+import org.touchbit.buggy.core.process.Component;
+import org.touchbit.buggy.core.process.Interface;
+import org.touchbit.buggy.core.process.Service;
 import org.touchbit.buggy.core.testng.listeners.BuggyExecutionListener;
+import org.touchbit.buggy.core.utils.log.BuggyLog;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -45,6 +47,9 @@ import static org.touchbit.buggy.core.utils.log.BuggyLog.LOG_DIRECTORY;
 @SuppressWarnings("WeakerAccess")
 public abstract class BaseUnitTest {
 
+    private static String runDir = new File(BaseUnitTest.class.getProtectionDomain().getCodeSource().getLocation().getPath())
+            .getParentFile().getAbsolutePath();
+
 //    protected static final Logger LOG = NOP_LOGGER;
     protected static final String WASTE;
     protected static final String CLASSES;
@@ -54,28 +59,32 @@ public abstract class BaseUnitTest {
     protected static final TestExitHandler EXIT_HANDLER = new TestExitHandler();
 
     static {
-        Buggy.setExitHandler(EXIT_HANDLER);
-        Buggy.setPrimaryConfigClass(UnitTestPrimaryConfig.class);
-        Buggy.initBuggyConfiguration();
-        WASTE = Buggy.getRunDir() + "/waste-unit-tests";
-        CLASSES = Buggy.getRunDir() + "/classes";
-        TEST_CLASSES = Buggy.getRunDir() + "/test-classes";
+        WASTE = runDir + "/waste-unit-tests";
+        CLASSES = runDir + "/classes";
+        TEST_CLASSES = runDir + "/test-classes";
         System.setProperty(LOG_DIRECTORY, WASTE + "/");
-        Buggy.initJCommander();
-        Buggy.getPrimaryConfig().setAbsoluteLogPath(WASTE);
         File wasteDir = new File(WASTE);
         File logFile = new File(WASTE, "console.txt");
         delete(wasteDir);
         wasteDir.mkdirs();
         SYSTEM_OUT_LOGGER = new SystemOutLogger(logFile);
+        Buggy.setBuggyLogClass(TestBuggyLog.class);
+        Buggy.setBuggyProcessor(new UnitTestBuggyProcessor());
+        Buggy.setPrimaryConfigClass(UnitTestPrimaryConfig.class);
+        Buggy.prepare();
     }
 
     @BeforeEach
     public void clean() {
         Buggy.setDefault();
+        Buggy.setBuggyProcessor(new UnitTestBuggyProcessor());
+        Buggy.setPrimaryConfigClass(UnitTestPrimaryConfig.class);
+        Buggy.setSecondaryConfigClasses(new ArrayList<>());
+        Buggy.setBuggyLogClass(TestBuggyLog.class);
         EXIT_HANDLER.clean();
         TEST_LOGGER.reset();
         SYSTEM_OUT_LOGGER.reset();
+        Buggy.getPrimaryConfig().setCheck(false);
         Buggy.getPrimaryConfig().setAbsoluteLogPath(WASTE);
         Buggy.getPrimaryConfig().setPrintAllParameters(false);
         Buggy.getPrimaryConfig().setPrintCause(false);
@@ -84,6 +93,34 @@ public abstract class BaseUnitTest {
         Buggy.getPrimaryConfig().setArtifactsUrl(null);
         BuggyExecutionListener.setSteps(new ArrayList<>());
         new BuggyExecutionListener() {};
+    }
+
+    public static class TestBuggyLog extends BuggyLog {
+
+        public TestBuggyLog() {
+            super(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
+        }
+
+    }
+
+    public static class UnitTestBuggyProcessor extends Buggy.DefaultBuggyProcessor {
+        @Override
+        public TestExitHandler getExitHandler() {
+            return EXIT_HANDLER;
+        }
+
+        @Override
+        public String getReportsOutputDirectory() {
+            return WASTE + "/reports";
+        }
+
+        public String getRealReportsOutputDirectory() {
+            return super.getReportsOutputDirectory();
+        }
+
+        public ExitHandler getRealExitHandler() {
+            return super.getExitHandler();
+        }
     }
 
     protected void assertExitCode(Integer code) {
@@ -161,7 +198,7 @@ public abstract class BaseUnitTest {
     }
 
     protected static IInvokedMethod getMockIInvokedMethod(boolean isTest) {
-        return getMockIInvokedMethod(MockITestClass.class, "iTestResultMethodWithDetails", isTest);
+        return getMockIInvokedMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithDetails", isTest);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -180,7 +217,7 @@ public abstract class BaseUnitTest {
     }
 
     protected static ITestNGMethod getMockITestNGMethod() {
-        return getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithDetails");
+        return getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithDetails");
     }
 
     protected static ITestNGMethod getMockITestNGMethod(Class<?> clazz, String methodName) {
@@ -211,7 +248,7 @@ public abstract class BaseUnitTest {
     protected static ITestResult getMockITestResult(Integer status) {
         Method method;
         try {
-            method = MockITestClass.class.getMethod("iTestResultMethodWithDetails");
+            method = TestNGTestClassWithSuite.class.getMethod("iTestResultMethodWithDetails");
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -296,7 +333,7 @@ public abstract class BaseUnitTest {
         }
 
         @Override
-        public void copyFile(File sourceFile, File destFile) throws IOException {
+        public void copyFile(File sourceFile, File destFile) {
             this.sourceFile = sourceFile;
             this.targetFile = destFile;
         }
@@ -311,19 +348,6 @@ public abstract class BaseUnitTest {
             super.increment(status);
         }
 
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Suite(service = TestService.class, interfaze = TestInterface.class)
-    public static class MockITestClass {
-        @SuppressWarnings("WeakerAccess")
-        @Test
-        @Details
-        public void iTestResultMethodWithDetails() { }
-        @SuppressWarnings({"WeakerAccess", "unused"})
-        public void iTestResultMethodWithoutDetails() {
-            // for getMockITestResult()
-        }
     }
 
     protected static Details getDetails() {
@@ -354,6 +378,36 @@ public abstract class BaseUnitTest {
             public Type type() { return type; }
             @Override
             public Class<? extends Annotation> annotationType() { return Details.class; }
+        };
+    }
+
+    protected static Suite getSuite() {
+        return new Suite() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Suite.class;
+            }
+
+            @Override
+            public Class<? extends Component> component() {
+                return TestComponent.class;
+            }
+
+            @Override
+            public Class<? extends Service> service() {
+                return TestService.class;
+            }
+
+            @Override
+            public Class<? extends Interface> interfaze() {
+                return TestInterface.class;
+            }
+
+            @Override
+            public String task() {
+                return UUID.randomUUID().toString();
+            }
         };
     }
 

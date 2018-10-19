@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.testng.*;
 import org.touchbit.buggy.core.config.TestComponent;
 import org.touchbit.buggy.core.config.TestInterface;
+import org.touchbit.buggy.core.config.TestNGTestClassWithSuite;
 import org.touchbit.buggy.core.config.TestService;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
@@ -45,9 +46,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.touchbit.buggy.core.config.Parameters.PRINT_CAUSE;
-import static org.touchbit.buggy.core.config.Parameters.PRINT_LOG;
-import static org.touchbit.buggy.core.config.Parameters.PRINT_SUITE;
+import static org.touchbit.buggy.core.config.BParameters.PRINT_CAUSE;
+import static org.touchbit.buggy.core.config.BParameters.PRINT_LOG;
+import static org.touchbit.buggy.core.config.BParameters.PRINT_SUITE;
 import static org.touchbit.buggy.core.model.Status.*;
 import static org.touchbit.buggy.core.model.Type.*;
 
@@ -170,7 +171,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @DisplayName("Check onAfterClass(ITestClass iTestClass) with Suite")
     void unitTest_20180921183611() {
         BuggyExecutionListener listener = new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
-        ITestClass iTestClass = getMockITestClass(MockITestClass.class);
+        ITestClass iTestClass = getMockITestClass(TestNGTestClassWithSuite.class);
         BuggyExecutionListener.setSteps(new ArrayList<>());
         listener.onAfterClass(iTestClass);
     }
@@ -193,7 +194,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             Buggy.getPrimaryConfig().setType(MODULE);
             Buggy.getPrimaryConfig().setForceRun(false);
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(EXP_FIX, SMOKE));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
             ISuite suite = mock(ISuite.class);
@@ -219,7 +220,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             Buggy.getPrimaryConfig().setType(MODULE);
             Buggy.getPrimaryConfig().setForceRun(true);
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(EXP_FIX, SMOKE));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
             ISuite suite = mock(ISuite.class);
@@ -375,7 +376,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Check afterInvocation without @Details")
         void unitTest_20180921222920() {
             BuggyExecutionListener listener = getBuggyExecutionListener();
-            IInvokedMethod iInvokedMethod = getMockIInvokedMethod(MockITestClass.class,
+            IInvokedMethod iInvokedMethod = getMockIInvokedMethod(TestNGTestClassWithSuite.class,
                     "iTestResultMethodWithoutDetails", true);
             when(iInvokedMethod.isTestMethod()).thenReturn(true);
             ITestResult iTestResult = getMockITestResult(1);
@@ -946,7 +947,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if method is not contains the @Details annotation")
         void unitTest_20180922062020() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener();
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
             ISuite suite = mock(ISuite.class);
@@ -963,7 +964,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if method invocation count <= 0")
         void unitTest_20180922063213() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(SUCCESS));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.getInvocationCount()).thenReturn(0);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -981,7 +982,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if received configuration method")
         void unitTest_20180922063717() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(SUCCESS));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(false);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -999,7 +1000,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if expected Status.SUCCESS")
         void unitTest_20180922063942() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(SUCCESS));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1017,7 +1018,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if expected Status.FIXED")
         void unitTest_20180922065558() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(FIXED));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1035,7 +1036,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if expected Status.IMPLEMENTED")
         void unitTest_20180922070145() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(IMPLEMENTED));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1053,7 +1054,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if expected Status.UNTESTED")
         void unitTest_20180922070204() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(UNTESTED));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1071,7 +1072,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if expected Status.SKIP")
         void unitTest_20180922070222() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(SKIP));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1089,7 +1090,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if expected Status.FAILED")
         void unitTest_20180922070246() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(FAILED));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1107,7 +1108,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Check disabling the test, if expected Status.EXP_FIX")
         void unitTest_20180922070306() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(EXP_FIX));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1126,7 +1127,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Check disabling the test, if expected Status.EXP_IMPL")
         void unitTest_20180922070547() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(EXP_IMPL));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1145,7 +1146,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Check disabling the test, if expected Status.BLOCKED")
         void unitTest_20180922070607() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(BLOCKED));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1164,7 +1165,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Check disabling the test, if expected Status.CORRUPTED")
         void unitTest_20180922070623() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(CORRUPTED));
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(true);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1189,7 +1190,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         @DisplayName("Ignore disabling the test, if @Details is not present")
         void unitTest_20180922073418() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener();
-            ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
             when(method.isTest()).thenReturn(false);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
@@ -1210,7 +1211,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             try {
                 Buggy.getPrimaryConfig().setType(MODULE);
                 UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(SMOKE));
-                ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+                ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
                 when(method.isTest()).thenReturn(false);
                 List<ITestNGMethod> allMethods = new ArrayList<>();
                 allMethods.add(method);
@@ -1234,7 +1235,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             try {
                 Buggy.getPrimaryConfig().setType(MODULE);
                 UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(SYSTEM));
-                ITestNGMethod method = getMockITestNGMethod(MockITestClass.class, "iTestResultMethodWithoutDetails");
+                ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
                 when(method.isTest()).thenReturn(false);
                 List<ITestNGMethod> allMethods = new ArrayList<>();
                 allMethods.add(method);
@@ -2179,6 +2180,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
     @DisplayName("Successful copyFile call when file exists")
     void unitTest_20181019025312() throws IOException {
         File source = new File(WASTE, "unitTest_20181019025312.source");
+        //noinspection ResultOfMethodCallIgnored
         source.createNewFile();
         File dist = new File(WASTE, "unitTest_20181019025312.dist");
         new BuggyExecutionListener(SYSTEM_OUT_LOGGER, SYSTEM_OUT_LOGGER, SYSTEM_OUT_LOGGER) {{

@@ -51,7 +51,7 @@ public final class IntellijIdeaTestNgPluginListener extends BuggyExecutionListen
             }
         });
         String[] args = list.toArray(new String[0]);
-        Buggy.initConfiguration(args);
+        Buggy.prepare(args);
     }
 
     @Override

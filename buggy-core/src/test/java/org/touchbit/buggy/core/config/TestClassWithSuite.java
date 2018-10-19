@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package org.touchbit.buggy.example.min.config;
+package org.touchbit.buggy.core.config;
 
-import org.touchbit.buggy.core.config.PrimaryConfig;
+import org.testng.annotations.Test;
+import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Suite;
+import org.touchbit.buggy.core.test.BaseBuggyTest;
 
 /**
- * Created by Oleg Shaburov on 18.09.2018
+ * Created by Oleg Shaburov on 20.09.2018
  * shaburov.o.a@gmail.com
  */
-public class Config implements PrimaryConfig {
+@Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, task = "unit_test")
+public class TestClassWithSuite extends BaseBuggyTest {
 
-    public Config() {
-        setPrintLogFile(true);
+    @Test(description = "test_20181021171954")
+    @Details
+    public void test_20181021171954() {
+        step("Example step test_20181021171954");
     }
 
 }

@@ -72,14 +72,14 @@ class TestSupervisorTests extends BaseUnitTest {
     void unitTest_20180920215058() {
         TestSupervisor supervisor = new TestSupervisor();
         ITestNGMethod iTestNGMethod = mock(ITestNGMethod.class);
-        when(iTestNGMethod.getMethodName()).thenReturn("method");
+        when(iTestNGMethod.getMethodName()).thenReturn("unitTest_20180920215058");
         IInvokedMethod iInvokedMethod = mock(IInvokedMethod.class);
         when(iInvokedMethod.getTestMethod()).thenReturn(iTestNGMethod);
-        when(iTestNGMethod.getRealClass()).thenReturn(TestSupervisor.class);
+        when(iTestNGMethod.getRealClass()).thenReturn(TestSupervisorTests.class);
         try {
             supervisor.onExecutionStart();
             supervisor.beforeInvocation(iInvokedMethod, null);
-            assertThat(supervisor.getExecutableTests(), contains("method (TestSupervisor)"));
+            assertThat(supervisor.getExecutableTests(), contains("unitTest_20180920215058 (TestSupervisorTests)"));
             supervisor.afterInvocation(iInvokedMethod, null);
             assertThat(supervisor.getExecutableTests(), is(empty()));
             assertThat(supervisor.isRunMetronome(), is(true));
@@ -94,18 +94,18 @@ class TestSupervisorTests extends BaseUnitTest {
     void unitTest_20180920220236() {
         TestSupervisor supervisor = new TestSupervisor();
         ITestNGMethod iTestNGMethod = mock(ITestNGMethod.class);
-        when(iTestNGMethod.getMethodName()).thenReturn("method");
+        when(iTestNGMethod.getMethodName()).thenReturn("unitTest_20180920220236");
         IInvokedMethod iInvokedMethod = mock(IInvokedMethod.class);
         when(iInvokedMethod.getTestMethod()).thenReturn(iTestNGMethod);
-        when(iTestNGMethod.getRealClass()).thenReturn(TestSupervisor.class);
+        when(iTestNGMethod.getRealClass()).thenReturn(TestSupervisorTests.class);
         try {
             supervisor.onExecutionStart();
             supervisor.beforeInvocation(iInvokedMethod, null);
             assertThat(supervisor.getExecutableTests().size(), is(1));
-            assertThat(supervisor.getExecutableTests(), contains("method (TestSupervisor)"));
+            assertThat(supervisor.getExecutableTests(), contains("unitTest_20180920220236 (TestSupervisorTests)"));
             supervisor.beforeInvocation(iInvokedMethod, null);
             assertThat(supervisor.getExecutableTests().size(), is(1));
-            assertThat(supervisor.getExecutableTests(), contains("method (TestSupervisor)"));
+            assertThat(supervisor.getExecutableTests(), contains("unitTest_20180920220236 (TestSupervisorTests)"));
             supervisor.afterInvocation(iInvokedMethod, null);
             assertThat(supervisor.getExecutableTests(), is(empty()));
             supervisor.afterInvocation(iInvokedMethod, null);

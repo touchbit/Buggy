@@ -20,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlTest;
+import org.touchbit.buggy.core.process.DefaultComponent;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.config.TestClassWithoutSuite;
@@ -147,6 +148,7 @@ class TestSuiteTests extends BaseUnitTest {
     @DisplayName("Check duplicates XmlTest")
     void unitTest_20180920200806() {
         TestSuite testSuite = new TestSuite("name", 120, TESTS, SUITE);
+        testSuite.setLog(TEST_LOGGER);
         testSuite.addTestPackage("TestPackage1", TestClassWithoutSuite.class, TestClassWithoutSuite.class);
         testSuite.addTestPackage("TestPackage2", TestSuiteTests.class, TestSuiteTests.class);
         testSuite.addTestPackage("TestPackage1", TestClassWithoutSuite.class, TestClassWithoutSuite.class);
@@ -167,6 +169,7 @@ class TestSuiteTests extends BaseUnitTest {
                 assertThat(classSet, containsInAnyOrder(TestSuiteTests.class.getTypeName()));
             }
         }
+        assertThat(TEST_LOGGER.takeLoggedMessages().toString(), containsString(" classes:\n"));
     }
 
     @Test
@@ -186,6 +189,59 @@ class TestSuiteTests extends BaseUnitTest {
         testSuite.addTestPackage(null);
         assertThat(testSuite.getTests().size(), is(0));
     }
+
+    @Test
+    @DisplayName("Check equals by Suite annotation")
+    void unitTest_20181022031937() {
+        TestSuite testSuite1 = new TestSuite("name", 120, TESTS, SUITE);
+        TestSuite testSuite2 = new TestSuite("name", 120, TESTS, SUITE);
+        assertThat(testSuite1.equals(testSuite2), is(true));
+    }
+
+    @Test
+    @DisplayName("Check not equals by Suite annotation")
+    void unitTest_20181022032227() {
+        TestSuite testSuite1 = new TestSuite("name", 120, TESTS, SUITE);
+        TestSuite testSuite2 = new TestSuite("name", 120, TESTS, SUITE2);
+        assertThat(testSuite1.equals(testSuite2), is(false));
+    }
+
+    @Test
+    @DisplayName("Check not equals by Object")
+    void unitTest_20181022032554() {
+        TestSuite testSuite = new TestSuite("name", 120, TESTS, SUITE);
+        testSuite.setLog(TEST_LOGGER);
+        assertThat(testSuite.equals(new Object()), is(false));
+    }
+
+    @Test
+    @DisplayName("Check hashCode for 2 same suites")
+    void unitTest_20181022033229() {
+        TestSuite testSuite1 = new TestSuite("name", 120, TESTS, SUITE);
+        TestSuite testSuite2 = new TestSuite("name", 120, TESTS, SUITE);
+        assertThat(testSuite1.hashCode(), is(testSuite2.hashCode()));
+    }
+
+    @Test
+    @DisplayName("Check hashCode for 2 different suites")
+    void unitTest_20181022033314() {
+        TestSuite testSuite1 = new TestSuite("name", 120, TESTS, SUITE);
+        TestSuite testSuite2 = new TestSuite("name", 120, TESTS, SUITE2);
+        assertThat(testSuite1.hashCode(), not(testSuite2.hashCode()));
+    }
+
+    private static final Suite SUITE2 = new Suite() {
+        @Override
+        public Class<? extends Annotation> annotationType() { return Suite.class; }
+        @Override
+        public Class<? extends Component> component() { return DefaultComponent.class; }
+        @Override
+        public Class<? extends Service> service() { return TestService.class; }
+        @Override
+        public Class<? extends Interface> interfaze() { return TestInterface.class; }
+        @Override
+        public String task() { return "task"; }
+    };
 
     private static final Suite SUITE = new Suite() {
         @Override

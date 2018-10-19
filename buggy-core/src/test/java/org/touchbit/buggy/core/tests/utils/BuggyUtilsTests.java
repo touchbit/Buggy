@@ -1,14 +1,13 @@
 package org.touchbit.buggy.core.tests.utils;
 
+import org.atteo.classindex.IndexSubclasses;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.testng.xml.Parameters;
+import org.touchbit.buggy.core.config.*;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.Buggy;
-import org.touchbit.buggy.core.config.TestComponent;
-import org.touchbit.buggy.core.config.TestInterface;
-import org.touchbit.buggy.core.config.TestService;
-import org.touchbit.buggy.core.config.UnitTestPrimaryConfig;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.process.Component;
@@ -207,6 +206,109 @@ class BuggyUtilsTests extends BaseUnitTest {
     void unitTest_20180915192539() throws NoSuchMethodException {
         checkUtilityClassConstructor(BuggyUtils.class);
     }
+
+    @Test
+    @DisplayName("GIVEN findAnnotatedInstantiatedClasses(Suite) WHEN public class THEN hasItem")
+    void unitTest_20181021171954() {
+        List<Class<?>> suites = BuggyUtils.findAnnotatedInstantiatedClasses(Suite.class);
+        assertThat(suites, not(empty()));
+        assertThat(suites, hasItem(sameInstance(TestClassWithSuite.class)));
+    }
+
+    @Test
+    @DisplayName("GIVEN findAnnotatedInstantiatedClasses(Suite) WHEN not public class THEN not(hasItem)")
+    void unitTest_20181021172745() {
+        List<Class<?>> suites = BuggyUtils.findAnnotatedInstantiatedClasses(Suite.class);
+        assertThat(suites, not(empty()));
+        assertThat(suites, not(hasItem(sameInstance(PrivateTestClass.class))));
+    }
+
+    @Test
+    @DisplayName("GIVEN findAnnotatedInstantiatedClasses(Suite) WHEN abstract class THEN not(hasItem)")
+    void unitTest_20181021173208() {
+        List<Class<?>> suites = BuggyUtils.findAnnotatedInstantiatedClasses(Suite.class);
+        assertThat(suites, not(empty()));
+        assertThat(suites, not(hasItem(sameInstance(AbstractTestClass.class))));
+    }
+
+    @Test
+    @DisplayName("GIVEN findAnnotatedInstantiatedClasses(Suite) WHEN no annotated class THEN is(empty())")
+    void unitTest_20181021174039() {
+        List<Class<?>> suites = BuggyUtils.findAnnotatedInstantiatedClasses(BuggyUtilsTestsInterface.class);
+        assertThat(suites, is(empty()));
+    }
+
+    @Test
+    @DisplayName("GIVEN isAssignableFrom WHEN nested inheritance THEN assignable")
+    void unitTest_20181021174629() {
+        assertThat(BuggyUtils.isAssignableFrom(Child.class, Parent.class), is(true));
+        assertThat(BuggyUtils.isAssignableFrom(Child.class, Child.class), is(true));
+        assertThat(BuggyUtils.isAssignableFrom(Parent.class, Child.class), is(false));
+        assertThat(BuggyUtils.isAssignableFrom(Child.class, ParentInterface.class), is(false));
+    }
+
+    @Test
+    @DisplayName("GIVEN isAssignableFrom WHEN null THEN false")
+    void unitTest_20181021175344() {
+        assertThat(BuggyUtils.isAssignableFrom(null, Parent.class), is(false));
+        assertThat(BuggyUtils.isAssignableFrom(Parent.class, null), is(false));
+    }
+
+    @Test
+    @DisplayName("GIVEN isAssignableFrom WHEN Object THEN false")
+    void unitTest_20181021175526() {
+        assertThat(BuggyUtils.isAssignableFrom(Object.class, Parent.class), is(false));
+    }
+
+    @Test
+    @DisplayName("WHEN findComponents() THEN hasItem")
+    void unitTest_20181021175921() {
+        assertThat(BuggyUtils.findComponents(), hasItem(instanceOf(TestComponent.class)));
+    }
+
+    @Test
+    @DisplayName("WHEN findServices() THEN hasItem")
+    void unitTest_20181021180113() {
+        assertThat(BuggyUtils.findServices(), hasItem(instanceOf(TestService.class)));
+    }
+
+    @Test
+    @DisplayName("WHEN findInterfaces() THEN hasItem")
+    void unitTest_20181021180159() {
+        assertThat(BuggyUtils.findInterfaces(), hasItem(instanceOf(TestInterface.class)));
+    }
+
+    @Test
+    @DisplayName("GIVEN Class with exception WHEN getSubclassesNewObjectList THEN BuggyConfigurationException")
+    void unitTest_20181021180411() {
+        Executable executable = () -> BuggyUtils.getSubclassesNewObjectList(IndexClass.class);
+        assertThrows(BuggyConfigurationException.class, executable,
+                "Can not create a new instance of the IndexClass " + IndexedClass.class);
+    }
+
+    @IndexSubclasses
+    public static abstract class IndexClass {}
+
+    public static class IndexedClass extends IndexClass {
+
+        public IndexedClass() {
+            throw new RuntimeException("unitTest_20181021180411 exception");
+        }
+    }
+
+    public interface ParentInterface {}
+
+    public static class Parent implements ParentInterface {}
+
+    public static class Child extends Parent {}
+
+    public static @interface BuggyUtilsTestsInterface {}
+
+    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, task = "unit_test")
+    private static class PrivateTestClass {}
+
+    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, task = "unit_test")
+    public abstract static class AbstractTestClass {}
 
     private static final Suite SUITE_1 = new Suite() {
 

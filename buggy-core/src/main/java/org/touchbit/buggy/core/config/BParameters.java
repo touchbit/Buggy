@@ -21,7 +21,7 @@ package org.touchbit.buggy.core.config;
  * shaburov.o.a@gmail.com
  */
 @SuppressWarnings("WeakerAccess")
-public class Parameters {
+public class BParameters {
 
     public static final String V = "-v";
     public static final String VERSION = "--version";
@@ -46,8 +46,10 @@ public class Parameters {
     public static final String PRINT_SUITE = "--print-suite";
     public static final String PRINT_CAUSE = "--print-cause";
     public static final String PRINT_LOG = "--print-log";
+    public static final String SELF_CHECK = "--check";
 
-    private Parameters() {
+
+    private BParameters() {
         throw new IllegalStateException("Utility class. Prohibit instantiation.");
     }
 
