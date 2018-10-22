@@ -5,12 +5,12 @@ import okhttp3.internal.http.RealResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import okio.Buffer;
+import org.touchbit.buggy.core.tests.BaseUnitTest;
 
 import static okhttp3.Protocol.HTTP_1_1;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,9 +23,8 @@ class OkHttpCallLoggingInterceptorTests extends BaseUnitTest {
 
     @Test
     @DisplayName("Check POST msg logging")
-    void unitTest_20181014142418() throws IOException {
-        Log log = new Log();
-        OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(log);
+    void unitTest_20181014142418() throws Exception {
+        OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(TEST_LOGGER);
         Request request = new Request.Builder()
                 .url("https://touchbit.org/")
                 .post(RequestBody.create(null, "RequestBody"))
@@ -43,22 +42,16 @@ class OkHttpCallLoggingInterceptorTests extends BaseUnitTest {
                 .build();
         when(chain.proceed(request)).thenReturn(response);
         interceptor.intercept(chain);
-        assertThat(log.msg, is("Request:\n" +
-                "POST https://touchbit.org/\n" +
-                "Headers:\n    request_header: [value]\n" +
-                "Body:\nRequestBody\n" +
-                "Response:\n" +
-                "Code: 200\n" +
-                "Message: OOOOOOK\n" +
-                "Headers:\n    response_header: [value]\n" +
-                "Body:\n"));
+        assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
+                "Request:\nPOST https://touchbit.org/\nHeaders:\n    request_header: [value]\nBody:\nRequestBody",
+                "Response:\nCode: 200\nMessage: OOOOOOK\nHeaders:\n    response_header: [value]\nBody:\n"
+        ));
     }
 
     @Test
     @DisplayName("Check GET msg logging with empty response body")
-    void unitTest_20181014211639() throws IOException {
-        Log log = new Log();
-        OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(log);
+    void unitTest_20181014211639() throws Exception {
+        OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(TEST_LOGGER);
         Request request = new Request.Builder()
                 .url("https://touchbit.org/")
                 .get()
@@ -76,24 +69,16 @@ class OkHttpCallLoggingInterceptorTests extends BaseUnitTest {
                 .build();
         when(chain.proceed(request)).thenReturn(response);
         interceptor.intercept(chain);
-        assertThat(log.msg, is("Request:\n" +
-                "GET https://touchbit.org/\n" +
-                "Headers:\n" +
-                "    request_header: [value]\n" +
-                "Body:\n<no request body>\n" +
-                "Response:\n" +
-                "Code: 200\n" +
-                "Message: OOOOOOK\n" +
-                "Headers:\n" +
-                "    response_header: [value]\n" +
-                "Body:\n<no response body>"));
+        assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
+                "Request:\nGET https://touchbit.org/\nHeaders:\n    request_header: [value]\nBody:\n<no request body>",
+                "Response:\nCode: 200\nMessage: OOOOOOK\nHeaders:\n    response_header: [value]\nBody:\n<no response body>"
+        ));
     }
 
     @Test
     @DisplayName("Check GET msg logging with null response body")
-    void unitTest_20181014212051() throws IOException {
-        Log log = new Log();
-        OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(log);
+    void unitTest_20181014212051() throws Exception {
+        OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(TEST_LOGGER);
         Request request = new Request.Builder()
                 .url("https://touchbit.org/")
                 .get()
@@ -103,19 +88,16 @@ class OkHttpCallLoggingInterceptorTests extends BaseUnitTest {
         when(chain.request()).thenReturn(request);
         when(chain.proceed(request)).thenReturn(null);
         interceptor.intercept(chain);
-        assertThat(log.msg, is("Request:\n" +
-                "GET https://touchbit.org/\n" +
-                "Headers:\n" +
-                "    request_header: [value]\n" +
-                "Body:\n<no request body>\n" +
-                "Response: null"));
+        assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
+                "Request:\nGET https://touchbit.org/\nHeaders:\n    request_header: [value]\nBody:\n<no request body>",
+                "Response: null"
+        ));
     }
 
     @Test
     @DisplayName("Check GET msg logging with null input stream")
-    void unitTest_20181014212407() throws IOException {
-        Log log = new Log();
-        OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(log);
+    void unitTest_20181014212407() throws Exception {
+        OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(TEST_LOGGER);
         Request request = new Request.Builder()
                 .url("https://touchbit.org/")
                 .get()
@@ -133,16 +115,9 @@ class OkHttpCallLoggingInterceptorTests extends BaseUnitTest {
                 .build();
         when(chain.proceed(request)).thenReturn(response);
         interceptor.intercept(chain);
-        assertThat(log.msg, is("Request:\n" +
-                "GET https://touchbit.org/\n" +
-                "Headers:\n" +
-                "    request_header: [value]\n" +
-                "Body:\n<no request body>\n" +
-                "Response:\n" +
-                "Code: 200\n" +
-                "Message: OOOOOOK\n" +
-                "Headers:\n" +
-                "    response_header: [value]\n" +
-                "Body:\n<no response body>"));
+        assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
+                "Request:\nGET https://touchbit.org/\nHeaders:\n    request_header: [value]\nBody:\n<no request body>",
+                "Response:\nCode: 200\nMessage: OOOOOOK\nHeaders:\n    response_header: [value]\nBody:\n<no response body>"
+        ));
     }
 }

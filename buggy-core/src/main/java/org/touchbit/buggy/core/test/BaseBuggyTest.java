@@ -38,7 +38,7 @@ public abstract class BaseBuggyTest {
     }
 
     protected BaseBuggyTest(final Logger logger) {
-        if (!IntellijIdeaTestNgPluginListener.isIntellijIdeaTestRun() && !Buggy.isRunning()) {
+        if (!IntellijIdeaTestNgPluginListener.isIntellijIdeaTestRun() && !Buggy.isTestRun()) {
             Buggy.getExitHandler().exitRun(1, "Missing IntellijIdeaPluginListener in the Intellij IDEA" +
                     " TestNG plugin configuration.");
         }

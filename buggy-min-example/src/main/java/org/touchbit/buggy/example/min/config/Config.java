@@ -22,7 +22,7 @@ import org.touchbit.buggy.core.config.PrimaryConfig;
  * Created by Oleg Shaburov on 18.09.2018
  * shaburov.o.a@gmail.com
  */
-public class Config implements PrimaryConfig, NetworkConfig {
+public class Config implements PrimaryConfig {
 
     public Config() {
         setPrintLogFile(true);

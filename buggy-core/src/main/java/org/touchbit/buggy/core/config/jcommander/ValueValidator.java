@@ -24,7 +24,7 @@ import org.touchbit.buggy.core.utils.StringUtils;
 import java.util.StringJoiner;
 import java.util.jar.Attributes;
 
-import static org.touchbit.buggy.core.config.Parameters.*;
+import static org.touchbit.buggy.core.config.BParameters.*;
 import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
 import static org.touchbit.buggy.core.utils.StringUtils.underscoreFiller;
 

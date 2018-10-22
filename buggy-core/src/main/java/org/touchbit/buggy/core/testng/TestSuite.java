@@ -142,7 +142,7 @@ public class TestSuite extends XmlSuite {
             duplicates.forEach(c -> {
                 classList.remove(c);
                 Buggy.incrementBuggyWarns();
-                log.warn("A duplicate has been removed from the class list: {}", c.getTypeName());
+                log.info("A duplicate has been removed from the class list: {}", c.getTypeName());
             });
         }
     }
@@ -156,7 +156,7 @@ public class TestSuite extends XmlSuite {
             if (!duplicates.isEmpty()) {
                 duplicates.forEach(c -> {
                             Buggy.incrementBuggyWarns();
-                            log.warn("The test package {} already contains a class: {}", test.getName(), c);
+                            log.info("The test package {} already contains a class: {}", test.getName(), c);
                 });
             }
             duplicates.forEach(classesList::remove);
@@ -193,4 +193,7 @@ public class TestSuite extends XmlSuite {
         return anInterface;
     }
 
+    public void setLog(Logger logger) {
+        log = logger;
+    }
 }

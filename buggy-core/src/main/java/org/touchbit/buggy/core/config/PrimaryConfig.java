@@ -21,7 +21,6 @@ import com.beust.jcommander.Parameter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.atteo.classindex.IndexSubclasses;
-import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.config.jcommander.InterfaceConverter;
 import org.touchbit.buggy.core.config.jcommander.ParameterValidator;
 import org.touchbit.buggy.core.config.jcommander.ServiceConverter;
@@ -30,7 +29,7 @@ import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.model.Type;
 import org.touchbit.buggy.core.process.Interface;
 import org.touchbit.buggy.core.process.Service;
-import org.touchbit.buggy.core.testng.TestSuite;
+import org.touchbit.buggy.core.utils.BuggyUtils;
 import org.touchbit.buggy.core.utils.StringUtils;
 
 import java.io.File;
@@ -39,11 +38,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
-import static org.touchbit.buggy.core.config.Parameters.*;
-import static org.touchbit.buggy.core.testng.listeners.IntellijIdeaTestNgPluginListener.INTELLIJ_IDEA_TEST_RUN;
+import static org.touchbit.buggy.core.config.BParameters.*;
 
 /**
  * Primary Config for jCommander
@@ -121,12 +116,6 @@ public interface PrimaryConfig {
     }
 
     default List<Service> getServices() {
-        if (DefaultValueProvider.services == null) {
-            DefaultValueProvider.services = Buggy.getSuites().stream()
-                    .map(TestSuite::getService)
-                    .collect(collectingAndThen(toCollection(() ->
-                            new TreeSet<>(comparing(Service::toString))), ArrayList::new));
-        }
         return DefaultValueProvider.services;
     }
 
@@ -137,12 +126,6 @@ public interface PrimaryConfig {
     }
 
     default List<Interface> getInterfaces() {
-        if (DefaultValueProvider.interfaces == null) {
-            DefaultValueProvider.interfaces = Buggy.getSuites().stream()
-                    .map(TestSuite::getInterface)
-                    .collect(collectingAndThen(toCollection(() ->
-                            new TreeSet<>(comparing(Interface::toString))), ArrayList::new));
-        }
         return DefaultValueProvider.interfaces;
     }
 
@@ -218,6 +201,23 @@ public interface PrimaryConfig {
         return false;
     }
 
+    @Parameter(names = {SELF_CHECK}, description = "Check buggy configuration without test run.")
+    default void setCheck(Boolean check) {
+        DefaultValueProvider.check = check;
+    }
+
+    default Boolean isCheck() {
+        return DefaultValueProvider.check;
+    }
+
+    default void setRunDir(String path) {
+        DefaultValueProvider.runDir = path;
+    }
+
+    default String getRunDir() {
+        return DefaultValueProvider.runDir;
+    }
+
     default void setAbsoluteLogPath(String path) {
         DefaultValueProvider.absoluteLogPath = path;
     }
@@ -272,13 +272,15 @@ public interface PrimaryConfig {
         private static Boolean printSuite = false;
         private static Boolean printCause = false;
         private static Boolean printLog = false;
+        private static Boolean check = false;
         private static Integer threads = 50;
         private static Integer status;
         private static String  logPath = "logs";
         private static String  absoluteLogPath;
+        private static String  runDir;
         private static String artifactsUrl;
-        private static List<Service> services;
-        private static List<Interface> interfaces;
+        private static List<Service> services = BuggyUtils.findServices();
+        private static List<Interface> interfaces = BuggyUtils.findInterfaces();
         private static Type type = Type.INTEGRATION;
 
         @Override
@@ -316,6 +318,8 @@ public interface PrimaryConfig {
                     return String.valueOf(printCause);
                 case PRINT_LOG:
                     return String.valueOf(printLog);
+                case SELF_CHECK:
+                    return String.valueOf(check);
                 default:
                     return null;
             }
@@ -348,9 +352,7 @@ public interface PrimaryConfig {
                     } else {
                         map.put(Arrays.toString(names), field.get(config.getClass()));
                     }
-                } catch (IllegalAccessException e) {
-                    throw new BuggyConfigurationException("Unable to get " + field.getName() + " value", e);
-                }
+                } catch (Exception ignore) { }
             }
         }
     }
@@ -381,10 +383,7 @@ public interface PrimaryConfig {
         for (Map.Entry<List<String>, Method> getMethod : getMethodsMap.entrySet()) {
             try {
                 map.put(getMethod.getKey().toString(), getMethod.getValue().invoke(config));
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new BuggyConfigurationException("Unable to get " + getMethod.getValue().getName() +
-                        " method value", e);
-            }
+            } catch (Exception ignore) { }
         }
     }
 

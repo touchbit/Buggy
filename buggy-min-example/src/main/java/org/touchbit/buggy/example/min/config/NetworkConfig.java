@@ -17,8 +17,8 @@
 package org.touchbit.buggy.example.min.config;
 
 import com.beust.jcommander.Parameter;
-
-import java.util.concurrent.TimeUnit;
+import com.beust.jcommander.Parameters;
+import org.touchbit.buggy.core.config.SecondaryConfig;
 
 import static org.touchbit.buggy.example.min.config.NetworkConfig.DefaultValues.*;
 
@@ -26,11 +26,12 @@ import static org.touchbit.buggy.example.min.config.NetworkConfig.DefaultValues.
  * Created by Oleg Shaburov on 02.09.2018
  * shaburov.o.a@gmail.com
  */
-public interface NetworkConfig {
+@SuppressWarnings("squid:S1118")
+@Parameters(commandNames = "network")
+public class NetworkConfig implements SecondaryConfig {
 
     @SuppressWarnings("WeakerAccess")
-    class DefaultValues {
-        protected static final String TIME_UNIT          = "--time-unit";
+    protected static class DefaultValues {
         protected static final String WRITE_TIMEOUT      = "--write-timeout";
         protected static final String READ_TIMEOUT       = "--read-timeout";
         protected static final String CONNECTION_TIMEOUT = "--connection-timeout";
@@ -39,7 +40,6 @@ public interface NetworkConfig {
         private static int readTimeout = 10;
         private static int writeTimeout = 10;
         private static int connectionTimeout = 10;
-        private static TimeUnit timeUnit = TimeUnit.SECONDS;
         private static String host = "http://example.com";
 
         private DefaultValues() {
@@ -47,48 +47,39 @@ public interface NetworkConfig {
         }
     }
 
-    @Parameter(names = {READ_TIMEOUT}, hidden = true, description = "Read timeout for response")
-    static void setReadTimeout(int readTimeout) {
+    @Parameter(names = {READ_TIMEOUT}, description = "Read timeout for response")
+    public static void setReadTimeout(int readTimeout) {
         DefaultValues.readTimeout = readTimeout;
     }
 
-    static int getReadTimeout() {
+    public static int getReadTimeout() {
         return DefaultValues.readTimeout;
     }
 
-    @Parameter(names = {WRITE_TIMEOUT}, hidden = true, description = "Write timeout for request")
-    static void setWriteTimeout(int writeTimeout) {
+    @Parameter(names = {WRITE_TIMEOUT}, description = "Write timeout for request")
+    public static void setWriteTimeout(int writeTimeout) {
         DefaultValues.writeTimeout = writeTimeout;
     }
 
-    static int getWriteTimeout() {
+    public static int getWriteTimeout() {
         return DefaultValues.writeTimeout;
     }
 
-    @Parameter(names = {CONNECTION_TIMEOUT}, hidden = true, description = "Connection timeout for request")
-    static void setConnectionTimeout(int writeTimeout) {
+    @Parameter(names = {CONNECTION_TIMEOUT}, description = "Connection timeout for request")
+    public static void setConnectionTimeout(int writeTimeout) {
         DefaultValues.connectionTimeout = writeTimeout;
     }
 
-    static int getConnectionTimeout() {
+    public static int getConnectionTimeout() {
         return DefaultValues.connectionTimeout;
     }
 
-    @Parameter(names = {TIME_UNIT}, hidden = true, description = "Connection time unit")
-    static void setTimeUnit(TimeUnit writeTimeout) {
-        DefaultValues.timeUnit = writeTimeout;
-    }
-
-    static TimeUnit getTimeUnit() {
-        return DefaultValues.timeUnit;
-    }
-
     @Parameter(names = {TEST_HOST}, description = "Tested host")
-    static void setHost(String host) {
+    public static void setHost(String host) {
         DefaultValues.host = host;
     }
 
-    static String getHost() {
+    public static String getHost() {
         return DefaultValues.host;
     }
 

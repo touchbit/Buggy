@@ -19,7 +19,7 @@ package org.touchbit.buggy.core.config.jcommander;
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.ParameterException;
 
-import static org.touchbit.buggy.core.config.Parameters.*;
+import static org.touchbit.buggy.core.config.BParameters.*;
 
 /**
  * Created by Oleg Shaburov on 08.09.2018

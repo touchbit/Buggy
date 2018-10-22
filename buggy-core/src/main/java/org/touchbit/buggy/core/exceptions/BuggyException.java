@@ -13,7 +13,7 @@
 package org.touchbit.buggy.core.exceptions;
 
 /**
- * A wrapper for exceptions that occur in the test framework.
+ * Interface wrapper for exceptions that occur in the test framework.
  * <p>
  * Created by Oleg Shaburov on 16.05.2018
  * shaburov.o.a@gmail.com

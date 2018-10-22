@@ -19,11 +19,10 @@ package org.touchbit.buggy.okhttp;
 import okhttp3.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
+import org.touchbit.buggy.core.tests.BaseUnitTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,14 +42,13 @@ class CURLLoggingInterceptorTests extends BaseUnitTest {
     @Test
     @DisplayName("Check OkHttpCURLLoggingInterceptor(final Logger log)")
     void unitTest_20181013155212() {
-        new OkHttpCURLLoggingInterceptor(new Log());
+        new OkHttpCURLLoggingInterceptor(TEST_LOGGER);
     }
 
     @Test
     @DisplayName("Check OkHttpCURLLoggingInterceptor() without body")
-    void unitTest_20181013155307() throws IOException {
-        final Log log = new Log();
-        OkHttpCURLLoggingInterceptor interceptor = new OkHttpCURLLoggingInterceptor(log::info);
+    void unitTest_20181013155307() throws Exception {
+        OkHttpCURLLoggingInterceptor interceptor = new OkHttpCURLLoggingInterceptor(TEST_LOGGER::info);
         Request request = new Request.Builder()
                 .url("https://touchbit.org/")
                 .get()
@@ -59,17 +57,14 @@ class CURLLoggingInterceptorTests extends BaseUnitTest {
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
         when(chain.request()).thenReturn(request);
         interceptor.intercept(chain);
-        assertThat(log.msg, is("Playback curl:\n" +
-                "curl -i -k -X GET " +
-                "'https://touchbit.org/' " +
-                "-h 'test_header: value'"));
+        assertThat(TEST_LOGGER.takeLoggedMessages(), contains("Playback curl:\ncurl -i -k -X " +
+                "GET 'https://touchbit.org/' -H 'test_header: value'"));
     }
 
     @Test
     @DisplayName("Check OkHttpCURLLoggingInterceptor() with body")
-    void unitTest_20181013161130() throws IOException {
-        final Log log = new Log();
-        OkHttpCURLLoggingInterceptor interceptor = new OkHttpCURLLoggingInterceptor(log::info);
+    void unitTest_20181013161130() throws Exception {
+        OkHttpCURLLoggingInterceptor interceptor = new OkHttpCURLLoggingInterceptor(TEST_LOGGER::info);
         Request request = new Request.Builder()
                 .url("https://touchbit.org/")
                 .post(RequestBody.create(null, "RequestBody"))
@@ -78,11 +73,8 @@ class CURLLoggingInterceptorTests extends BaseUnitTest {
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
         when(chain.request()).thenReturn(request);
         interceptor.intercept(chain);
-        assertThat(log.msg, is("Playback curl:\n" +
-                "curl -i -k -X POST " +
-                "'https://touchbit.org/' " +
-                "-h 'test_header: value' " +
-                "--data 'RequestBody'"));
+        assertThat(TEST_LOGGER.takeLoggedMessages(), contains("Playback curl:\ncurl -i -k -X " +
+                "POST 'https://touchbit.org/' -H 'test_header: value' --data 'RequestBody'"));
     }
 
 }

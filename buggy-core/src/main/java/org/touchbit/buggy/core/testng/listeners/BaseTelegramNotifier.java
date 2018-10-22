@@ -73,6 +73,7 @@ public abstract class BaseTelegramNotifier extends BaseBuggyExecutionListener im
         int successfulLen = len + testCountLen - (String.valueOf(testCount.get() - errorCount)).length();
         sj.add(StringUtils.dotFiller("`Successful tests", successfulLen, "`") +
                 (testCount.get() - errorCount));
+        sj.add(StringUtils.dotFiller("`Skipped tests", successfulLen, "`") + (skippedTests.get()));
         int failedLen = len + testCountLen - (String.valueOf(errorCount)).length();
         sj.add(StringUtils.dotFiller("`Failed tests", failedLen, "`") + errorCount);
         sj.add(StringUtils.filler("`", "-", fullLen, "`"));

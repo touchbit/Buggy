@@ -1,7 +1,7 @@
 stages:
   - build
   - test
-  - analyse
+  - verify
   - deploy
 
 variables:
@@ -12,7 +12,13 @@ Build Buggy:
   tags:
     - touchbit-shell
   script:
-    - mvn clean install -Dmaven.test.skip=true
+    # do not use -Dmaven.test.skip=true
+    - mvn clean install -DskipTests
+    - mv buggy-min-example/target/Buggy.jar MinBuggy.jar
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - "*Buggy.jar"
 
 Buggy-core test:
   stage: test
@@ -22,7 +28,7 @@ Buggy-core test:
     - cd buggy-core
     - mvn test
   artifacts:
-    expire_in: 1 week
+    expire_in: 1 day
     paths:
       - "*/target/reports"
 
@@ -34,7 +40,7 @@ Buggy-feign test:
     - cd buggy-feign
     - mvn test
   artifacts:
-    expire_in: 1 week
+    expire_in: 1 day
     paths:
       - "*/target/reports"
 
@@ -46,12 +52,12 @@ Buggy-okhttp test:
     - cd buggy-okhttp
     - mvn test
   artifacts:
-    expire_in: 1 week
+    expire_in: 1 day
     paths:
       - "*/target/reports"
 
-Sonar:
-  stage: analyse
+Sonar review:
+  stage: verify
   dependencies:
     - Buggy-core test
     - Buggy-feign test
@@ -66,10 +72,27 @@ Sonar:
         mvn compile sonar:sonar -Dsonar.login=$SONAR_LOGIN $SONAR_ARGS -Dsonar.analysis.mode=preview
       fi
 
+Min Buggy run:
+  stage: verify
+  variables:
+    GIT_STRATEGY: none
+  dependencies:
+    - Build Buggy
+  tags:
+    - touchbit-shell
+  script:
+    - java -jar MinBuggy.jar --check
+    - java -jar MinBuggy.jar
+    - java -jar MinBuggy.jar --force --status 0 --artifacts-url "$CI_PROJECT_URL/-/jobs/$CI_JOB_ID/artifacts/file/"
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - "logs"
+
 Deploy Snapshot:
   stage: deploy
-  dependencies:
-    - Sonar
+  tags:
+    - touchbit-shell
   except:
     - tags
   when: manual
@@ -82,8 +105,8 @@ Deploy Snapshot:
 
 Deploy Buggy:
   stage: deploy
-  dependencies:
-    - Sonar
+  tags:
+    - touchbit-shell
   before_script:
     - mvn dependency:purge-local-repository@local-buggy
     - mvn dependency:get@current-version && CHECK_RESULT=$(echo $?) || CHECK_RESULT=$(echo $?)
