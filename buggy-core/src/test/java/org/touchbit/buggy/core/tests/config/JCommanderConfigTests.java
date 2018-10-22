@@ -20,6 +20,7 @@ import com.beust.jcommander.Parameter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.Buggy;
+import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.config.BParameters;
 import org.touchbit.buggy.core.config.PrimaryConfig;
@@ -368,6 +369,45 @@ class JCommanderConfigTests extends BaseUnitTest {
         assertThat(p.contains("[--pp]...........................publcParameter"), is(true));
         assertThat(p.contains("[--ppm]................................********"), is(true));
         assertThat(p.contains("[--ppp]................................********"), is(true));
+    }
+
+    @Test
+    @DisplayName("Check PrimaryConfig.configurationToString(config) with private parameter")
+    void unitTest_20180919211539() {
+        JCommanderPrimaryConfigFailGetField config = new JCommanderPrimaryConfigFailGetField();
+        config.setPrintAllParameters(true);
+        PrimaryConfig.configurationToString(config);
+    }
+
+    @Test
+    @DisplayName("Check PrimaryConfig.")
+    void unitTest_20180919212056() {
+        JCommanderPrimaryConfigFailGetMethod config = new JCommanderPrimaryConfigFailGetMethod();
+        config.setPrintAllParameters(true);
+        PrimaryConfig.configurationToString(config);
+    }
+
+    public static class JCommanderPrimaryConfigFailGetField implements PrimaryConfig {
+
+        private static final String FF = "--ff";
+        @Parameter(names = {FF})
+        private static String privateParameter = "privateParameter";
+
+    }
+
+    public static class JCommanderPrimaryConfigFailGetMethod implements PrimaryConfig {
+
+        private static final String FF = "--ff";
+
+        @Parameter(names = {FF})
+        private void setPrivateHiddenMethod(String s) {
+
+        }
+
+        private String getPrivateHiddenMethod() {
+            return "getPrivateHiddenMethod";
+        }
+
     }
 
     @SuppressWarnings("unused")
