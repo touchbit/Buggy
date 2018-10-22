@@ -7,7 +7,7 @@
     <groupId>org.touchbit.buggy</groupId>
     <artifactId>buggy</artifactId>
     <name>Buggy</name>
-    <version>0.2.17</version>
+    <version>0.2.18</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -98,17 +98,17 @@
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-core</artifactId>
-                <version>0.2.17</version>
+                <version>0.2.18</version>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-feign</artifactId>
-                <version>0.2.17</version>
+                <version>0.2.18</version>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-okhttp</artifactId>
-                <version>0.2.17</version>
+                <version>0.2.18</version>
             </dependency>
             <!-- Compile -->
             <dependency>
@@ -135,7 +135,7 @@
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-core</artifactId>
-                <version>0.2.17</version>
+                <version>0.2.18</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
