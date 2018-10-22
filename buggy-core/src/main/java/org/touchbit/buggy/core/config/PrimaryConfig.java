@@ -25,7 +25,6 @@ import org.touchbit.buggy.core.config.jcommander.InterfaceConverter;
 import org.touchbit.buggy.core.config.jcommander.ParameterValidator;
 import org.touchbit.buggy.core.config.jcommander.ServiceConverter;
 import org.touchbit.buggy.core.config.jcommander.ValueValidator;
-import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.model.Type;
 import org.touchbit.buggy.core.process.Interface;
 import org.touchbit.buggy.core.process.Service;
@@ -34,7 +33,6 @@ import org.touchbit.buggy.core.utils.StringUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -352,7 +350,9 @@ public interface PrimaryConfig {
                     } else {
                         map.put(Arrays.toString(names), field.get(config.getClass()));
                     }
-                } catch (Exception ignore) { }
+                } catch (Exception ignore) {
+                    // do nothing
+                }
             }
         }
     }
@@ -383,7 +383,9 @@ public interface PrimaryConfig {
         for (Map.Entry<List<String>, Method> getMethod : getMethodsMap.entrySet()) {
             try {
                 map.put(getMethod.getKey().toString(), getMethod.getValue().invoke(config));
-            } catch (Exception ignore) { }
+            } catch (Exception ignore) {
+                // do nothing
+            }
         }
     }
 
