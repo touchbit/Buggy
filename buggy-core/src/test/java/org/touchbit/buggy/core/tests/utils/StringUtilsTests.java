@@ -83,6 +83,13 @@ class StringUtilsTests extends BaseUnitTest {
     }
 
     @Test
+    @DisplayName("WHEN filler with empty symbol THEN default dot")
+    void unitTest_20181029012204() {
+        String msg = StringUtils.filler(null, "", 5, null);
+        assertThat(msg, is("....."));
+    }
+
+    @Test
     @DisplayName("Check out of message length")
     void unitTest_20180914221536() {
         String msg = StringUtils.filler("Test", "+", 5, "OK");

@@ -157,18 +157,22 @@ public class BuggyUtils {
     }
 
     public static Manifest getManifest() {
-        Manifest mf = new Manifest();
+        InputStream inputStream = IOHelper.getResourceAsStream("./META-INF/MANIFEST.MF");
+        if (inputStream == null) {
+            inputStream = IOHelper.getResourceAsStream("META-INF/MANIFEST.MF");
+        }
+        return readManifest(inputStream);
+    }
+
+    private static Manifest readManifest(InputStream inputStream) {
+        Manifest manifest = new Manifest();
         try {
-            InputStream inputStream = IOHelper.getResourceAsStream("./META-INF/MANIFEST.MF");
-            if (inputStream == null) {
-                inputStream = IOHelper.getResourceAsStream("META-INF/MANIFEST.MF");
-            }
             if (inputStream != null) {
-                mf.read(inputStream);
+                manifest.read(inputStream);
             }
-            return mf;
+            return manifest;
         } catch (IOException ignore) {
-            return mf;
+            return manifest;
         }
     }
 

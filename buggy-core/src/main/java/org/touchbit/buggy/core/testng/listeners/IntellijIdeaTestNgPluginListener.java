@@ -36,6 +36,7 @@ public final class IntellijIdeaTestNgPluginListener extends BuggyExecutionListen
 
     public static final String INTELLIJ_IDEA_TEST_RUN = "intellij.idea.test.run";
 
+    @SuppressWarnings("StatementWithEmptyBody")
     public IntellijIdeaTestNgPluginListener() {
         System.setProperty(INTELLIJ_IDEA_TEST_RUN, Boolean.TRUE.toString());
         Properties properties = readPropertiesFileFromResource("buggy.properties");
@@ -43,11 +44,15 @@ public final class IntellijIdeaTestNgPluginListener extends BuggyExecutionListen
         properties.forEach((k, v) -> {
             String key = String.valueOf(k);
             String val = String.valueOf(v);
+            // option key
             if (key.startsWith("-")) {
                 list.add(key);
-            }
-            if (!val.isEmpty()) {
-                list.add(val);
+                // option value
+                if (!val.isEmpty()) {
+                    list.add(val);
+                }
+            } else {
+                // ignore command
             }
         });
         String[] args = list.toArray(new String[0]);

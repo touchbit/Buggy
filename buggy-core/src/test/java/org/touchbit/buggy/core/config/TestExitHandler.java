@@ -15,19 +15,19 @@ public class TestExitHandler extends Buggy.DefaultBuggyProcessor.DefaultBuggySys
     private Integer status = null;
     private String msg = null;
 
-    @Override
-    public void exitRunWithUsage(int status, String msg) {
-        exitRun(status, msg);
-    }
+//    @Override
+//    public void exitRunWithUsage(int status, String msg) {
+//        exitRun(status, msg);
+//    }
 
     public void realExitRunWithUsage(int status, String msg) {
         super.exitRunWithUsage(status, msg);
     }
 
-    @Override
-    public void exitRunWithUsage(int status) {
-        exitRun(status, null);
-    }
+//    @Override
+//    public void exitRunWithUsage(int status) {
+//        exitRun(status, null);
+//    }
 
     @Override
     public void exitRun(int status) {
@@ -48,7 +48,7 @@ public class TestExitHandler extends Buggy.DefaultBuggyProcessor.DefaultBuggySys
 
     @Override
     public void exit(int status) {
-        // do nothing
+        this.status = status;
     }
 
     public void clean() {

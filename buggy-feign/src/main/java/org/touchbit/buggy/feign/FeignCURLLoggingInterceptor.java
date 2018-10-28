@@ -33,16 +33,19 @@ import java.util.function.Consumer;
  */
 public class FeignCURLLoggingInterceptor extends CURLLoggingInterceptor implements RequestInterceptor {
 
-    public FeignCURLLoggingInterceptor() {
-        this(LoggerFactory.getLogger(FeignCURLLoggingInterceptor.class));
+    private String host;
+
+    public FeignCURLLoggingInterceptor(final String host) {
+        this(host, LoggerFactory.getLogger(FeignCURLLoggingInterceptor.class));
     }
 
-    public FeignCURLLoggingInterceptor(final Logger log) {
-        this(log::info);
+    public FeignCURLLoggingInterceptor(final String host, final Logger log) {
+        this(host, log::info);
     }
 
-    public FeignCURLLoggingInterceptor(final Consumer<String> logMethod) {
+    public FeignCURLLoggingInterceptor(final String host, final Consumer<String> logMethod) {
         super(logMethod);
+        this.host = host;
     }
 
     @Override
@@ -55,7 +58,7 @@ public class FeignCURLLoggingInterceptor extends CURLLoggingInterceptor implemen
             byte[] bodyBytes = requestTemplate.body().clone();
             body = new String(bodyBytes, StandardCharsets.UTF_8);
         }
-        super.intercept(method, url, headers, body);
+        super.intercept(method, host + url, headers, body);
     }
 
 }

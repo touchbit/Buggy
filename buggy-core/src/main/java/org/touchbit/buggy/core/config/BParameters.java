@@ -34,12 +34,9 @@ public class BParameters {
     public static final String T = "-t";
     public static final String TYPE = "--type";
     public static final String LOG = "--log";
-    public static final String N = "-n";
-    public static final String NOTIFICATION = "--notify";
     public static final String THREADS = "--threads";
     public static final String F = "-f";
     public static final String FORCE = "--force";
-    public static final String SMOKE = "--smoke";
     public static final String ARTIFACTS_URL = "--artifacts-url";
     public static final String STATUS = "--status";
     public static final String ALL = "--all";

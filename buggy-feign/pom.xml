@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.2.18</version>
+        <version>0.2.19</version>
     </parent>
 
     <artifactId>buggy-feign</artifactId>
     <name>Feign utils</name>
     <description>Feign client utils</description>
-    <version>0.2.18</version>
+    <version>0.2.19</version>
     <packaging>jar</packaging>
 
     <properties>

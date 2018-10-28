@@ -44,15 +44,34 @@ import static org.touchbit.buggy.core.config.BParameters.*;
  * Created by Oleg Shaburov on 30.05.2018
  * shaburov.o.a@gmail.com
  */
-@SuppressWarnings({"unused", "squid:S2696"})
+@SuppressWarnings({"unused", "squid:S1214"})
 @IndexSubclasses
 public interface PrimaryConfig {
 
-    default DefaultValueProvider getDefaultValueProvider() {
-        return new DefaultValueProvider();
+    DefaultValues DEFAULT_VALUES = new DefaultValues();
+
+    class DefaultValues {
+        private Boolean force = false;
+        private Boolean printAll = false;
+        private Boolean printSuite = false;
+        private Boolean printCause = false;
+        private Boolean printLog = false;
+        private Boolean check = false;
+        private Integer threads = 50;
+        private Integer status;
+        private String  logPath = "logs";
+        private String  absoluteLogPath;
+        private String  runDir;
+        private String  artifactsUrl;
+        private Type    type = Type.INTEGRATION;
+        private List<Service>   services = BuggyUtils.findServices();
+        private List<Interface> interfaces = BuggyUtils.findInterfaces();
+
+        /** Utility class. Prohibit instantiation. */
+        private DefaultValues() { }
     }
 
-    @Parameter(names = {QUESTION_MARK, HELP}, help = true, validateValueWith = ValueValidator.class,
+    @Parameter(names = {QUESTION_MARK, HELP}, hidden = true, help = true, validateValueWith = ValueValidator.class,
             description = "Print usage.")
     default void setHelp(Boolean help) {
         // Do nothing
@@ -62,135 +81,117 @@ public interface PrimaryConfig {
         return false;
     }
 
-    @Parameter(names = {SMOKE}, description = "Running only smoke-tests.")
-    default void setSmoke(Boolean smoke) {
-        DefaultValueProvider.smoke = smoke;
-    }
-
-    default Boolean isSmoke() {
-        return DefaultValueProvider.smoke;
-    }
-
     @Parameter(names = {ALL}, hidden = true, description = "Print all configuration parameters.")
     default void setPrintAllParameters(Boolean printAllParameters) {
-        DefaultValueProvider.printAll = printAllParameters;
+        DEFAULT_VALUES.printAll = printAllParameters;
     }
 
     default Boolean isPrintAllParameters() {
-        return DefaultValueProvider.printAll;
+        return DEFAULT_VALUES.printAll;
     }
 
     @Parameter(names = {F, FORCE}, description = "Running all tests, including those that fall.")
     default void setForceRun(Boolean force) {
-        DefaultValueProvider.force = force;
+        DEFAULT_VALUES.force = force;
     }
 
     default Boolean isForceRun() {
-        return DefaultValueProvider.force;
+        return DEFAULT_VALUES.force;
     }
 
     @Parameter(names = {THREADS}, description = "The number of threads to run the test methods.")
     default void setThreads(Integer threads) {
-        DefaultValueProvider.threads = threads;
+        DEFAULT_VALUES.threads = threads;
     }
 
     default Integer getThreads() {
-        return DefaultValueProvider.threads;
+        return DEFAULT_VALUES.threads;
     }
 
     @Parameter(names = {LOG}, hidden = true, description = "Absolute path to the directory for test logs.")
     default void setLogPath(String logDir) {
-        DefaultValueProvider.logPath = logDir;
+        DEFAULT_VALUES.logPath = logDir;
     }
 
     default String getLogPath() {
-        return DefaultValueProvider.logPath;
+        return DEFAULT_VALUES.logPath;
     }
 
     @Parameter(names = {S, SERVICES}, description = "List of tested services in the format: NAME,NAME,NAME.",
             validateWith = ParameterValidator.class, listConverter = ServiceConverter.class)
     default void setServices(List<Service> services) {
-        DefaultValueProvider.services = services;
+        DEFAULT_VALUES.services = services;
     }
 
     default List<Service> getServices() {
-        return DefaultValueProvider.services;
+        return DEFAULT_VALUES.services;
     }
 
     @Parameter(names = {I, INTERFACE}, description = "List of tested interfaces in the format: NAME,NAME,NAME.",
             validateWith = ParameterValidator.class, listConverter = InterfaceConverter.class)
     default void setInterfaces(List<Interface> interfaces) {
-        DefaultValueProvider.interfaces = interfaces;
+        DEFAULT_VALUES.interfaces = interfaces;
     }
 
     default List<Interface> getInterfaces() {
-        return DefaultValueProvider.interfaces;
+        return DEFAULT_VALUES.interfaces;
     }
 
     @Parameter(names = {T, TYPE}, description = "Type of tests to run.", validateWith = ParameterValidator.class)
     default void setType(Type type) {
-        DefaultValueProvider.type = type;
+        DEFAULT_VALUES.type = type;
     }
 
     default Type getType() {
-        return DefaultValueProvider.type;
+        return DEFAULT_VALUES.type;
     }
 
     @Parameter(names = {STATUS}, hidden = true, description = "Completion with the specified status.")
     default void setStatus(Integer status) {
-        DefaultValueProvider.status = status;
+        DEFAULT_VALUES.status = status;
     }
 
     default Integer getStatus() {
-        return DefaultValueProvider.status;
+        return DEFAULT_VALUES.status;
     }
 
-    @Parameter(names = {N, NOTIFICATION}, description = "Notification in ...")
-    default void setNotify(Boolean notify) {
-        DefaultValueProvider.notify = notify;
-    }
-
-    default boolean isNotify() {
-        return DefaultValueProvider.notify;
-    }
-
-    @Parameter(names = {ARTIFACTS_URL}, description = "The storage address for the builds (artifacts).")
+    @Parameter(names = {ARTIFACTS_URL}, hidden = true, description = "The storage address for the builds (artifacts).")
     default void setArtifactsUrl(String artifactsUrl) {
-        DefaultValueProvider.artifactsUrl = artifactsUrl;
+        DEFAULT_VALUES.artifactsUrl = artifactsUrl;
     }
 
     default String getArtifactsUrl() {
-        return DefaultValueProvider.artifactsUrl;
+        return DEFAULT_VALUES.artifactsUrl;
     }
 
-    @Parameter(names = {PRINT_SUITE}, description = "Display information on the Suite in the console log.")
+    @Parameter(names = {PRINT_SUITE}, hidden = true, description = "Display information on the Suite in the console log.")
     default void setPrintSuite(Boolean printSuite) {
-        DefaultValueProvider.printSuite = printSuite;
+        DEFAULT_VALUES.printSuite = printSuite;
     }
 
     default Boolean isPrintSuite() {
-        return DefaultValueProvider.printSuite;
+        return DEFAULT_VALUES.printSuite;
     }
 
-    @Parameter(names = {PRINT_CAUSE}, description = "Print the cause of a fail or skip test in the console log.")
+    @Parameter(names = {PRINT_CAUSE}, hidden = true, description = "Print the cause of a fail or skip test in the console log.")
     default void setPrintCause(Boolean printCause) {
-        DefaultValueProvider.printCause = printCause;
+        DEFAULT_VALUES.printCause = printCause;
     }
 
     default Boolean isPrintCause() {
-        return DefaultValueProvider.printCause;
+        return DEFAULT_VALUES.printCause;
     }
 
-    @Parameter(names = {PRINT_LOG}, description = "Print the test log file path in the console log")
+    @Parameter(names = {PRINT_LOG}, hidden = true, description = "Print the test log file path in the console log")
     default void setPrintLogFile(Boolean printLog) {
-        DefaultValueProvider.printLog = printLog;
+        DEFAULT_VALUES.printLog = printLog;
     }
 
     default Boolean isPrintLogFile() {
-        return DefaultValueProvider.printLog;
+        return DEFAULT_VALUES.printLog;
     }
 
-    @Parameter(names = {V, VERSION}, description = "Print program version", validateValueWith = ValueValidator.class)
+    @Parameter(names = {V, VERSION}, hidden = true, description = "Print program version", validateValueWith = ValueValidator.class)
     default void setVersion(Boolean version) {
         // Do nothing
     }
@@ -199,29 +200,29 @@ public interface PrimaryConfig {
         return false;
     }
 
-    @Parameter(names = {SELF_CHECK}, description = "Check buggy configuration without test run.")
+    @Parameter(names = {SELF_CHECK}, hidden = true, description = "Check buggy configuration without test run.")
     default void setCheck(Boolean check) {
-        DefaultValueProvider.check = check;
+        DEFAULT_VALUES.check = check;
     }
 
     default Boolean isCheck() {
-        return DefaultValueProvider.check;
+        return DEFAULT_VALUES.check;
     }
 
     default void setRunDir(String path) {
-        DefaultValueProvider.runDir = path;
+        DEFAULT_VALUES.runDir = path;
     }
 
     default String getRunDir() {
-        return DefaultValueProvider.runDir;
+        return DEFAULT_VALUES.runDir;
     }
 
     default void setAbsoluteLogPath(String path) {
-        DefaultValueProvider.absoluteLogPath = path;
+        DEFAULT_VALUES.absoluteLogPath = path;
     }
 
     default String getAbsoluteLogPath() {
-        return DefaultValueProvider.absoluteLogPath;
+        return DEFAULT_VALUES.absoluteLogPath;
     }
 
     default File getErrorLogDir() {
@@ -263,65 +264,11 @@ public interface PrimaryConfig {
     @SuppressWarnings("WeakerAccess")
     class DefaultValueProvider implements IDefaultProvider {
 
-        private static Boolean force = false;
-        private static Boolean smoke = false;
-        private static Boolean printAll = false;
-        private static Boolean notify = false;
-        private static Boolean printSuite = false;
-        private static Boolean printCause = false;
-        private static Boolean printLog = false;
-        private static Boolean check = false;
-        private static Integer threads = 50;
-        private static Integer status;
-        private static String  logPath = "logs";
-        private static String  absoluteLogPath;
-        private static String  runDir;
-        private static String artifactsUrl;
-        private static List<Service> services = BuggyUtils.findServices();
-        private static List<Interface> interfaces = BuggyUtils.findInterfaces();
-        private static Type type = Type.INTEGRATION;
-
         @Override
         public String getDefaultValueFor(String optionName) {
-            PrimaryConfig p = new PrimaryConfig() {};
-            switch (optionName) {
-                case S:
-                case SERVICES:
-                    return String.valueOf(p.getServices());
-                case I:
-                case INTERFACE:
-                    return String.valueOf(p.getInterfaces());
-                case FORCE:
-                case F:
-                return String.valueOf(force);
-                case SMOKE:
-                return String.valueOf(smoke);
-                case ALL:
-                return String.valueOf(printAll);
-                case N:
-                case NOTIFICATION:
-                return String.valueOf(notify);
-                case THREADS:
-                return String.valueOf(threads);
-                case LOG:
-                return String.valueOf(logPath);
-                case ARTIFACTS_URL:
-                return String.valueOf(artifactsUrl);
-                case T:
-                case TYPE:
-                    return String.valueOf(type);
-                case PRINT_SUITE:
-                    return String.valueOf(printSuite);
-                case PRINT_CAUSE:
-                    return String.valueOf(printCause);
-                case PRINT_LOG:
-                    return String.valueOf(printLog);
-                case SELF_CHECK:
-                    return String.valueOf(check);
-                default:
-                    return null;
-            }
+            return null;
         }
+
     }
 
     static <T extends PrimaryConfig> String configurationToString(T config) {

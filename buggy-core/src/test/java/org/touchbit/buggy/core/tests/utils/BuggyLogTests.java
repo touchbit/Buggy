@@ -136,7 +136,7 @@ class BuggyLogTests extends BaseUnitTest {
     @Test
     @DisplayName("Check init logger before Buggy")
     void unitTest_20181017010157() {
-        Buggy.setDefault();
+        Buggy.reset();
         new BuggyLog(null, null, null);
         assertExitCode(1, "The logger cannot be initialized before the Buggy configuration.");
     }

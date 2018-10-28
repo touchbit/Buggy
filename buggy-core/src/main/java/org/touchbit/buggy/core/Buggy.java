@@ -57,6 +57,7 @@ public abstract class Buggy {
     private static PrimaryConfig primaryConfig;
     private static Class<? extends PrimaryConfig> primaryConfigClass;
     private static List<Class<? extends SecondaryConfig>> secondaryConfigClasses = new ArrayList<>();
+    private static List<SecondaryConfig> secondaryConfigs = new ArrayList<>();
     private static BuggyProcessor processor = new DefaultBuggyProcessor();
     private static boolean primaryConfigInitialized = false;
     private static boolean testRun = false;
@@ -68,7 +69,7 @@ public abstract class Buggy {
 
     @SuppressWarnings("WeakerAccess")
     public static void delegate(TestNG delegate, String... args) {
-        setDefault();
+        reset();
         testNG = delegate;
         prepare(args);
         if (!primaryConfig.isCheck()) {
@@ -89,20 +90,26 @@ public abstract class Buggy {
         return testRun;
     }
 
-    public static void setDefault() {
+    public static void reset() {
+        testNG = new TestNG();
+        jCommander = null;
         primaryConfigInitialized = false;
         testRun = false;
         buggyErrors.set(0);
         buggyWarns.set(0);
-        jCommander = null;
     }
 
     public static void prepare(String... args) {
         StringUtils.println(CONSOLE_DELIMITER);
         primaryConfig = processor.getPrimaryConfig(primaryConfigClass);
         primaryConfigClass = primaryConfig.getClass();
-        List<SecondaryConfig> secondaryConfigs = processor.getSecondaryConfigList(secondaryConfigClasses);
-        jCommander = processor.getJCommander(primaryConfig, secondaryConfigs, programName, args);
+        secondaryConfigs = processor.getSecondaryConfigList(secondaryConfigClasses);
+        jCommander = processor.prepareJCommander(primaryConfig, secondaryConfigs, programName);
+        try {
+            jCommander.parse(args);
+        } catch (Exception e) {
+            getExitHandler().exitRunWithUsage(1, e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
         primaryConfigInitialized = processor.preparePrimaryConfig(primaryConfig);
         processor.prepareBuggyLog(buggyLogClass);
         StringUtils.println(CONSOLE_DELIMITER);
@@ -160,27 +167,19 @@ public abstract class Buggy {
         }
 
         @Override
-        public JCommander getJCommander(PrimaryConfig primary,
-                                        List<SecondaryConfig> secondary,
-                                        String name,
-                                        String... args) {
-            if (primary == null || secondary == null || args == null) {
-                this.getExitHandler().exitRunWithUsage(1,
+        public JCommander prepareJCommander(PrimaryConfig primary,
+                                            List<SecondaryConfig> secondary,
+                                            String name) {
+            if (primary == null || secondary == null) {
+                this.getExitHandler().exitRun(1,
                         "An invalid 'null' value was received for one of the parameters:" +
                                 "\nPrimaryConfig = " + primary +
-                                "\nSecondaryConfigs list = " + secondary +
-                                "\nargs = " + Arrays.toString(args));
+                                "\nSecondaryConfigs list = " + secondary);
             } else {
-                try {
-                    JCommander jCommander = new JCommander(primary);
-                    jCommander.setProgramName(name);
-                    secondary.forEach(jCommander::addCommand);
-                    jCommander.setDefaultProvider(primary.getDefaultValueProvider());
-                    jCommander.parse(args);
-                    return jCommander;
-                } catch (Exception e) {
-                    this.getExitHandler().exitRunWithUsage(1, e.getClass().getSimpleName() + ": " + e.getMessage());
-                }
+                JCommander jCommander = new JCommander(primary);
+                jCommander.setProgramName(name);
+                secondary.forEach(jCommander::addCommand);
+                return jCommander;
             }
             return null;
         }
@@ -459,4 +458,7 @@ public abstract class Buggy {
         return jCommander;
     }
 
+    public static List<SecondaryConfig> getSecondaryConfigs() {
+        return secondaryConfigs;
+    }
 }

@@ -5,11 +5,8 @@ import com.beust.jcommander.Parameters;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.testng.ITestNGListener;
 import org.testng.TestNG;
 import org.testng.xml.XmlSuite;
-import org.touchbit.buggy.core.BuggyProcessor;
-import org.touchbit.buggy.core.ExitHandler;
 import org.touchbit.buggy.core.testng.TestSuite;
 import org.touchbit.buggy.core.testng.listeners.BuggyListener;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
@@ -134,6 +131,7 @@ class BuggyTests extends BaseUnitTest {
             assertThat(EXIT_HANDLER.getThrowable(), is(nullValue()));
         }
 
+        @SuppressWarnings("unchecked")
         @Test
         @DisplayName("GIVEN SecondaryConfigClassList(2) WHEN getSecondaryConfigList THEN SecondaryConfigList(2)")
         void unitTest_20181021194443() {
@@ -187,9 +185,9 @@ class BuggyTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("GIVEN empty args WHEN getJCommander THEN return JCommander")
+        @DisplayName("GIVEN empty args WHEN prepareJCommander THEN return JCommander")
         void unitTest_20181021200419() {
-            JCommander result = processor.getJCommander(new UnitTestPrimaryConfig(), new ArrayList<>(), "");
+            JCommander result = processor.prepareJCommander(new UnitTestPrimaryConfig(), new ArrayList<>(), "");
             assertThat(result, is(notNullValue()));
             assertThat(EXIT_HANDLER.getMsg(), is(nullValue()));
             assertThat(EXIT_HANDLER.getStatus(), is(nullValue()));
@@ -197,9 +195,9 @@ class BuggyTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("GIVEN name==null WHEN getJCommander THEN return JCommander")
+        @DisplayName("GIVEN name==null WHEN prepareJCommander THEN return JCommander")
         void unitTest_20181021201229() {
-            JCommander result = processor.getJCommander(new UnitTestPrimaryConfig(), new ArrayList<>(), null);
+            JCommander result = processor.prepareJCommander(new UnitTestPrimaryConfig(), new ArrayList<>(), null);
             assertThat(result, is(notNullValue()));
             assertThat(EXIT_HANDLER.getMsg(), is(nullValue()));
             assertThat(EXIT_HANDLER.getStatus(), is(nullValue()));
@@ -207,9 +205,9 @@ class BuggyTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("GIVEN SecondaryConfigList = null WHEN getJCommander THEN return JCommander")
+        @DisplayName("GIVEN SecondaryConfigList = null WHEN prepareJCommander THEN return JCommander")
         void unitTest_20181021201615() {
-            JCommander result = processor.getJCommander(new UnitTestPrimaryConfig(), null, "name");
+            JCommander result = processor.prepareJCommander(new UnitTestPrimaryConfig(), null, "name");
             assertThat(result, is(nullValue()));
             String msg = EXIT_HANDLER.getMsg();
             assertThat(msg, is(containsString("An invalid 'null' value was received for one of the parameters:")));
@@ -219,37 +217,13 @@ class BuggyTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("GIVEN PrimaryConfig = null WHEN getJCommander THEN return JCommander")
+        @DisplayName("GIVEN PrimaryConfig = null WHEN prepareJCommander THEN return JCommander")
         void unitTest_20181021202628() {
-            JCommander result = processor.getJCommander(null, new ArrayList<>(), "name");
+            JCommander result = processor.prepareJCommander(null, new ArrayList<>(), "name");
             assertThat(result, is(nullValue()));
             String msg = EXIT_HANDLER.getMsg();
             assertThat(msg, is(containsString("An invalid 'null' value was received for one of the parameters:")));
             assertThat(msg, is(containsString("PrimaryConfig = null")));
-            assertThat(EXIT_HANDLER.getStatus(), is(1));
-            assertThat(EXIT_HANDLER.getThrowable(), is(nullValue()));
-        }
-
-        @Test
-        @DisplayName("GIVEN args = null WHEN getJCommander THEN return JCommander")
-        void unitTest_20181021202801() {
-            JCommander result = processor.getJCommander(new UnitTestPrimaryConfig(), new ArrayList<>(), "name", null);
-            assertThat(result, is(nullValue()));
-            String msg = EXIT_HANDLER.getMsg();
-            assertThat(msg, is(containsString("An invalid 'null' value was received for one of the parameters:")));
-            assertThat(msg, is(containsString("args = null")));
-            assertThat(EXIT_HANDLER.getStatus(), is(1));
-            assertThat(EXIT_HANDLER.getThrowable(), is(nullValue()));
-        }
-
-        @Test
-        @DisplayName("GIVEN args =  WHEN getJCommander THEN return JCommander")
-        void unitTest_20181021202838() {
-            JCommander result = processor
-                    .getJCommander(new UnitTestPrimaryConfig(), new ArrayList<>(), "name", "--invalid-parameter");
-            assertThat(result, is(nullValue()));
-            assertThat(EXIT_HANDLER.getMsg(), is("ParameterException: Was passed main parameter '--invalid-parameter' " +
-                    "but no main parameter was defined in your arg class"));
             assertThat(EXIT_HANDLER.getStatus(), is(1));
             assertThat(EXIT_HANDLER.getThrowable(), is(nullValue()));
         }
@@ -563,26 +537,43 @@ class BuggyTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("GIVEN Buggy.prepare() WHEN getJCommander() THEN not null")
+    @DisplayName("GIVEN Buggy.prepare() WHEN prepare() THEN not null")
     void unitTest_20181022020129() {
         Buggy.prepare();
         assertThat(Buggy.getJCommander(), is(notNullValue()));
     }
 
     @Test
-    @DisplayName("GIVEN Buggy.prepare() WHEN getJCommander() THEN not null")
+    @DisplayName("GIVEN Buggy.prepare() WHEN prepare() THEN not null")
     void unitTest_20181022020247() {
         Buggy.setPrimaryConfigClass(null);
         Buggy.prepare();
     }
 
     @Test
-    @DisplayName("GIVEN --print-log WHEN jar run THEN console log contains test log path")
+    @DisplayName("GIVEN Buggy.main WHEN --print-log THEN console log contains test log path")
     void unitTest_20181022014156() {
         Buggy.main(new String[]{"--print-log"});
         assertThat(TEST_LOGGER.takeLoggedMessages(),
                 is(hasItems("test_20181016172050.....................SUCCESS \u2B9E " +
                         "file://" + Buggy.getPrimaryConfig().getAbsoluteLogPath() + "/tests/test_20181016172050.log")));
+    }
+
+    @Test
+    @DisplayName("GIVEN Buggy.prepare WHEN --invalid-parameter THEN MissingCommandException")
+    void unitTest_20181021202838() {
+        Buggy.prepare("--invalid-parameter");
+        assertThat(EXIT_HANDLER.getMsg(), is("MissingCommandException: Expected a command, got --invalid-parameter"));
+        assertThat(EXIT_HANDLER.getStatus(), is(1));
+        assertThat(EXIT_HANDLER.getThrowable(), is(nullValue()));
+    }
+
+    @Test
+    @DisplayName("GIVEN main WHEN -? THEN print usage")
+    void unitTest_20181028173318() {
+        Buggy.main(new String[]{"-?"});
+        assertThat(SYSTEM_OUT_LOGGER.takeLoggedMessages().toString(),
+                containsString("Usage: Buggy [options] [command] [command options]"));
     }
 
     @Test
@@ -627,6 +618,15 @@ class BuggyTests extends BaseUnitTest {
         Buggy.delegate(testNG);
         assertThat(EXIT_HANDLER.getMsg(), is("TestNG safely died."));
         assertThat(EXIT_HANDLER.getStatus(), is(60));
+    }
+
+    @Test
+    @DisplayName("WHEN getSecondaryConfigs THEN UnitTestSecondaryConfig")
+    void unitTest_20181029032307() {
+        Buggy.prepare();
+        assertThat(Buggy.getSecondaryConfigs(), contains(
+                instanceOf(UnitTestSecondaryConfig.class)
+        ));
     }
 
     public static class TestNGDieProcessor extends UnitTestBuggyProcessor {

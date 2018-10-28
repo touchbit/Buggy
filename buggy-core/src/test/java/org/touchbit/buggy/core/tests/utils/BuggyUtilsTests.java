@@ -15,11 +15,16 @@ import org.touchbit.buggy.core.process.Interface;
 import org.touchbit.buggy.core.process.Service;
 import org.touchbit.buggy.core.testng.TestSuite;
 import org.touchbit.buggy.core.utils.BuggyUtils;
+import org.touchbit.buggy.core.utils.IOHelper;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -114,6 +119,47 @@ class BuggyUtilsTests extends BaseUnitTest {
     @DisplayName("Check getManifest()")
     void unitTest_20180915185908() {
         assertThat(BuggyUtils.getManifest(), is(notNullValue()));
+    }
+
+    @Test
+    @DisplayName("GIVEN InputStream == null WHEN readManifest THEN return empty Manifest")
+    void unitTest_20181029013041() throws Exception {
+        Class<BuggyUtils> buggyUtilsClass = BuggyUtils.class;
+        Method readManifest = buggyUtilsClass.getDeclaredMethod("readManifest", InputStream.class);
+        readManifest.setAccessible(true);
+        InputStream inputStream = null;
+        Manifest manifest = (Manifest) readManifest.invoke(buggyUtilsClass, inputStream);
+        assertThat(manifest.getMainAttributes().entrySet(), is(empty()));
+    }
+
+    @Test
+    @DisplayName("GIVEN InputStream WHEN readManifest THEN return Manifest")
+    void unitTest_20181029013955() throws Exception {
+        Class<BuggyUtils> buggyUtilsClass = BuggyUtils.class;
+        Method readManifest = buggyUtilsClass.getDeclaredMethod("readManifest", InputStream.class);
+        readManifest.setAccessible(true);
+        InputStream inputStream = IOHelper.getResourceAsStream("./META-INF/MANIFEST.MF");
+        if (inputStream == null) {
+            inputStream = IOHelper.getResourceAsStream("META-INF/MANIFEST.MF");
+        }
+        Manifest manifest = (Manifest) readManifest.invoke(buggyUtilsClass, inputStream);
+        assertThat(manifest.getMainAttributes().entrySet(), is(not(empty())));
+    }
+
+    @Test
+    @DisplayName("GIVEN InputStream IOException WHEN readManifest THEN return empty Manifest")
+    void unitTest_20181029014220() throws Exception {
+        Class<BuggyUtils> buggyUtilsClass = BuggyUtils.class;
+        Method readManifest = buggyUtilsClass.getDeclaredMethod("readManifest", InputStream.class);
+        readManifest.setAccessible(true);
+        InputStream inputStream = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("unitTest_20181029014220");
+            }
+        };
+        Manifest manifest = (Manifest) readManifest.invoke(buggyUtilsClass, inputStream);
+        assertThat(manifest.getMainAttributes().entrySet(), is(empty()));
     }
 
     @Test

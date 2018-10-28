@@ -168,7 +168,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
     @DisplayName("Check report with ArtifactsUrl")
     void unitTest_20180920231553() {
         StringBuilder sb = new StringBuilder();
-        Buggy.setProgramName("unitTest_20180920231553");
+        Buggy.setProgramName(null);
         Notifier notifier = sb::append;
         Buggy.getPrimaryConfig().setArtifactsUrl("http://build.url");
         try {
@@ -188,8 +188,7 @@ class BaseTelegramNotifierTests extends BaseUnitTest {
                 }
             };
             telegram.onExecutionFinish();
-            assertThat(sb.toString(), is("*unitTest_20180920231553*\n" +
-                    "Run Results:\n" +
+            assertThat(sb.toString(), is("Run Results:\n" +
                     "`--------------------------------`\n" +
                     "`Running tests..................`6\n" +
                     "`--------------------------------`\n" +
