@@ -20,6 +20,13 @@ Build Buggy:
     paths:
       - "*Buggy.jar"
 
+Build Doc:
+  stage: build
+  tags:
+    - touchbit-shell
+  script:
+    - make build-doc-image
+
 Buggy-core test:
   stage: test
   tags:
@@ -127,6 +134,7 @@ Deploy Buggy:
     - tags
   script:
     - mvn versions:set -DnewVersion=$CI_COMMIT_TAG
-    - mvn deploy
+    # do not use -Dmaven.test.skip=true
+    - mvn deploy -DskipTests
     - BUGGY_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
     - "curl -X POST \"https://api.telegram.org/bot$BABBLER_TOKEN/sendMessage?chat_id=$TELEGRAM_BUGGY_CI_CD_CHAT_ID&disable_notification=false&parse_mode=Markdown&text=*Buggy*%0ANew version deployed: %5B${BUGGY_VERSION}%5D%28https://touchbit.org/repository/org/touchbit/buggy/buggy/${BUGGY_VERSION}/%29\""

@@ -1,5 +1,7 @@
-Buggy документация
-==================
+Buggy
+=====
+
+**Buggy** - это надстройка над **TestNG** для быстрого создания/подключения тестового проекта, разработки и вариативнго запуска автотестов.
 
 Основная документация содержит следующие разделы:
 
@@ -8,13 +10,15 @@ Buggy документация
     :caption: Общая
     :name: sec-general
 
-    about/index
+    general/about
+    general/config
 
 .. toctree::
     :maxdepth: 1
     :caption: Начало работы
     :name: sec-getting-started
 
+    getting_started/add_project/index
     getting_started/init_dependency/index
 
 .. toctree::
