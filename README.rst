@@ -203,14 +203,49 @@ Readthedocs документация (`RU <https://buggy.readthedocs.io/ru/maste
 
 #. `Notex <https://www.notex.ch/editor>`_
 
-Полная документация находится в директории docs и предназначена для деплоя в `readthedocs.org <https://readthedocs.org/>`_.
+Исходники документации находятся в директории docs и предназначены для деплоя на сайт `buggy.readthedocs.io <https://buggy.readthedocs.io/ru/latest/>`_.
 
 Точка входа для разработки документации: docs/index.rst
 
 Точка входа для управление конфигурацией сборки документации: docs/conf.py
 
+Локальная сборка html
+"""""""""""""""""""""
+
+Для локальной сборки проекта с документацией необходимо:
+
+#. Установить `python 3 <https://www.python.org/downloads/>`_
+#. Установить `sphinx-doc <http://www.sphinx-doc.org/en/master/usage/installation.html>`_
+#. Выполнить сборку ``sphinx-build -W -b html ./docs ./site``
+
+В результате в директории ``./site`` будет находится reStructuredText документация в стиле сайта ``readthedocs.org``.
+
+Локальная сборка/запуск docker образа
+"""""""""""""""""""""""""""""""""""""
+
+**Сборка образа**
+
+* выполнив ``make build-doc-image`` (при условии установленного ``make``)
+
+или
+
+* выполнив ``docker build --no-cache -t buggy/doc -f ./docs/Dockerfile .`` (точка в конце обязательна)
+
+В результате выполнения будет создан образ ``buggy/doc:latest``
+
+**Запуск контейнера**
+
+* docker run -p 80:80 buggy/doc
+
+или
+
+* make run-doc-image
+
+Юнит тесты
+^^^^^^^^^^
+
 Запуск unit тестов с тестовым покрытием (Intellij IDEA)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 #. Toolbar ⮞ Run ⮞ Edit Configurations ⮞ Templates ⮞ JUnit
 
