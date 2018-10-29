@@ -76,7 +76,7 @@ public abstract class BaseUnitTest {
 
     @BeforeEach
     public void clean() {
-        Buggy.setDefault();
+        Buggy.reset();
         Buggy.setBuggyProcessor(new UnitTestBuggyProcessor());
         Buggy.setPrimaryConfigClass(UnitTestPrimaryConfig.class);
         Buggy.setSecondaryConfigClasses(new ArrayList<>());

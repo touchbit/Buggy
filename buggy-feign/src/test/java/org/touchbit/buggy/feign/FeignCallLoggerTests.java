@@ -6,6 +6,8 @@ import org.touchbit.buggy.core.tests.BaseUnitTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by Oleg Shaburov on 13.10.2018
@@ -20,6 +22,14 @@ class FeignCallLoggerTests extends BaseUnitTest {
         FeignCallLogger feignCallLogger = new FeignCallLogger(TEST_LOGGER);
         feignCallLogger.log("Class.method()", "format %s", "object");
         assertThat(TEST_LOGGER.takeLoggedMessages(), contains("[Class.method] format object"));
+    }
+
+    @Test
+    @DisplayName("WHEN FeignCallLogger() THEN no exception")
+    void unitTest_20181028160734() {
+        FeignCallLogger feignCallLogger = new FeignCallLogger();
+        feignCallLogger.log("Class.method()", "format %s", "object");
+        assertThat(TEST_LOGGER.takeLoggedMessages(), is(empty()));
     }
 
 }

@@ -47,10 +47,14 @@ public class ValueValidator implements IValueValidator {
     }
 
     private static void printManifestInfo() {
+        Attributes attributes = BuggyUtils.getManifestAttributes();
+        printAttributes(attributes);
+    }
+
+    private static void printAttributes(Attributes attributes) {
         StringJoiner stringJoiner = new StringJoiner("\n");
-        Attributes atts = BuggyUtils.getManifestAttributes();
-        if (atts != null) {
-            atts.entrySet().stream()
+        if (attributes != null) {
+            attributes.entrySet().stream()
                     .filter(e -> String.valueOf(e.getKey()).startsWith("Implementation") && e.getValue() != null)
                     .forEach(e -> stringJoiner.add(
                             underscoreFiller(String.valueOf(e.getKey()).replace("Implementation-", ""),

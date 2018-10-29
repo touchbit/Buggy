@@ -20,7 +20,6 @@ import com.beust.jcommander.Parameter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.Buggy;
-import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.config.BParameters;
 import org.touchbit.buggy.core.config.PrimaryConfig;
@@ -31,8 +30,11 @@ import org.touchbit.buggy.core.process.Interface;
 import org.touchbit.buggy.core.process.Service;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -54,30 +56,11 @@ class JCommanderConfigTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check PrimaryConfig.getDefaultValueProvider()")
-    void unitTest_20180919192728() {
-        assertThat(Buggy.getPrimaryConfig().getDefaultValueProvider(), instanceOf(PrimaryConfig.DefaultValueProvider.class));
-    }
-
-    @Test
     @DisplayName("Check PrimaryConfig.isHelp()")
     void unitTest_20180919193201() {
         assertThat(Buggy.getPrimaryConfig().isHelp(), is(false));
         Buggy.getPrimaryConfig().setHelp(true);
         assertThat(Buggy.getPrimaryConfig().isHelp(), is(false));
-    }
-
-    @Test
-    @DisplayName("Check PrimaryConfig.isSmoke()")
-    void unitTest_20180919193410() {
-        boolean isSmoke = Buggy.getPrimaryConfig().isSmoke();
-        try {
-            assertThat(isSmoke, is(false));
-            Buggy.getPrimaryConfig().setSmoke(true);
-            assertThat(Buggy.getPrimaryConfig().isSmoke(), is(true));
-        } finally {
-            Buggy.getPrimaryConfig().setSmoke(isSmoke);
-        }
     }
 
     @Test
@@ -181,19 +164,6 @@ class JCommanderConfigTests extends BaseUnitTest {
             assertThat(Buggy.getPrimaryConfig().getStatus(), is(10));
         } finally {
             Buggy.getPrimaryConfig().setStatus(status);
-        }
-    }
-
-    @Test
-    @DisplayName("Check PrimaryConfig.setNotify(Boolean notify)")
-    void unitTest_20180919201358() {
-        boolean notify = Buggy.getPrimaryConfig().isNotify();
-        try {
-            assertThat(notify, is(false));
-            Buggy.getPrimaryConfig().setNotify(true);
-            assertThat(Buggy.getPrimaryConfig().isNotify(), is(true));
-        } finally {
-            Buggy.getPrimaryConfig().setNotify(notify);
         }
     }
 
@@ -386,6 +356,61 @@ class JCommanderConfigTests extends BaseUnitTest {
         config.setPrintAllParameters(true);
         PrimaryConfig.configurationToString(config);
     }
+
+    @Test
+    @DisplayName("GIVEN private constructor WHEN new DefaultValues() THEN IllegalStateException")
+    void unitTest_20181028233416() throws Exception {
+        Constructor<PrimaryConfig.DefaultValues> constructor = PrimaryConfig.DefaultValues.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        constructor.newInstance();
+    }
+
+    @Test
+    @DisplayName("GIVEN DefaultValueProvider WHEN any value THEN return null")
+    void unitTest_20181028233806() {
+        PrimaryConfig.DefaultValueProvider provider = new PrimaryConfig.DefaultValueProvider();
+        assertThat(provider.getDefaultValueFor(""), is(nullValue()));
+        assertThat(provider.getDefaultValueFor("-?"), is(nullValue()));
+        assertThat(provider.getDefaultValueFor(null), is(nullValue()));
+        assertThat(provider.getDefaultValueFor("unitTest_20181028233806"), is(nullValue()));
+    }
+
+    @Test
+    @DisplayName("GIVEN  WHEN  THEN")
+    void unitTest_20181029002410() {
+        boolean isPrintAllParameters = Buggy.getPrimaryConfig().isPrintAllParameters();
+        try {
+            Map<String, Object> map = new HashMap<>();
+            JCommanderPrimaryConfigGetField config = new JCommanderPrimaryConfigGetField() {};
+            config.setPrintAllParameters(false);
+            PrimaryConfig.addFieldValuesToMap(config, map);
+            assertThat(map.get("[-ffff]"), is("publicParameter"));
+            assertThat(map.get("[-hhhh]"), is(not("publicHiddenParameter")));
+            assertThat(map.size(), is(1));
+            config.setPrintAllParameters(true);
+            map.clear();
+            PrimaryConfig.addFieldValuesToMap(config, map);
+            assertThat(map.get("[-ffff]"), is("publicParameter"));
+            assertThat(map.get("[-hhhh]"), is("publicHiddenParameter"));
+            assertThat(map.size(), is(2));
+        } finally {
+            Buggy.getPrimaryConfig().setPrintAllParameters(isPrintAllParameters);
+        }
+    }
+
+    public static class JCommanderPrimaryConfigGetField implements PrimaryConfig {
+        private static final String F = "-ffff";
+        private static final String H = "-hhhh";
+
+        @Parameter(names = {F})
+        public static String publicParameter = "publicParameter";
+
+        @Parameter(names = {H}, hidden = true)
+        public static String publicHiddenParameter = "publicHiddenParameter";
+
+        public static String parameter = "parameter";
+    }
+
 
     public static class JCommanderPrimaryConfigFailGetField implements PrimaryConfig {
 

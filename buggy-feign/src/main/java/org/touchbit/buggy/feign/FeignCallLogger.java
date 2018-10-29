@@ -1,6 +1,7 @@
 package org.touchbit.buggy.feign;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
@@ -11,6 +12,10 @@ import java.util.function.Consumer;
 public class FeignCallLogger extends feign.Logger {
 
     private final Consumer<String> logMethod;
+
+    public FeignCallLogger() {
+        this(LoggerFactory.getLogger(FeignCallLogger.class));
+    }
 
     public FeignCallLogger(final Logger logger) {
         this(logger::info);

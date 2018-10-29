@@ -107,7 +107,6 @@ public class TestSuite extends XmlSuite {
             log.warn("There are no classes for the test package: {}", packageName);
             return;
         }
-        log.debug("Suite {}. Add test package (XmlTest): {}", this.getName(), packageName);
         List<Class<?>> classList = new ArrayList<>(Arrays.asList(classes));
         removeDuplicatesClasses(classList);
         List<XmlClass> xmlClasses = new ArrayList<>();
@@ -122,15 +121,21 @@ public class TestSuite extends XmlSuite {
                 break;
             }
         }
-        if (testPackage == null) {
-            testPackage = new XmlTest(this);
-        }
-        testPackage.setName(packageName);
-        testPackage.getXmlClasses().addAll(xmlClasses);
-        if (log.isDebugEnabled()) {
-            StringJoiner stringJoiner = new StringJoiner("\n    ", "[\n    ", "\n]");
-            testPackage.getXmlClasses().forEach(c -> stringJoiner.add(c.getName()));
-            log.debug("{} classes:\n{}", packageName, stringJoiner);
+        if (!xmlClasses.isEmpty()) {
+            if (testPackage == null) {
+                testPackage = new XmlTest(this);
+            }
+            testPackage.setName(packageName);
+            testPackage.getXmlClasses().addAll(xmlClasses);
+            log.debug("Suite {}. Add test package (XmlTest): {}", this.getName(), packageName);
+            if (log.isDebugEnabled()) {
+                StringJoiner stringJoiner = new StringJoiner("\n    ", "[\n    ", "\n]");
+                testPackage.getXmlClasses().forEach(c -> stringJoiner.add(c.getName()));
+                log.debug("{} classes:\n{}", packageName, stringJoiner);
+            }
+        } else {
+            log.debug("The {} test package (XmlTest) does not contain unique test classes " +
+                    "and has not been added to the {} test suite.", packageName, this.getName());
         }
     }
 
@@ -174,7 +179,7 @@ public class TestSuite extends XmlSuite {
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + ((suite == null) ? 0 : suite.hashCode());
+        return 31 * super.hashCode() + suite.hashCode();
     }
 
     public Suite getSuite() {

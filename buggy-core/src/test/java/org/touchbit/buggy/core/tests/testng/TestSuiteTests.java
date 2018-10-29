@@ -230,6 +230,24 @@ class TestSuiteTests extends BaseUnitTest {
         assertThat(testSuite1.hashCode(), not(testSuite2.hashCode()));
     }
 
+    @Test
+    @DisplayName("GIVEN  WHEN  THEN")
+    void unitTest_20181029004902() {
+        TestSuite testSuite = new TestSuite("TestSuiteName", 120, TESTS, SUITE);
+        testSuite.setLog(TEST_LOGGER);
+        TEST_LOGGER.whenDebugEnabled(false);
+        testSuite.addTestPackage("TestPackage_1", Object.class);
+        assertThat(TEST_LOGGER.takeLoggedMessages(),
+                contains("Suite TestSuiteName. Add test package (XmlTest): TestPackage_1")
+        );
+        TEST_LOGGER.whenDebugEnabled(true);
+        testSuite.addTestPackage("TestPackage_2", Object.class);
+        assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
+                "The test package TestPackage_1 already contains a class: [XmlClass class=java.lang.Object]",
+                "The TestPackage_2 test package (XmlTest) does not contain unique test classes and has not been added to the TestSuiteName test suite.")
+        );
+    }
+
     private static final Suite SUITE2 = new Suite() {
         @Override
         public Class<? extends Annotation> annotationType() { return Suite.class; }

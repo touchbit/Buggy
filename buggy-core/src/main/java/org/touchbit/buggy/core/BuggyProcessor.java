@@ -20,7 +20,7 @@ public interface BuggyProcessor {
 
     List<SecondaryConfig> getSecondaryConfigList(List<Class<? extends SecondaryConfig>> secondaryConfigClasses);
 
-    JCommander getJCommander(PrimaryConfig primary, List<SecondaryConfig> secondary, String name, String... args);
+    JCommander prepareJCommander(PrimaryConfig primary, List<SecondaryConfig> secondary, String name);
 
     boolean preparePrimaryConfig(PrimaryConfig primaryConfig);
 

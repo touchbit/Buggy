@@ -33,10 +33,12 @@ import static org.hamcrest.Matchers.contains;
 @DisplayName("Feign http client cURL logging interceptors tests")
 class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
 
+    private static final String TARGET = "http//touchbit.org";
+
     @Test
     @DisplayName("Check FeignCURLLoggingInterceptor(final Consumer<String> logMethod)")
     void unitTest_20181013143711() {
-        FeignCURLLoggingInterceptor interceptor = new FeignCURLLoggingInterceptor(TEST_LOGGER::info);
+        FeignCURLLoggingInterceptor interceptor = new FeignCURLLoggingInterceptor(TARGET, TEST_LOGGER::info);
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", new ArrayList<String>() {{
                 add("value");
@@ -45,31 +47,31 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
         }};
         RequestTemplate rt = new RequestTemplate()
                 .method("POST")
-                .append("http//touchbit.org")
+                .append("/api/v1")
                 .headers(headers)
                 .body("test-body");
         interceptor.apply(rt);
         assertThat(TEST_LOGGER.takeLoggedMessages(),
-                contains("Playback curl:\ncurl -i -k -X POST 'http//touchbit.org' -H 'test_header: value; charset=utf-8' -H 'Content-Length: 9' --data 'test-body'"
+                contains("Playback curl:\ncurl -i -k -X POST 'http//touchbit.org/api/v1' -H 'test_header: value; charset=utf-8' -H 'Content-Length: 9' --data 'test-body'"
                 ));
     }
 
     @Test
     @DisplayName("Check FeignCURLLoggingInterceptor(final Logger log)")
     void unitTest_20181013151037() {
-        new FeignCURLLoggingInterceptor(TEST_LOGGER);
+        new FeignCURLLoggingInterceptor(TARGET, TEST_LOGGER);
     }
 
     @Test
     @DisplayName("Check FeignCURLLoggingInterceptor()")
     void unitTest_20181013153128() {
-        new FeignCURLLoggingInterceptor();
+        new FeignCURLLoggingInterceptor(TARGET);
     }
 
     @Test
     @DisplayName("Check FeignCURLLoggingInterceptor if body == null")
     void unitTest_20181013162214() {
-        FeignCURLLoggingInterceptor interceptor = new FeignCURLLoggingInterceptor(TEST_LOGGER::info);
+        FeignCURLLoggingInterceptor interceptor = new FeignCURLLoggingInterceptor(TARGET, TEST_LOGGER::info);
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", new ArrayList<String>() {{
                 add("value");
@@ -78,12 +80,12 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
         }};
         RequestTemplate rt = new RequestTemplate()
                 .method("POST")
-                .append("http//touchbit.org")
+                .append("/api/v1")
                 .headers(headers)
                 .body(null);
         interceptor.apply(rt);
         assertThat(TEST_LOGGER.takeLoggedMessages(),
-                contains("Playback curl:\ncurl -i -k -X POST 'http//touchbit.org' -H 'test_header: value; charset=utf-8' -H 'Content-Length: 0'"
+                contains("Playback curl:\ncurl -i -k -X POST 'http//touchbit.org/api/v1' -H 'test_header: value; charset=utf-8' -H 'Content-Length: 0'"
                 ));
     }
 

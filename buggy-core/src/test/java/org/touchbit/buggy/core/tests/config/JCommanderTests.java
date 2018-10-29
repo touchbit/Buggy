@@ -3,6 +3,7 @@ package org.touchbit.buggy.core.tests.config;
 import com.beust.jcommander.ParameterException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.config.jcommander.*;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
@@ -16,8 +17,11 @@ import org.touchbit.buggy.core.utils.IOHelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -168,6 +172,7 @@ class JCommanderTests extends BaseUnitTest {
     @Test
     @DisplayName("Check ValueValidator.validate(QUESTION_MARK & HELP)")
     void unitTest_20180917001718() {
+        Buggy.prepare();
         ValueValidator validator = new ValueValidator();
         validator.validate(QUESTION_MARK, "true");
         assertExitCode(0);
@@ -256,6 +261,45 @@ class JCommanderTests extends BaseUnitTest {
         ParameterValidator validator = new ParameterValidator();
         validator.validate("--fake", "");
         validator.validate("--fake", null);
+    }
+
+    @Test
+    @DisplayName("GIVEN null WHEN printAttributes() THEN empty version information")
+    void unitTest_20181028234354() throws Exception {
+        Class<ValueValidator> clazz = ValueValidator.class;
+        Method method = clazz.getDeclaredMethod("printAttributes", Attributes.class);
+        method.setAccessible(true);
+        Attributes attributes = null;
+        method.invoke(clazz, attributes);
+        assertThat(SYSTEM_OUT_LOGGER.takeLoggedMessages(), is(empty()));
+    }
+
+    @Test
+    @DisplayName("GIVEN empty Attributes WHEN printAttributes() THEN empty version information")
+    void unitTest_20181028235141() throws Exception {
+        Class<ValueValidator> clazz = ValueValidator.class;
+        Method method = clazz.getDeclaredMethod("printAttributes", Attributes.class);
+        method.setAccessible(true);
+        Attributes attributes = new Attributes();
+        method.invoke(clazz, attributes);
+        assertThat(SYSTEM_OUT_LOGGER.takeLoggedMessages(), is(empty()));
+    }
+
+    @Test
+    @DisplayName("GIVEN Attributes WHEN printAttributes() THEN empty version information")
+    void unitTest_20181028235254() throws Exception {
+        Class<ValueValidator> clazz = ValueValidator.class;
+        Method method = clazz.getDeclaredMethod("printAttributes", Attributes.class);
+        method.setAccessible(true);
+        Attributes attributes = new Attributes();
+        attributes.put(new Attributes.Name("Implementation-unit-test"), "unitTest_20181028235254");
+        attributes.put(new Attributes.Name("Implementation-unit-test-null"), null);
+        attributes.put(new Attributes.Name("Another-attribute"), "attribute");
+        method.invoke(clazz, attributes);
+        assertThat(SYSTEM_OUT_LOGGER.takeLoggedMessages(), contains(
+                "unit-test_______________unitTest_20181028235254",
+                "==============================================="
+        ));
     }
 
     private static class PrivateTestInterfaceJC extends Interface {
