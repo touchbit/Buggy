@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.2.20</version>
+        <version>0.2.22</version>
     </parent>
 
     <artifactId>buggy-okhttp</artifactId>
     <name>okHTTP3 utils</name>
     <description>okHTTP3 client utils</description>
-    <version>0.2.20</version>
+    <version>0.2.22</version>
     <packaging>jar</packaging>
 
     <properties>
