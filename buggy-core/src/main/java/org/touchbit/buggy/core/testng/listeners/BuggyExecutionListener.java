@@ -46,7 +46,7 @@ import static org.touchbit.buggy.core.utils.StringUtils.*;
 
 /**
  * Listener for processing executable tests.
- *
+ * <p>
  * Created by Shaburov Oleg on 31.07.2017.
  */
 @SuppressWarnings({"unused", "UnusedReturnValue", "WeakerAccess", "squid:S2629"})
@@ -55,7 +55,8 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
 
     private static final ThreadLocal<List<String>> STEPS = new ThreadLocal<>();
 
-    public BuggyExecutionListener() { }
+    public BuggyExecutionListener() {
+    }
 
     public BuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger) {
         testLog = testLogger;
@@ -297,12 +298,11 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     }
 
     public void disableTestsByStatus(ISuite suite) {
-        List<ITestNGMethod> methods = suite.getAllMethods();
-        methods.forEach(method -> {
+        suite.getAllMethods().forEach(method -> {
             Details details = getDetails(method);
-            if (method.isTest()) {
-                if (details != null && method.getInvocationCount() > 0) {
-                    switch(details.status()) {
+            if (details != null) {
+                if (method.getInvocationCount() > 0) {
+                    switch (details.status()) {
                         case EXP_FIX:
                         case EXP_IMPL:
                         case BLOCKED:
@@ -313,11 +313,11 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
                         default:
                             // do nothing
                     }
-                } else {
-                    Buggy.incrementBuggyWarns();
-                    frameworkLog.warn("The test method {} does not contain the @Details annotation",
-                            method.getMethodName());
                 }
+            } else {
+                Buggy.incrementBuggyWarns();
+                frameworkLog.warn("The test method {} does not contain the @Details annotation",
+                        method.getMethodName());
             }
         });
     }
@@ -482,7 +482,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         consoleLog.info(StringUtils.dotFiller("Total tests run", 47, testCount.get()));
         consoleLog.info(StringUtils.dotFiller("Successful tests", 47, testCount.get() - errorCount));
         checkWarnAndPrint("Skipped tests", skippedTests.get());
-        if (errorCount > 0 ) {
+        if (errorCount > 0) {
             checkWarnAndPrint("Failed tests", errorCount);
             checkErrorAndPrint("New Errors", newError.get());
             println(CONSOLE_DELIMITER);

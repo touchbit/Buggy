@@ -961,16 +961,16 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         }
 
         @Test
-        @DisplayName("Ignore disabling the test, if method invocation count <= 0")
+        @DisplayName("Ignore disabling the test, if method has @Details and invocation count <= 0")
         void unitTest_20180922063213() {
             UnitTestBuggyExecutionListener listener = new UnitTestBuggyExecutionListener(getDetails(SUCCESS));
-            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithoutDetails");
+            ITestNGMethod method = getMockITestNGMethod(TestNGTestClassWithSuite.class, "iTestResultMethodWithDetails");
             when(method.getInvocationCount()).thenReturn(0);
             List<ITestNGMethod> allMethods = new ArrayList<>();
             allMethods.add(method);
             ISuite suite = mock(ISuite.class);
             when(suite.getAllMethods()).thenReturn(allMethods);
-            int expWarn = Buggy.getBuggyWarns() + 1;
+            int expWarn = Buggy.getBuggyWarns();
             listener.disableTestsByStatus(suite);
             assertThat(listener.method, is(nullValue()));
             assertThat(listener.status, is(nullValue()));
