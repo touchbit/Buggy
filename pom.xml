@@ -416,6 +416,7 @@
                     <executions>
                         <execution>
                             <phase>install</phase>
+                            <id>intall-this-jar</id>
                             <configuration>
                                 <file>target/${project.artifactId}-${project.version}.jar</file>
                                 <sources>target/${project.artifactId}-${project.version}-sources.jar</sources>
