@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static org.testng.xml.XmlSuite.FailurePolicy.CONTINUE;
 import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
 
 /**
@@ -311,6 +312,7 @@ public abstract class Buggy {
             testNG.setXmlSuites(xmlSuites);
             testNG.setSuiteThreadPoolSize(xmlSuites.size());
             testNG.setUseDefaultListeners(true);
+            testNG.setConfigFailurePolicy(CONTINUE);
             testNG.setOutputDirectory(getReportsOutputDirectory());
             List<BuggyListener> listeners = getBuggyListeners(BuggyUtils
                     .findInstantiatedSubclasses(BuggyListener.class));

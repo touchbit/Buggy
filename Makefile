@@ -21,6 +21,7 @@ deploy:
 
 version:
 	mvn versions:set -DnewVersion=${VERSION}
+ver: version
 
 purge:
 	mvn dependency:purge-local-repository@local-buggy
