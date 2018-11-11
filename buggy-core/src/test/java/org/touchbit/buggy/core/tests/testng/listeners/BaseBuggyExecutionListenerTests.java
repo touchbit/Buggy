@@ -101,7 +101,7 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("getInvokedMethodLogFileName when details contains test ids")
+    @DisplayName("getInvokedTestMethodLogFileName when details contains test ids")
     void unitTest_20181019034500() {
         StringBuilder sb = new StringBuilder();
         Details details = getDetails(new int[]{1,2,3}, Status.FAILED, Type.SMOKE, "BUG-123");
@@ -112,7 +112,7 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
                 return details;
             }
             {
-                sb.append(getInvokedMethodLogFileName(method));
+                sb.append(getInvokedTestMethodLogFileName(method));
             }
         };
         assertThat(sb.toString(), is("[1, 2, 3]_iTestResultMethodWithDetails.log"));

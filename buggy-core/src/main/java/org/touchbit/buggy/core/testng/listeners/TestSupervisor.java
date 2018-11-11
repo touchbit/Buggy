@@ -65,7 +65,7 @@ public class TestSupervisor extends BaseBuggyExecutionListener implements IExecu
     }
 
     private String getSupervisorTestName(IInvokedMethod method) {
-        return getMethodName(method) + " (" + getClassSimpleName(method) + ")";
+        return getInvokedMethodName(method) + " (" + getClassSimpleName(method) + ")";
     }
 
     private class Metronome implements Runnable {

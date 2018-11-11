@@ -16,6 +16,8 @@
 
 package org.touchbit.buggy.core.testng.listeners;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.testng.*;
@@ -101,7 +103,7 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
 
     protected String getURLEncodedLogFilePath(ITestNGMethod method) {
         PrimaryConfig c = Buggy.getPrimaryConfig();
-        String urlEncoded = StringUtils.encode(getInvokedMethodLogFileName(method));
+        String urlEncoded = StringUtils.encode(getInvokedTestMethodLogFileName(method));
         // Do not change the check. Feature parsing values by jCommander library.
         if (!"null".equalsIgnoreCase(String.valueOf(c.getArtifactsUrl()))) {
             String parentDir = c.getTestLogDir().getParentFile().getName();
@@ -114,10 +116,22 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
     }
 
     protected String getInvokedMethodLogFileName(IInvokedMethod method) {
-        return getInvokedMethodLogFileName(method.getTestMethod());
+        if (method.isTestMethod()) {
+            return getInvokedTestMethodLogFileName(method.getTestMethod());
+        } else {
+            return getInvokedConfigurationMethodLogFileName(method);
+        }
     }
 
-    protected String getInvokedMethodLogFileName(ITestNGMethod iTestNGMethod) {
+    protected String getInvokedTestMethodLogFileName(IInvokedMethod method) {
+        return getInvokedTestMethodLogFileName(method.getTestMethod());
+    }
+
+    protected String getInvokedConfigurationMethodLogFileName(IInvokedMethod method) {
+        return getInvokedMethodName(method) + ".log";
+    }
+
+    protected String getInvokedTestMethodLogFileName(ITestNGMethod iTestNGMethod) {
         Method method = iTestNGMethod.getConstructorOrMethod().getMethod();
         String caseIds = "";
         String methodName = method.getName();
@@ -159,8 +173,35 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         return method.getTestMethod().getRealClass().getSimpleName();
     }
 
-    protected String getMethodName(IInvokedMethod method) {
-        return method.getTestMethod().getMethodName();
+    protected String getInvokedMethodName(IInvokedMethod method) {
+        if (method.isTestMethod()) {
+            return method.getTestMethod().getMethodName();
+        }
+        return method.getTestMethod().getMethodName() + "@" + getShortSHA(method);
+    }
+
+    protected static String getShortSHA(IInvokedMethod method) {
+        return getShortSHA(getSHA(method));
+    }
+
+    protected static String getShortSHA(String sha) {
+        if (sha == null || sha.length() < 8) {
+            return sha;
+        }
+        return sha.substring(0, 8);
+    }
+
+    protected static String getSHA(IInvokedMethod method) {
+        StringBuilder sb = new StringBuilder()
+                .append(method.getDate())
+                .append(Thread.currentThread().getName())
+                .append(Thread.currentThread().getId())
+                .append(method.isTestMethod())
+                .append(method.getTestResult().getInstance())
+                .append(method.getTestResult().getSkipCausedBy())
+                .append(method.getTestMethod().getId())
+                ;
+        return Hashing.sha256().hashString(sb, Charsets.UTF_8).toString();
     }
 
     protected boolean isIssuesPresent(Details details) {

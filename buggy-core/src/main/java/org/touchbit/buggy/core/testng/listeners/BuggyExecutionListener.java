@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.testng.ITestResult.*;
 import static org.touchbit.buggy.core.model.Status.BLOCKED;
@@ -51,7 +52,7 @@ import static org.touchbit.buggy.core.utils.StringUtils.*;
  */
 @SuppressWarnings({"unused", "UnusedReturnValue", "WeakerAccess", "squid:S2629"})
 public class BuggyExecutionListener extends BaseBuggyExecutionListener
-        implements IExecutionListener, IInvokedMethodListener, ISuiteListener, ITestListener, IClassListener {
+        implements IExecutionListener, IInvokedMethodListener, ISuiteListener, IClassListener {
 
     private static final ThreadLocal<List<String>> STEPS = new ThreadLocal<>();
 
@@ -81,27 +82,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         printTestStatistic();
     }
 
-    @Override
-    public void onTestSuccess(ITestResult result) {
-        onTestFinish(result);
-    }
-
-    @Override
-    public void onTestFailure(ITestResult result) {
-        onTestFinish(result);
-    }
-
-    @Override
-    public void onTestSkipped(ITestResult result) {
-        onTestFinish(result);
-    }
-
-    @Override
-    public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-        onTestFinish(result);
-    }
-
-    public void onTestFinish(ITestResult result) {
+    public void onInvokedMethodFinish(ITestResult result) {
         Method method = getRealMethod(result);
         Throwable t = result.getThrowable();
         if ((t != null && t.getClass().getName().contains("ExpectedImplementationException"))) {
@@ -119,7 +100,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
             Buggy.incrementBuggyWarns();
             frameworkLog.warn("There are no playback steps in the test method {}", method.getName());
         }
-        testLog.info("Date: {}", new Date());
+        testLog.info("Date: {}\n\n", new Date());
     }
 
     @Override
@@ -151,37 +132,85 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
                 });
     }
 
+    private static final Map<String, String> INVOKED_METHODS_LOGS = new ConcurrentHashMap<>();
+    private static final String SKIP_CAUSED_SHA = "SKIP_CAUSED_SHA";
+
     @Override
-    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+    public synchronized void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+        updateInvokedMethodTestResult(method, testResult);
+        String testLogFileName = getInvokedMethodLogFileName(method);
+        String configurationMethodSHA = String.valueOf(testResult.getTestContext().getAttribute(SKIP_CAUSED_SHA));
+        String configurationMethodLog = INVOKED_METHODS_LOGS.get(configurationMethodSHA);
+        System.out.println(" >>>>>>>>>>> " + configurationMethodLog);
+//        if (testResult.getSkipCausedBy() != null && !testResult.getSkipCausedBy().isEmpty()) {
+//            testLog.info(" >>>>>>>>>>>>>>>> " + method.getTestResult().getStatus());
+//            testLog.info(" >>>>>>>>>>>>>>>> " + testResult.getStatus());
+//            testLog.info(" >>>>>>>>>>>>>>>> " + testResult.getSkipCausedBy());
+//            testLog.info(" >>>>>>>>>>>>>>>> " + getSHA(method));
+//            testLog.info(" >>>>>>>>>>>>>>>> " + getInvokedMethodName(method));
+//            testLog.info(" >>>>>>>>>>>>>>>> " + configurationMethodSHA);
+//            testLog.info(" >>>>>>>>>>>>>>>> " + configurationMethodLog);
+//            try {
+//                copyFile(new File(Buggy.getPrimaryConfig().getTestLogDir(), configurationMethodLog),
+//                        new File(Buggy.getPrimaryConfig().getTestLogDir(), testLogFileName)
+//                );
+//            } catch (IOException e) {
+//                frameworkLog.error("TODO", e); // todo
+//            }
+//        }
+        if (configurationMethodLog != null) {
+            try {
+                copyFile(new File(Buggy.getPrimaryConfig().getTestLogDir(), configurationMethodLog),
+                        new File(Buggy.getPrimaryConfig().getTestLogDir(), testLogFileName)
+                );
+            } catch (IOException e) {
+                frameworkLog.error("TODO", e); // todo
+            }
+        }
+        BuggyLog.setTestLogFileName(testLogFileName);
         STEPS.set(new ArrayList<>());
-        String methodName = getMethodName(method);
-        BuggyLog.setTestLogFileName(getInvokedMethodLogFileName(method));
+        String methodName = getInvokedMethodName(method);
         if (method.isTestMethod()) {
-            testLog.info("Test method is running:\n{} - {}", methodName, getDescription(method));
+            testLog.info("Test method is running: {} - {}", methodName, getDescription(method));
         } else {
-            testLog.info("Configuration method is running:\n{} - {}.", methodName, getDescription(method));
+            testLog.info("Configuration method is running: {} - {}.", methodName, getDescription(method));
         }
         if (testLog.isDebugEnabled()) {
             StringJoiner sj = new StringJoiner("\n", "\n", "\n");
             for (Annotation annotation : getRealMethod(method).getAnnotations()) {
                 sj.add(annotation.toString());
             }
-            testLog.trace("Declared method annotations:{}", sj);
+            testLog.trace("Declared method annotations:\n{}", sj);
         }
     }
 
+    private void updateInvokedMethodTestResult(IInvokedMethod method, ITestResult testResult) {
+        method.getTestResult().setTestName(getInvokedMethodName(method));
+    }
+
     @Override
-    public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+    public synchronized void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        updateInvokedMethodTestResult(method, testResult);
+        String invokedMethodLogFileName = getInvokedMethodLogFileName(method);
+        String sha = getSHA(method);
+        INVOKED_METHODS_LOGS.put(sha, invokedMethodLogFileName);
+        if (!method.isTestMethod()) {
+            testResult.getTestContext().setAttribute(SKIP_CAUSED_SHA, sha);
+        }
         Throwable throwable = testResult.getThrowable();
-        String methodName = getMethodName(method);
-        if (throwable != null) {
-            List<String> stepList = getSteps();
-            if (!stepList.isEmpty()) {
-                int lastIndex = stepList.size() - 1;
-                stepList.set(lastIndex, stepList.get(lastIndex) + " - ERROR");
-                setSteps(stepList);
+        String methodName = getInvokedMethodName(method);
+        if (testResult.getStatus() == ITestResult.SKIP) {
+
+        } else {
+            if (throwable != null) {
+                List<String> stepList = getSteps();
+                if (!stepList.isEmpty()) {
+                    int lastIndex = stepList.size() - 1;
+                    stepList.set(lastIndex, stepList.get(lastIndex) + " - ERROR");
+                    setSteps(stepList);
+                }
+                testLog.error("Execution of {} resulted in an error.", methodName, throwable);
             }
-            testLog.error("Execution of {} resulted in an error.", methodName, throwable);
         }
         if (method.isTestMethod()) {
             if (testResult.getStatus() != SKIP) {
@@ -197,7 +226,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         } else {
             processConfigurationMethodResult(method, testResult);
         }
-
+        onInvokedMethodFinish(testResult);
     }
 
     /**
@@ -275,7 +304,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     }
 
     public void processConfigurationMethodResult(IInvokedMethod method, ITestResult testResult) {
-        String methodName = getMethodName(method);
+        String methodName = getInvokedMethodName(method);
         String description = getDescription(method);
         switch (testResult.getStatus()) {
             case SUCCESS:
@@ -287,7 +316,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
                 break;
             case SUCCESS_PERCENTAGE_FAILURE:
             case FAILURE:
-                testLog.error("Invoke configuration method [{}] completed with error \n{}",
+                testLog.error("Invoke configuration method [{}] completed with error: {}",
                         methodName, testResult.getThrowable().getMessage());
                 break;
             default:
@@ -338,11 +367,11 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         PrimaryConfig c = Buggy.getPrimaryConfig();
         Details details = getDetails(method);
         int iTestResultStatus = method.getTestResult().getStatus();
-        File sourceFile = new File(c.getTestLogDir(), getInvokedMethodLogFileName(method));
+        File sourceFile = new File(c.getTestLogDir(), getInvokedTestMethodLogFileName(method));
         File targetFile = null;
         if (details == null) {
             if (iTestResultStatus == FAILURE || iTestResultStatus == SUCCESS_PERCENTAGE_FAILURE) {
-                targetFile = new File(c.getNewErrorLogDir(), getInvokedMethodLogFileName(method));
+                targetFile = new File(c.getNewErrorLogDir(), getInvokedTestMethodLogFileName(method));
                 copyFile(sourceFile, targetFile);
             }
             return;
@@ -351,29 +380,29 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         switch (iTestResultStatus) {
             case ITestResult.SUCCESS:
                 if (status.equals(EXP_FIX) || status.equals(BLOCKED)) {
-                    targetFile = new File(c.getFixedLogDir(), getInvokedMethodLogFileName(method));
+                    targetFile = new File(c.getFixedLogDir(), getInvokedTestMethodLogFileName(method));
                 }
                 if (status.equals(EXP_IMPL)) {
-                    targetFile = new File(c.getImplementedLogDir(), getInvokedMethodLogFileName(method));
+                    targetFile = new File(c.getImplementedLogDir(), getInvokedTestMethodLogFileName(method));
                 }
                 break;
             case ITestResult.FAILURE:
             case ITestResult.SUCCESS_PERCENTAGE_FAILURE:
                 switch (status) {
                     case EXP_FIX:
-                        targetFile = new File(c.getExpFixErrorLogDir(), getInvokedMethodLogFileName(method));
+                        targetFile = new File(c.getExpFixErrorLogDir(), getInvokedTestMethodLogFileName(method));
                         break;
                     case EXP_IMPL:
-                        targetFile = new File(c.getExpImplErrorLogDir(), getInvokedMethodLogFileName(method));
+                        targetFile = new File(c.getExpImplErrorLogDir(), getInvokedTestMethodLogFileName(method));
                         break;
                     case BLOCKED:
-                        targetFile = new File(c.getBlockedErrorLogDir(), getInvokedMethodLogFileName(method));
+                        targetFile = new File(c.getBlockedErrorLogDir(), getInvokedTestMethodLogFileName(method));
                         break;
                     case CORRUPTED:
-                        targetFile = new File(c.getCorruptedErrorLogDir(), getInvokedMethodLogFileName(method));
+                        targetFile = new File(c.getCorruptedErrorLogDir(), getInvokedTestMethodLogFileName(method));
                         break;
                     default:
-                        targetFile = new File(c.getNewErrorLogDir(), getInvokedMethodLogFileName(method));
+                        targetFile = new File(c.getNewErrorLogDir(), getInvokedTestMethodLogFileName(method));
                 }
             default:
                 // ignore unhandled statuses
@@ -544,26 +573,6 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
 
     protected void copyFile(File sourceFile, File destFile) throws IOException {
         IOHelper.copyFile(sourceFile, destFile);
-    }
-
-    @Override
-    public void onStart(ITestContext context) {
-        // do nothing
-    }
-
-    @Override
-    public void onFinish(ITestContext context) {
-        // do nothing
-    }
-
-    @Override
-    public void onBeforeClass(ITestClass testClass) {
-        // do nothing
-    }
-
-    @Override
-    public void onTestStart(ITestResult result) {
-        // do nothing
     }
 
 }

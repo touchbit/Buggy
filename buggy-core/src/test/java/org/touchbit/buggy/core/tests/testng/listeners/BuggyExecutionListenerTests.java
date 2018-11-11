@@ -93,78 +93,43 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
         ITestContext iTestContext = mock(ITestContext.class);
         ITestClass iTestClass = mock(ITestClass.class);
         ITestResult iTestResult = mock(ITestResult.class);
-        listener.onStart(iTestContext);
-        listener.onFinish(iTestContext);
         listener.onBeforeClass(iTestClass);
-        listener.onTestStart(iTestResult);
     }
 
     @Test
-    @DisplayName("Check onTestSuccess(ITestResult result)")
-    void unitTest_20180921150511() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
-        ITestResult iTestResult = getMockITestResult(1);
-        listener.onTestSuccess(iTestResult);
-    }
-
-    @Test
-    @DisplayName("Check onTestFailure(ITestResult result)")
-    void unitTest_20180921150916() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
-        ITestResult iTestResult = getMockITestResult(2);
-        listener.onTestFailure(iTestResult);
-    }
-
-    @Test
-    @DisplayName("Check onTestSkipped(ITestResult result)")
-    void unitTest_20180921151028() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
-        ITestResult iTestResult = getMockITestResult(3);
-        listener.onTestSkipped(iTestResult);
-    }
-
-    @Test
-    @DisplayName("Check onTestFailedButWithinSuccessPercentage(ITestResult result)")
-    void unitTest_20180921151130() {
-        BuggyExecutionListener listener = new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
-        ITestResult iTestResult = getMockITestResult(4);
-        listener.onTestFailedButWithinSuccessPercentage(iTestResult);
-    }
-
-    @Test
-    @DisplayName("Check onTestFinish with ExpectedImplementationException")
+    @DisplayName("Check onInvokedMethodFinish with ExpectedImplementationException")
     void unitTest_20180921182848() {
         BuggyExecutionListener listener = new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(4);
         when(iTestResult.getThrowable()).thenReturn(new ExpectedImplementationException(""));
-        listener.onTestFinish(iTestResult);
+        listener.onInvokedMethodFinish(iTestResult);
     }
 
     @Test
-    @DisplayName("Check onTestFinish with Exception")
+    @DisplayName("Check onInvokedMethodFinish with Exception")
     void unitTest_20180921183436() {
         BuggyExecutionListener listener = new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(4);
         when(iTestResult.getThrowable()).thenReturn(new Exception(""));
-        listener.onTestFinish(iTestResult);
+        listener.onInvokedMethodFinish(iTestResult);
     }
 
     @Test
-    @DisplayName("Check onTestFinish with null steps")
+    @DisplayName("Check onInvokedMethodFinish with null steps")
     void unitTest_20180921183125() {
         BuggyExecutionListener listener = new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(1);
         BuggyExecutionListener.setSteps(null);
-        listener.onTestFinish(iTestResult);
+        listener.onInvokedMethodFinish(iTestResult);
     }
 
     @Test
-    @DisplayName("Check onTestFinish with empty steps")
+    @DisplayName("Check onInvokedMethodFinish with empty steps")
     void unitTest_20180921183228() {
         BuggyExecutionListener listener = new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
         ITestResult iTestResult = getMockITestResult(1);
         BuggyExecutionListener.setSteps(new ArrayList<String>() {{ add("steppp"); }});
-        listener.onTestFinish(iTestResult);
+        listener.onInvokedMethodFinish(iTestResult);
     }
 
     @Test
@@ -299,7 +264,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             when(iInvokedMethod.isTestMethod()).thenReturn(false);
             listener.beforeInvocation(iInvokedMethod, iTestResult);
             String logResult = TEST_LOGGER.takeLoggedMessages().toString();
-            assertThat(logResult, containsString("Configuration method is running:\niTestResultMethodWithDetails - null."));
+            assertThat(logResult, containsString("Configuration method is running:iTestResultMethodWithDetails - null."));
             assertThat(logResult, containsString("Declared method annotations:\n@"));
         }
 
@@ -313,7 +278,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             when(iInvokedMethod.isTestMethod()).thenReturn(false);
             listener.beforeInvocation(iInvokedMethod, iTestResult);
             String logResult = TEST_LOGGER.takeLoggedMessages().toString();
-            assertThat(logResult, containsString("Configuration method is running:\niTestResultMethodWithDetails - null."));
+            assertThat(logResult, containsString("Configuration method is running:iTestResultMethodWithDetails - null."));
             assertThat(logResult, is(not(containsString("Declared method annotations:\n@"))));
         }
 
