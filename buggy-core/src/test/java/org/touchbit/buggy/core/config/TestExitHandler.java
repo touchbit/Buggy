@@ -1,9 +1,6 @@
 package org.touchbit.buggy.core.config;
 
 import org.touchbit.buggy.core.Buggy;
-import org.touchbit.buggy.core.utils.StringUtils;
-
-import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
 
 /**
  * Created by Oleg Shaburov on 16.10.2018
@@ -15,19 +12,11 @@ public class TestExitHandler extends Buggy.DefaultBuggyProcessor.DefaultBuggySys
     private Integer status = null;
     private String msg = null;
 
-//    @Override
-//    public void exitRunWithUsage(int status, String msg) {
-//        exitRun(status, msg);
-//    }
+    private Boolean isWorked = false;
 
     public void realExitRunWithUsage(int status, String msg) {
         super.exitRunWithUsage(status, msg);
     }
-
-//    @Override
-//    public void exitRunWithUsage(int status) {
-//        exitRun(status, null);
-//    }
 
     @Override
     public void exitRun(int status) {
@@ -40,21 +29,26 @@ public class TestExitHandler extends Buggy.DefaultBuggyProcessor.DefaultBuggySys
     }
 
     @Override
-    public void exitRun(int status, String msg, Throwable t) {
+    public synchronized void exitRun(int status, String msg, Throwable t) {
+        if (isWorked) {
+            return;
+        }
         this.throwable = t;
         this.status = status;
         this.msg = msg;
+        isWorked = true;
     }
 
     @Override
     public void exit(int status) {
-        this.status = status;
+        exitRun(status, null, null);
     }
 
     public void clean() {
         throwable = null;
         status = null;
         msg = null;
+        isWorked = false;
     }
 
     public Throwable getThrowable() {

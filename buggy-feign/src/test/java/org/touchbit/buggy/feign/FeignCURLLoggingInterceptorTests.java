@@ -16,6 +16,7 @@
 
 package org.touchbit.buggy.feign;
 
+import feign.Request;
 import feign.RequestTemplate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,11 @@ import org.touchbit.buggy.core.tests.BaseUnitTest;
 
 import java.util.*;
 
+import static feign.Request.HttpMethod.POST;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by Oleg Shaburov on 13.10.2018
@@ -33,7 +37,7 @@ import static org.hamcrest.Matchers.contains;
 @DisplayName("Feign http client cURL logging interceptors tests")
 class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
 
-    private static final String TARGET = "http//touchbit.org";
+    private static final String TARGET = "http://touchbit.org";
 
     @Test
     @DisplayName("Check FeignCURLLoggingInterceptor(final Consumer<String> logMethod)")
@@ -46,13 +50,14 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
             }});
         }};
         RequestTemplate rt = new RequestTemplate()
-                .method("POST")
-                .append("/api/v1")
+                .method(POST)
+                .uri("/api/v1", true)
                 .headers(headers)
                 .body("test-body");
         interceptor.apply(rt);
         assertThat(TEST_LOGGER.takeLoggedMessages(),
-                contains("Playback curl:\ncurl -i -k -X POST 'http//touchbit.org/api/v1' -H 'test_header: value; charset=utf-8' -H 'Content-Length: 9' --data 'test-body'"
+                contains("Playback curl:\ncurl -i -k -X POST 'http://touchbit.org/api/v1' " +
+                        "-H 'test_header: charset=utf-8; value' -H 'Content-Length: 9' --data 'test-body'"
                 ));
     }
 
@@ -79,13 +84,14 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
             }});
         }};
         RequestTemplate rt = new RequestTemplate()
-                .method("POST")
-                .append("/api/v1")
+                .method(POST)
+                .uri("/api/v1", true)
                 .headers(headers)
-                .body(null);
+                .body((String) null);
         interceptor.apply(rt);
         assertThat(TEST_LOGGER.takeLoggedMessages(),
-                contains("Playback curl:\ncurl -i -k -X POST 'http//touchbit.org/api/v1' -H 'test_header: value; charset=utf-8' -H 'Content-Length: 0'"
+                contains("Playback curl:\ncurl -i -k -X POST 'http://touchbit.org/api/v1' " +
+                        "-H 'test_header: charset=utf-8; value'"
                 ));
     }
 

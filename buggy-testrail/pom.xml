@@ -10,14 +10,14 @@
         <version>0.3.5</version>
     </parent>
 
-    <artifactId>buggy-min-example</artifactId>
-    <name>Buggy minimal example</name>
+    <artifactId>buggy-testrail</artifactId>
+    <name>TestRail module</name>
+    <description>TestRail module</description>
     <version>0.3.5</version>
     <packaging>jar</packaging>
 
     <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-        <sonar.projectKey>org.touchbit:buggy-min-example</sonar.projectKey>
+        <sonar.projectKey>org.touchbit:buggy-testrail</sonar.projectKey>
     </properties>
 
     <dependencies>
@@ -27,7 +27,17 @@
         </dependency>
         <dependency>
             <groupId>org.touchbit.buggy</groupId>
-            <artifactId>buggy-testrail</artifactId>
+            <artifactId>buggy-feign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.touchbit.testrail4j</groupId>
+            <artifactId>jackson2-feign-client</artifactId>
+        </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>org.touchbit.buggy</groupId>
+            <artifactId>buggy-core</artifactId>
+            <type>test-jar</type>
         </dependency>
     </dependencies>
 
@@ -39,15 +49,13 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
+                <artifactId>maven-source-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <configuration>
-                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
+
 </project>

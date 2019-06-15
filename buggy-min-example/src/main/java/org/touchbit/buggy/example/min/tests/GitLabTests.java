@@ -22,7 +22,6 @@ import org.touchbit.buggy.core.exceptions.BuggyException;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
-import org.touchbit.buggy.core.test.BaseBuggyTest;
 import org.touchbit.buggy.example.min.goals.API;
 import org.touchbit.buggy.example.min.goals.GitLab;
 
@@ -32,7 +31,7 @@ import org.touchbit.buggy.example.min.goals.GitLab;
  */
 @Suite(service = GitLab.class, interfaze = API.class, task = "common")
 @SuppressWarnings("squid:S00100")
-public class GitLabTests extends BaseBuggyTest {
+public class GitLabTests extends BaseTest {
 
     private static final String DO_SOMETHING = "do something";
     private static final String EXAMPLE_STEP = "Example step";
@@ -47,63 +46,79 @@ public class GitLabTests extends BaseBuggyTest {
         log.info(DO_SOMETHING);
     }
 
-    @Test(description = "Example description for test_20180918045754")
-    @Details(status = Status.CORRUPTED)
+    @Test(description = "Example success test with CORRUPTED status")
+    @Details(id = 86, bug = "QA-100", status = Status.CORRUPTED)
     public void test_20180918045754() {
         step(EXAMPLE_STEP);
         log.info(DO_SOMETHING);
     }
 
-    @Test(description = "Example description for test_20181021232500")
-    @Details(status = Status.EXP_FIX)
+    @Test(description = "Example fail test with CORRUPTED status")
+    @Details(id = 87, bug = "QA-100", status = Status.CORRUPTED)
+    public void test_20180918045755() {
+        step(EXAMPLE_STEP);
+        log.info(DO_SOMETHING);
+        throw new BuggyException("Example CORRUPTED exception");
+    }
+
+    @Test(description = "Example success test with EXP_FIX status")
+    @Details(id = 88, bug = "DF-485", status = Status.EXP_FIX)
     public void test_20181021232500() {
         step(EXAMPLE_STEP);
         log.info(DO_SOMETHING);
     }
 
-    @Test(description = "Example description for test_20181021232518")
-    @Details(status = Status.EXP_FIX)
+    @Test(description = "Example fail test with EXP_FIX status")
+    @Details(id = 89, bug = "DF-485", status = Status.EXP_FIX)
     public void test_20181021232518() {
         step(EXAMPLE_STEP);
         log.info(DO_SOMETHING);
         throw new BuggyException("Example EXP_FIX exception");
     }
 
-    @Test(description = "Example description for test_20181021232522")
-    @Details(status = Status.EXP_IMPL)
+    @Test(description = "Example success test with EXP_IMPL status")
+    @Details(id = 90, bug = "AD-144", status = Status.EXP_IMPL)
     public void test_20181021232522() {
         step(EXAMPLE_STEP);
         log.info(DO_SOMETHING);
     }
 
-    @Test(description = "Example description for test_20181021232527")
-    @Details(status = Status.EXP_IMPL)
+    @Test(description = "Example fail test with EXP_IMPL status")
+    @Details(id = 91, bug = "AD-144", status = Status.EXP_IMPL)
     public void test_20181021232527() {
         step(EXAMPLE_STEP);
         log.info(DO_SOMETHING);
         throw new BuggyException("Example EXP_IMPL exception");
     }
 
-    @Test(description = "Example description for test_20181021232530")
-    @Details(status = Status.BLOCKED)
+    @Test(description = "Example success test with BLOCKED status")
+    @Details(id = 92, bug = "INFRA-581", status = Status.BLOCKED)
     public void test_20181021232530() {
         step(EXAMPLE_STEP);
         log.info(DO_SOMETHING);
     }
 
-    @Test(description = "Example description for test_20181021232530")
-    @Details(status = Status.BLOCKED)
+    @Test(description = "Example fail test with BLOCKED status")
+    @Details(id = 93, bug = "INFRA-581", status = Status.BLOCKED)
     public void test_20181021232745() {
         step(EXAMPLE_STEP);
         log.info(DO_SOMETHING);
         throw new BuggyException("Example BLOCKED exception");
     }
 
-    @Test(description = "Example description for test_20181021232749")
-    @Details()
+    @Test(description = "Example success test")
+    @Details(id = 94)
     public void test_20181021232749() {
         step(EXAMPLE_STEP);
         log.info(DO_SOMETHING);
+    }
+
+    @Test(description = "Example fail test")
+    @Details(id = 95)
+    public void test_20181021232400() {
+        step(EXAMPLE_STEP);
+        log.info(DO_SOMETHING);
+        throw new BuggyException("Example fail test");
     }
 
 }

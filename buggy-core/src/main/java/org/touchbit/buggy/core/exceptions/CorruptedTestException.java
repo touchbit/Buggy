@@ -16,14 +16,22 @@
 
 package org.touchbit.buggy.core.exceptions;
 
+import org.touchbit.buggy.core.model.Details;
+
 /**
  * Created by Oleg Shaburov on 18.05.2018
  * shaburov.o.a@gmail.com
  */
-public class CorruptedTestException extends RuntimeException {
+public class CorruptedTestException extends BaseBuggyTestException {
+
+    private static final String MSG = "The autotest is corrupted and must be repaired.";
+
+    public CorruptedTestException(Details details) {
+        super(getMsg(MSG, details));
+    }
 
     public CorruptedTestException() {
-        super("Test must be repaired.");
+        super(MSG);
     }
 
     public CorruptedTestException(String msg) {
@@ -37,4 +45,5 @@ public class CorruptedTestException extends RuntimeException {
     public CorruptedTestException(Throwable e) {
         super(e);
     }
+
 }

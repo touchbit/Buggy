@@ -7,14 +7,15 @@
     <groupId>org.touchbit.buggy</groupId>
     <artifactId>buggy</artifactId>
     <name>Buggy</name>
-    <version>0.2.23</version>
+    <version>0.3.5</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>buggy-core</module>
         <module>buggy-feign</module>
-        <module>buggy-okhttp</module>
         <module>buggy-min-example</module>
+        <module>buggy-okhttp</module>
+        <module>buggy-testrail</module>
     </modules>
 
     <licenses>
@@ -70,6 +71,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <log4j.version>2.9.1</log4j.version>
         <junit.jupiter.version>5.3.1</junit.jupiter.version>
+        <feign.version>10.1.0</feign.version>
 
         <sonar.host.url>https://touchbit.org/sonar/</sonar.host.url>
         <sonar.projectKey>org.touchbit:buggy</sonar.projectKey>
@@ -97,7 +99,50 @@
             <id>spring.plugins.repository</id>
             <url>http://repo.spring.io/plugins-release/</url>
         </repository>
+        <repository>
+            <id>touchbit.org.repository</id>
+            <url>https://touchbit.org/repository/</url>
+        </repository>
     </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>2.0.0-beta.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.2.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
@@ -105,17 +150,34 @@
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-core</artifactId>
-                <version>0.2.23</version>
+                <version>0.3.5</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-feign</artifactId>
-                <version>0.2.23</version>
+                <version>0.3.5</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-okhttp</artifactId>
-                <version>0.2.23</version>
+                <version>0.3.5</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.touchbit.buggy</groupId>
+                <artifactId>buggy-testrail</artifactId>
+                <version>0.3.5</version>
+                <scope>compile</scope>
+            </dependency>
+            <!-- Self Test -->
+            <dependency>
+                <groupId>org.touchbit.buggy</groupId>
+                <artifactId>buggy-core</artifactId>
+                <version>0.3.5</version>
+                <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
             <!-- Compile -->
             <dependency>
@@ -138,49 +200,15 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>3.6</version>
             </dependency>
-            <!-- Test -->
             <dependency>
-                <groupId>org.touchbit.buggy</groupId>
-                <artifactId>buggy-core</artifactId>
-                <version>0.2.23</version>
-                <type>test-jar</type>
-                <scope>test</scope>
+                <groupId>org.touchbit.testrail4j</groupId>
+                <artifactId>jackson2-feign-client</artifactId>
+                <version>2.1.1</version>
             </dependency>
             <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-params</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>1.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito2</artifactId>
-                <version>2.0.0-beta.5</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.awaitility</groupId>
-                <artifactId>awaitility</artifactId>
-                <version>3.1.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject</groupId>
-                <artifactId>guice</artifactId>
-                <version>4.2.0</version>
-                <scope>test</scope>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-core</artifactId>
+                <version>${feign.version}</version>
             </dependency>
             <!-- Logging -->
             <dependency>
@@ -311,6 +339,10 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
             </plugin>
         </plugins>
         <pluginManagement>
@@ -458,39 +490,36 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.8</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>sonatype</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <updateReleaseInfo>true</updateReleaseInfo>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
-                    <inherited>true</inherited>
                     <configuration>
-                        <url>${distributionRepository}</url>
-                        <file>
-                            ${project.build.directory}/${project.artifactId}-${project.version}.jar
-                        </file>
-                        <sources>
-                            ${project.build.directory}/${project.artifactId}-${project.version}-sources.jar
-                        </sources>
-                        <packaging>${project.packaging}</packaging>
-                        <pomFile>pom.xml</pomFile>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>${project.artifactId}</artifactId>
-                        <version>${project.version}</version>
+                        <skip>true</skip>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
-        </extensions>
     </build>
     <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
         <repository>
-            <id>touchbit.org</id>
-            <url>${distributionRepository}</url>
+            <id>sonatype</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 </project>

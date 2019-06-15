@@ -17,15 +17,21 @@
 package org.touchbit.buggy.example.min.config;
 
 import org.touchbit.buggy.core.config.PrimaryConfig;
+import org.touchbit.buggy.testrail.BaseTestRailConfig;
 
 /**
  * Created by Oleg Shaburov on 18.09.2018
  * shaburov.o.a@gmail.com
  */
-public class Config implements PrimaryConfig {
+public class Config implements PrimaryConfig, BaseTestRailConfig {
 
     public Config() {
         setPrintLogFile(true);
+        setPrintCause(true);
+        setPrintSuite(true);
+        BaseTestRailConfig.setTestRailHost("https://touchbit.org/testrail");
+        BaseTestRailConfig.setLogin("automation@touchbit.org");
+        BaseTestRailConfig.setPass("automation");
     }
 
 }

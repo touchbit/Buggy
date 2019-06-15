@@ -20,27 +20,24 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import org.touchbit.buggy.core.config.SecondaryConfig;
 
-import static org.touchbit.buggy.example.min.config.NetworkConfig.DefaultValues.*;
+import static org.touchbit.buggy.example.min.config.MinExampleSecondaryConfig.DefaultValues.*;
 
 /**
  * Created by Oleg Shaburov on 02.09.2018
  * shaburov.o.a@gmail.com
  */
-@SuppressWarnings("squid:S1118")
-@Parameters(commandNames = "network")
-public class NetworkConfig implements SecondaryConfig {
+@Parameters(commandNames = {"with"}, commandDescription = "secondary config")
+public class MinExampleSecondaryConfig implements SecondaryConfig {
 
     @SuppressWarnings("WeakerAccess")
     protected static class DefaultValues {
         protected static final String WRITE_TIMEOUT      = "--write-timeout";
         protected static final String READ_TIMEOUT       = "--read-timeout";
         protected static final String CONNECTION_TIMEOUT = "--connection-timeout";
-        protected static final String TEST_HOST = "--host";
 
         private static int readTimeout = 10;
         private static int writeTimeout = 10;
         private static int connectionTimeout = 10;
-        private static String host = "http://example.com";
 
         private DefaultValues() {
             throw new IllegalStateException("Utility class. Prohibit instantiation.");
@@ -74,13 +71,11 @@ public class NetworkConfig implements SecondaryConfig {
         return DefaultValues.connectionTimeout;
     }
 
-    @Parameter(names = {TEST_HOST}, description = "Tested host")
-    public static void setHost(String host) {
-        DefaultValues.host = host;
-    }
-
-    public static String getHost() {
-        return DefaultValues.host;
+    @Override
+    public String toString() {
+        return WRITE_TIMEOUT + " = " + DefaultValues.writeTimeout + "\n" +
+                READ_TIMEOUT + " = " + DefaultValues.readTimeout + "\n" +
+                CONNECTION_TIMEOUT + " = " + DefaultValues.connectionTimeout + "\n";
     }
 
 }

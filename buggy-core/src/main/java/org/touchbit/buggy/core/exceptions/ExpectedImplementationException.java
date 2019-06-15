@@ -12,11 +12,23 @@
 
 package org.touchbit.buggy.core.exceptions;
 
+import org.touchbit.buggy.core.model.Details;
+
 /**
  * Created by Oleg Shaburov on 18.05.2018
  * shaburov.o.a@gmail.com
  */
-public class ExpectedImplementationException extends RuntimeException {
+public class ExpectedImplementationException extends BaseBuggyTestException {
+
+    private static final String MSG = "The autotest is waiting for the implementation of the related test-case";
+
+    public ExpectedImplementationException(Details details) {
+        super(getMsg(MSG, details));
+    }
+
+    public ExpectedImplementationException() {
+        super(MSG);
+    }
 
     public ExpectedImplementationException(String msg) {
         super(msg);

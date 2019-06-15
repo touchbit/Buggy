@@ -640,6 +640,7 @@ class BuggyTests extends BaseUnitTest {
 
     private abstract class AbstractBuggyListener implements BuggyListener {}
 
+    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, task = "PrivateTestSuite")
     private static class PrivateTestSuite extends TestSuite { }
 
     private static class PrivateBuggyTestsBuggyLog extends BuggyLog { }

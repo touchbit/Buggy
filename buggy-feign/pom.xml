@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.2.23</version>
+        <version>0.3.5</version>
     </parent>
 
     <artifactId>buggy-feign</artifactId>
     <name>Feign utils</name>
     <description>Feign client utils</description>
-    <version>0.2.23</version>
+    <version>0.3.5</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -24,8 +24,6 @@
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-core</artifactId>
-            <version>10.0.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -35,23 +33,10 @@
             <groupId>org.touchbit.buggy</groupId>
             <artifactId>buggy-core</artifactId>
         </dependency>
-        <!-- Test -->
         <dependency>
             <groupId>org.touchbit.buggy</groupId>
             <artifactId>buggy-core</artifactId>
             <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -70,7 +55,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -79,10 +63,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

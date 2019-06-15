@@ -28,3 +28,4 @@ Buggy
 
     modules/core/index
     modules/min-example/index
+    modules/testrail/index

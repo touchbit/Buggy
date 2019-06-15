@@ -21,6 +21,7 @@ deploy:
 
 version:
 	mvn versions:set -DnewVersion=${VERSION}
+
 ver: version
 
 purge:
@@ -36,7 +37,7 @@ build-doc-image:
 	docker build --no-cache -t buggy/doc:${VERSION} -f ./docs/Dockerfile .
 
 run-doc-image:
-	docker run -p 80:80 buggy/doc:${VERSION}
+	docker run -p 8080:80 buggy/doc:${VERSION}
 
 deploy-doc-image: build-doc
 	echo ToDo gitlab registry

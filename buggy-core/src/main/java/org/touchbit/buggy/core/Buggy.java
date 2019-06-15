@@ -73,16 +73,23 @@ public abstract class Buggy {
         reset();
         testNG = delegate;
         prepare(args);
-        if (!primaryConfig.isCheck()) {
-            testRun = true;
-            int status = processor.runTestNG(delegate);
-            if (status == 60) {
-                processor.getExitHandler().exitRun(60, "TestNG safely died.");
-            } else {
-                processor.getExitHandler().exitRun(status);
-            }
-            testRun = false;
+        checkPrimaryConfig();
+        run();
+    }
+
+    public static void run() {
+        testRun = true;
+        int status = processor.runTestNG(testNG);
+        if (status == 60) {
+            processor.getExitHandler().exitRun(60, "TestNG safely died.");
         } else {
+            processor.getExitHandler().exitRun(status);
+        }
+        testRun = false;
+    }
+
+    public static void checkPrimaryConfig() {
+        if (primaryConfig.isCheck()) {
             processor.getExitHandler().exitRun(0, "Buggy configuration is correct.");
         }
     }

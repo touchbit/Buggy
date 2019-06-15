@@ -54,8 +54,8 @@ public class FeignCURLLoggingInterceptor extends CURLLoggingInterceptor implemen
         final String url = requestTemplate.url();
         final Map<String, Collection<String>> headers = requestTemplate.headers();
         String body = null;
-        if (requestTemplate.body() != null) {
-            byte[] bodyBytes = requestTemplate.body().clone();
+        if (requestTemplate.requestBody() != null && requestTemplate.requestBody().asBytes() != null) {
+            byte[] bodyBytes = requestTemplate.requestBody().asBytes().clone();
             body = new String(bodyBytes, StandardCharsets.UTF_8);
         }
         super.intercept(method, host + url, headers, body);

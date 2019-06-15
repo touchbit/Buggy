@@ -147,7 +147,7 @@ public class TestSuite extends XmlSuite {
             duplicates.forEach(c -> {
                 classList.remove(c);
                 Buggy.incrementBuggyWarns();
-                log.info("A duplicate has been removed from the class list: {}", c.getTypeName());
+                log.info("TRVariables duplicate has been removed from the class list: {}", c.getTypeName());
             });
         }
     }

@@ -126,8 +126,8 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         }
         Details details = getDetails(method);
         if (details != null) {
-            List<Integer> ids = new ArrayList<>();
-            for (int id : details.id()) {
+            List<Long> ids = new ArrayList<>();
+            for (long id : details.id()) {
                 if (id > 0) {
                     ids.add(id);
                 }

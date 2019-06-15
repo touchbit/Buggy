@@ -104,7 +104,7 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
     @DisplayName("getInvokedMethodLogFileName when details contains test ids")
     void unitTest_20181019034500() {
         StringBuilder sb = new StringBuilder();
-        Details details = getDetails(new int[]{1,2,3}, Status.FAILED, Type.SMOKE, "BUG-123");
+        Details details = getDetails(new long[]{1,2,3}, Status.FAILED, Type.SMOKE, "BUG-123");
         ITestNGMethod method = getMockITestNGMethod();
         new BaseBuggyExecutionListener() {
             @Override public boolean isEnable() { return false; }

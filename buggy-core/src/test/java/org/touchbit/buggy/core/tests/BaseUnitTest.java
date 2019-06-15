@@ -44,10 +44,11 @@ import static org.touchbit.buggy.core.utils.log.BuggyLog.LOG_DIRECTORY;
  * Created by Oleg Shaburov on 15.09.2018
  * shaburov.o.a@gmail.com
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "ResultOfMethodCallIgnored"})
 public abstract class BaseUnitTest {
 
-    private static String runDir = new File(BaseUnitTest.class.getProtectionDomain().getCodeSource().getLocation().getPath())
+    private static String runDir = new File(BaseUnitTest.class
+            .getProtectionDomain().getCodeSource().getLocation().getPath())
             .getParentFile().getAbsolutePath();
 
 //    protected static final Logger LOG = NOP_LOGGER;
@@ -134,20 +135,24 @@ public abstract class BaseUnitTest {
 
     @SuppressWarnings("SameParameterValue")
     protected void assertExitCode(Integer code, String msg, Class<Throwable> throwableClass) {
-        if (code == null) {
-            assertThat(EXIT_HANDLER.getStatus(), is(nullValue()));
-        } else {
-            assertThat(EXIT_HANDLER.getStatus(), is(code));
-        }
-        if (msg == null) {
-            assertThat(EXIT_HANDLER.getMsg(), is(nullValue()));
-        } else {
-            assertThat(EXIT_HANDLER.getMsg(), is(msg));
-        }
-        if (throwableClass == null) {
-            assertThat(EXIT_HANDLER.getThrowable(), is(nullValue()));
-        } else {
-            assertThat(EXIT_HANDLER.getThrowable(), is(instanceOf(throwableClass)));
+        try {
+            if (code == null) {
+                assertThat(EXIT_HANDLER.getStatus(), is(nullValue()));
+            } else {
+                assertThat(EXIT_HANDLER.getStatus(), is(code));
+            }
+            if (msg == null) {
+                assertThat(EXIT_HANDLER.getMsg(), is(nullValue()));
+            } else {
+                assertThat(EXIT_HANDLER.getMsg(), is(msg));
+            }
+            if (throwableClass == null) {
+                assertThat(EXIT_HANDLER.getThrowable(), is(nullValue()));
+            } else {
+                assertThat(EXIT_HANDLER.getThrowable(), is(instanceOf(throwableClass)));
+            }
+        } finally {
+            EXIT_HANDLER.clean();
         }
     }
 
@@ -268,15 +273,14 @@ public abstract class BaseUnitTest {
         return getBuggyExecutionListener(true);
     }
 
+    @SuppressWarnings("SameParameterValue")
     protected BuggyExecutionListener getBuggyExecutionListener(boolean withOverrideCopyFile) {
 
         return new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER) {
 
             @Override
             public void copyFile(File sourceFile, File destFile) throws IOException {
-                if (withOverrideCopyFile) {
-                    // do nothing
-                } else {
+                if (!withOverrideCopyFile) {
                     super.copyFile(sourceFile, destFile);
                 }
             }
@@ -350,6 +354,7 @@ public abstract class BaseUnitTest {
 
     }
 
+    @SuppressWarnings("unused")
     protected static Details getDetails() {
         return getDetails(SUCCESS, MODULE);
     }
@@ -363,17 +368,23 @@ public abstract class BaseUnitTest {
     }
 
     protected static Details getDetails(Status status, Type type, String... issue) {
-        return getDetails(new int[0], status, type, issue);
+        return getDetails(new long[0], status, type, issue);
     }
 
-    protected static Details getDetails(int[] ids, Status status, Type type, String... issue) {
+    protected static Details getDetails(long[] ids, Status status, Type type, String... issue) {
         return new Details() {
             @Override
-            public int[] id() { return ids; }
+            public long[] id() { return ids; }
             @Override
             public Status status() { return status; }
             @Override
             public String[] issue() { return issue; }
+
+            @Override
+            public String[] bug() {
+                return new String[] {};
+            }
+
             @Override
             public Type type() { return type; }
             @Override

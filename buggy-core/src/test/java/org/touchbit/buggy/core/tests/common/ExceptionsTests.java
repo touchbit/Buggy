@@ -170,7 +170,7 @@ class ExceptionsTests extends BaseUnitTest {
     @DisplayName("Check CorruptedTestException()")
     void unitTest_20180919221046() {
         CorruptedTestException exception = new CorruptedTestException();
-        assertThat(exception.getMessage(), is("Test must be repaired."));
+        assertThat(exception.getMessage(), is("The autotest is corrupted and must be repaired."));
         assertThat(exception.getStackTrace(), not(emptyArray()));
         assertThat(exception.getCause(), is(nullValue()));
     }
