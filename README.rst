@@ -53,12 +53,12 @@ Readthedocs документация (`RU <https://buggy.readthedocs.io/ru/maste
 
 #. Модуль к okhttp клиенту (утилиты).
 
+#. Модуль интеграция c TestRail (трансляция результатов).
+
 Предстоит
 ^^^^^^^^^
 
-#. Модуль интеграция c TestRail (трансляции результатов).
-
-#. Модуль интеграция с ReportPortal (трансляции результатов).
+#. Модуль интеграция с ReportPortal (трансляция результатов).
 
 #. Модуль к Retrofit клиенту (утилиты).
 
@@ -81,7 +81,7 @@ Readthedocs документация (`RU <https://buggy.readthedocs.io/ru/maste
     * Любой класс реализации интерфейса ``SecondaryConfig`` будет автоматически подгружен и создан экземпляр (``Buggy.getSecondaryConfigs()``).
     * Класс реализации интерфейса ``SecondaryConfig`` может быть имплементирован от множества конфигурационных интерфейсов, в том числе и из разных проектов.
     * Для класса реализации интерфейса ``SecondaryConfig`` обязательно наличие аннотации ``com.beust.jcommander.Parameters`` с объявленным ``commandNames``.
-    * Пример: ``org.touchbit.buggy.example.min.config.NetworkConfig``
+    * Пример: ``org.touchbit.buggy.example.min.config.MinExampleSecondaryConfig``
 
 Параметры
 ^^^^^^^^^

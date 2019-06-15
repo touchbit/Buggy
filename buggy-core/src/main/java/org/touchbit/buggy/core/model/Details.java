@@ -35,7 +35,7 @@ import static org.touchbit.buggy.core.model.Status.SUCCESS;
 public @interface Details {
 
     /** Test-case identifiers */
-    int[] id() default -1;
+    long[] id() default -1;
 
     /**
      * Test status (see: {@link Status})
@@ -43,8 +43,11 @@ public @interface Details {
      */
     Status status() default SUCCESS;
 
-    /** Issues ID in the bug-tracker system. Format: "MAPI-269" */
+    /** Issues ID in the task-tracker system. Format: "MAPI-269" */
     String[] issue() default {""};
+
+    /** Defects ID in the task-tracker system. Format: "MAPI-269" */
+    String[] bug() default {""};
 
     /** Type of auto test */
     Type type() default Type.MODULE;

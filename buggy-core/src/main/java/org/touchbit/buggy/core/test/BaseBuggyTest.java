@@ -29,7 +29,7 @@ import org.touchbit.buggy.core.utils.log.BuggyLog;
  * Created by Oleg Shaburov on 17.05.2018
  * shaburov.o.a@gmail.com
  */
-public abstract class BaseBuggyTest {
+public abstract class BaseBuggyTest implements TestRailTest {
 
     protected static Logger log = BuggyLog.test();
 
@@ -43,6 +43,7 @@ public abstract class BaseBuggyTest {
                     " TestNG plugin configuration.");
         }
         setLog(logger);
+        setRunId();
     }
 
     /**
@@ -56,6 +57,11 @@ public abstract class BaseBuggyTest {
         if (logger != null) {
             log = logger;
         }
+    }
+
+    @Override
+    public long getRunId() {
+        return 0;
     }
 
 }

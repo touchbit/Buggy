@@ -19,13 +19,13 @@ master_doc = 'index'
 
 # General information about the project
 project = 'Buggy'
-copyright = '2018 Oleg Shaburov. Maintained by the TouchBIT Team'
+copyright = '2019 Oleg Shaburov. Maintained by the TouchBIT Team'
 author = 'Oleg Shaburov'
 
 version = 'latest'
 release = 'latest'
 
-language = 'ru'
+language = 'en'
 
 exclude_patterns = ['_build']
 

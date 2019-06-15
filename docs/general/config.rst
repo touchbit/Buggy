@@ -26,7 +26,7 @@ SecondaryConfig
 * Любой класс реализации интерфейса ``SecondaryConfig`` будет автоматически подгружен и создан экземпляр (получить список: ``Buggy.getSecondaryConfigs()``).
 * Класс реализации интерфейса ``SecondaryConfig`` может быть имплементирован от множества конфигурационных интерфейсов, в том числе и из разных проектов.
 * Для класса реализации интерфейса ``SecondaryConfig`` обязательно наличие аннотации ``com.beust.jcommander.Parameters`` с объявленным ``commandNames``.
-* Пример: ``org.touchbit.buggy.example.min.config.NetworkConfig``
+* Пример: ``org.touchbit.buggy.example.min.config.MinExampleSecondaryConfig``
 
 Параметры запуска
 -----------------
