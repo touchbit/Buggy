@@ -23,6 +23,8 @@ JUnit:
 
 Sonar review:
   extends: .sonar_review
+  dependencies:
+    - JUnit
 
 Min Buggy run:
   stage: verify
