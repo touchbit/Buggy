@@ -29,8 +29,8 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
             UnitTestBaseBuggyExecutionListener listener = new UnitTestBaseBuggyExecutionListener();
             Buggy.getPrimaryConfig().setArtifactsUrl("https://touchbit.org/artifacts");
             ITestNGMethod method = getMockITestNGMethod();
-            String result = listener.getURLEncodedLogFilePath(method);
-            assertThat(result, is(" \u2B9E https://touchbit.org/artifacts/waste-unit-tests/tests/iTestResultMethodWithDetails.log"));
+            String result = listener.getLogFilePath(method);
+            assertThat(result, is("https://touchbit.org/artifacts/waste-unit-tests/tests/iTestResultMethodWithDetails.log"));
         } finally {
             Buggy.getPrimaryConfig().setArtifactsUrl(temp);
         }
@@ -44,8 +44,8 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
             UnitTestBaseBuggyExecutionListener listener = new UnitTestBaseBuggyExecutionListener();
             Buggy.getPrimaryConfig().setArtifactsUrl("https://touchbit.org/artifacts/");
             ITestNGMethod method = getMockITestNGMethod();
-            String result = listener.getURLEncodedLogFilePath(method);
-            assertThat(result, is(" \u2B9E https://touchbit.org/artifacts/waste-unit-tests/tests/iTestResultMethodWithDetails.log"));
+            String result = listener.getLogFilePath(method);
+            assertThat(result, is("https://touchbit.org/artifacts/waste-unit-tests/tests/iTestResultMethodWithDetails.log"));
         } finally {
             Buggy.getPrimaryConfig().setArtifactsUrl(temp);
         }
@@ -60,8 +60,8 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
             UnitTestBaseBuggyExecutionListener listener = new UnitTestBaseBuggyExecutionListener();
             Buggy.getPrimaryConfig().setArtifactsUrl(null);
             ITestNGMethod method = getMockITestNGMethod();
-            String result = listener.getURLEncodedLogFilePath(method);
-            assertThat(result, is(" \u2B9E file://" + Buggy.getPrimaryConfig().getAbsoluteLogPath() +
+            String result = listener.getLogFilePath(method);
+            assertThat(result, is("file://" + Buggy.getPrimaryConfig().getAbsoluteLogPath() +
                     "/tests/iTestResultMethodWithDetails.log"));
         } finally {
             Buggy.getPrimaryConfig().setArtifactsUrl(temp);
@@ -77,45 +77,12 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
             UnitTestBaseBuggyExecutionListener listener = new UnitTestBaseBuggyExecutionListener();
             Buggy.getPrimaryConfig().setArtifactsUrl(null);
             ITestNGMethod method = getMockITestNGMethod();
-            String result = listener.getURLEncodedLogFilePath(method);
-            assertThat(result, is(" \u2B9E file://" + Buggy.getPrimaryConfig().getAbsoluteLogPath() +
+            String result = listener.getLogFilePath(method);
+            assertThat(result, is("file://" + Buggy.getPrimaryConfig().getAbsoluteLogPath() +
                     "/tests/iTestResultMethodWithDetails.log"));
         } finally {
             Buggy.getPrimaryConfig().setArtifactsUrl(temp);
         }
-    }
-
-    @Test
-    @DisplayName("Check setArrow")
-    void unitTest_20181019033011() {
-        StringBuilder sb = new StringBuilder();
-        Details details = getDetails(Status.FAILED, "BUG-123");
-        new BaseBuggyExecutionListener() {
-            @Override public boolean isEnable() { return false; }
-            {
-                setArrow(" ----------------> ");
-                sb.append(buildDetailsMessage(details, "note"));
-            }
-        };
-        assertThat(sb.toString(), is(" ----------------> [BUG-123] note"));
-    }
-
-    @Test
-    @DisplayName("getInvokedMethodLogFileName when details contains test ids")
-    void unitTest_20181019034500() {
-        StringBuilder sb = new StringBuilder();
-        Details details = getDetails(new long[]{1,2,3}, Status.FAILED, Type.SMOKE, "BUG-123");
-        ITestNGMethod method = getMockITestNGMethod();
-        new BaseBuggyExecutionListener() {
-            @Override public boolean isEnable() { return false; }
-            @Override protected Details getDetails(Method method) {
-                return details;
-            }
-            {
-                sb.append(getInvokedMethodLogFileName(method));
-            }
-        };
-        assertThat(sb.toString(), is("[1, 2, 3]_iTestResultMethodWithDetails.log"));
     }
 
     private static class UnitTestBaseBuggyExecutionListener extends BaseBuggyExecutionListener {
@@ -126,8 +93,8 @@ class BaseBuggyExecutionListenerTests extends BaseUnitTest {
         }
 
         @Override
-        public String getURLEncodedLogFilePath(ITestNGMethod method) {
-            return super.getURLEncodedLogFilePath(method);
+        public String getLogFilePath(ITestNGMethod method) {
+            return super.getLogFilePath(method);
         }
 
     }

@@ -5,4 +5,8 @@ package org.touchbit.buggy.core.config;
  * shaburov.o.a@gmail.com
  */
 public class UnitTestPrimaryConfig implements PrimaryConfig {
+
+    private static class UnitTestPrimaryConfigs extends UnitTestPrimaryConfig {
+    }
+
 }

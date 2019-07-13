@@ -29,8 +29,9 @@ public class OkHttpCallLoggingInterceptor implements Interceptor {
         this.logMethod = logMethod;
     }
     
+    @NotNull
     @Override
-    public Response intercept(@NotNull Chain chain) throws IOException {
+    public Response intercept(Chain chain) throws IOException {
         Request okHttpRequest = chain.request();
         StringJoiner requestHeaders = new StringJoiner("\n");
         okHttpRequest.headers().toMultimap().forEach((k, v) -> requestHeaders.add("    " + k + ": " + v));
@@ -40,15 +41,11 @@ public class OkHttpCallLoggingInterceptor implements Interceptor {
         logMethod.accept(requestMsg);
         Response response = chain.proceed(okHttpRequest);
         StringJoiner responseHeaders = new StringJoiner("\n");
-        if (response != null) {
-            response.headers().toMultimap().forEach((k, v) -> responseHeaders.add("    " + k + ": " + v));
-            String responseBody = responseBodyToString(response.body());
-            String responseMsg = String.format("Response:%nCode: %s%nMessage: %s%nHeaders:%n%s%nBody:%n%s",
-                    response.code(), response.message(), responseHeaders.toString(), responseBody);
-            logMethod.accept(responseMsg);
-        } else {
-            logMethod.accept("Response: null");
-        }
+        response.headers().toMultimap().forEach((k, v) -> responseHeaders.add("    " + k + ": " + v));
+        String responseBody = responseBodyToString(response.body());
+        String responseMsg = String.format("Response:%nCode: %s%nMessage: %s%nHeaders:%n%s%nBody:%n%s",
+                response.code(), response.message(), responseHeaders.toString(), responseBody);
+        logMethod.accept(responseMsg);
         return response;
     }
 
@@ -62,12 +59,14 @@ public class OkHttpCallLoggingInterceptor implements Interceptor {
     }
 
     private String responseBodyToString(@Nullable ResponseBody responseBody) throws IOException {
-        if (responseBody != null && responseBody.source() != null) {
+        String result = "";
+        if (responseBody != null) {
+            responseBody.source();
             BufferedSource source = responseBody.source();
             source.request(Long.MAX_VALUE);
-            Buffer buffer = source.buffer();
-            return buffer.clone().readString(UTF8);
+            Buffer buffer = source.getBuffer();
+            result = buffer.clone().readString(UTF8);
         }
-        return "<no response body>";
+        return result.isEmpty() ? "<no response body>" : result;
     }
 }

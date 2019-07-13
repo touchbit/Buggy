@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.3.5</version>
+        <version>0.3.7</version>
     </parent>
 
     <artifactId>buggy-min-example</artifactId>
     <name>Buggy minimal example</name>
-    <version>0.3.5</version>
+    <version>0.3.7</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -33,10 +33,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

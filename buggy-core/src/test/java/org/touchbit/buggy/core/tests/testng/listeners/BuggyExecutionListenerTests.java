@@ -203,7 +203,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.onStart(suite);
             assertThat(listener.method, not(nullValue()));
             assertThat(listener.status, is(EXP_FIX));
-            assertThat(listener.msg, is(" \u2B9E forced test run disabled"));
+            assertThat(listener.msg, is("forced test run disabled"));
             assertThat(Buggy.getBuggyWarns(), is(expWarn));
         } finally {
             Buggy.getPrimaryConfig().setType(configType);
@@ -335,7 +335,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.afterInvocation(iInvokedMethod, iTestResult);
             assertThat(BuggyExecutionListener.getSteps(), contains("Step 1. with exception - ERROR"));
             assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
-                    " -----------\u2B9E Step 1. with exception",
+                    " ------------> Step 1. with exception",
                     "Execution of iTestResultMethodWithDetails resulted in an error.",
                     "iTestResultMethodWithDetails - SUCCESS null",
                     "iTestResultMethodWithDetails............SUCCESS"));
@@ -463,7 +463,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(EXP_FIX, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(FIXED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
         
         @Test
@@ -485,7 +485,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(BLOCKED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(FIXED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -507,7 +507,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(EXP_IMPL, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(IMPLEMENTED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -529,7 +529,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(CORRUPTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(CORRUPTED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -551,7 +551,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(FIXED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SUCCESS));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -562,7 +562,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(IMPLEMENTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SUCCESS));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -573,7 +573,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(UNTESTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SUCCESS));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -584,7 +584,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(SUCCESS, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SUCCESS));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -595,7 +595,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(SKIP, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SUCCESS));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -606,7 +606,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SUCCESS), getDetails(FAILED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SUCCESS));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -618,7 +618,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
                     getDetails(EXP_FIX, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(EXP_FIX));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -629,7 +629,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(EXP_FIX, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(EXP_FIX));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -640,7 +640,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(CORRUPTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(CORRUPTED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -651,7 +651,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(EXP_IMPL, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(EXP_IMPL));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -662,7 +662,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(BLOCKED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(BLOCKED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -673,7 +673,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(FIXED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(FAILED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -684,7 +684,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(IMPLEMENTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(FAILED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -695,7 +695,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(UNTESTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(FAILED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -706,7 +706,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(SUCCESS, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(FAILED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -717,7 +717,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(SKIP, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(FAILED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -728,7 +728,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.FAILURE), getDetails(FAILED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(FAILED));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -739,7 +739,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(EXP_IMPL, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -750,7 +750,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(EXP_FIX, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -761,7 +761,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(BLOCKED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -772,7 +772,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(CORRUPTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -783,7 +783,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(FIXED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -794,7 +794,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(IMPLEMENTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -805,7 +805,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(UNTESTED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -816,7 +816,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(SUCCESS, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -827,7 +827,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(SKIP, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -838,7 +838,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.processTestMethodResult(method, getMockITestResult(ITestResult.SKIP), getDetails(FAILED, "JIRA-123"));
             assertThat(listener.method.getMethodName(), is(method.getTestMethod().getMethodName()));
             assertThat(listener.status, is(SKIP));
-            assertThat(listener.msg, is(" \u2B9E [JIRA-123]"));
+            assertThat(listener.msg, is("[JIRA-123]"));
         }
 
         @Test
@@ -1119,7 +1119,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             assertThat(listener.method, not(nullValue()));
             assertThat(listener.method.getInvocationCount(), not(0));
             assertThat(listener.status, is(EXP_FIX));
-            assertThat(listener.msg, is(" \u2B9E forced test run disabled"));
+            assertThat(listener.msg, is("forced test run disabled"));
             assertThat(Buggy.getBuggyWarns(), is(expWarn));
         }
 
@@ -1138,7 +1138,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             assertThat(listener.method, not(nullValue()));
             assertThat(listener.method.getInvocationCount(), not(0));
             assertThat(listener.status, is(EXP_IMPL));
-            assertThat(listener.msg, is(" \u2B9E forced test run disabled"));
+            assertThat(listener.msg, is("forced test run disabled"));
             assertThat(Buggy.getBuggyWarns(), is(expWarn));
         }
 
@@ -1157,7 +1157,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             assertThat(listener.method, not(nullValue()));
             assertThat(listener.method.getInvocationCount(), not(0));
             assertThat(listener.status, is(BLOCKED));
-            assertThat(listener.msg, is(" \u2B9E forced test run disabled"));
+            assertThat(listener.msg, is("forced test run disabled"));
             assertThat(Buggy.getBuggyWarns(), is(expWarn));
         }
 
@@ -1176,7 +1176,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             assertThat(listener.method, not(nullValue()));
             assertThat(listener.method.getInvocationCount(), not(0));
             assertThat(listener.status, is(CORRUPTED));
-            assertThat(listener.msg, is(" \u2B9E forced test run disabled"));
+            assertThat(listener.msg, is("forced test run disabled"));
             assertThat(Buggy.getBuggyWarns(), is(expWarn));
         }
 
@@ -1245,7 +1245,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
                 listener.disableTestsByType(suite);
                 assertThat(listener.method, not(nullValue()));
                 assertThat(listener.status, is(SKIP));
-                assertThat(listener.msg, is(" \u2B9E SYSTEM test type"));
+                assertThat(listener.msg, is("SYSTEM test type"));
                 assertThat(Buggy.getBuggyWarns(), is(expWarn));
             } finally {
                 Buggy.getPrimaryConfig().setType(configType);
@@ -1638,7 +1638,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.resultLog(iTestNGMethod, Status.SUCCESS, "cause");
             assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
                     "iTestResultMethodWithDetails - SUCCESS null",
-                    "iTestResultMethodWithDetails............SUCCESS \u2B9E [TESTSERVICE TESTINTERFACE TestTask]"
+                    "iTestResultMethodWithDetails............SUCCESS [TESTCOMPONENT TESTSERVICE TESTINTERFACE TestTask]"
             ));
         }
 
@@ -1678,7 +1678,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.resultLog(iTestNGMethod, Status.SUCCESS, "cause");
             assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
                     "iTestResultMethodWithDetails - SUCCESS null",
-                    "iTestResultMethodWithDetails............SUCCESS \u2B9E file://" + WASTE +
+                    "iTestResultMethodWithDetails............SUCCESS └ file://" + WASTE +
                             "/tests/iTestResultMethodWithDetails.log"
             ));
         }
@@ -1699,8 +1699,8 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             listener.resultLog(iTestNGMethod, Status.SUCCESS, "cause");
             assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
                     "iTestResultMethodWithDetails - SUCCESS null",
-                    "iTestResultMethodWithDetails............SUCCESS \u2B9E [TESTSERVICE TESTINTERFACE TestTask] " +
-                            "cause \u2B9E file://" + WASTE +
+                    "iTestResultMethodWithDetails............SUCCESS [TESTCOMPONENT TESTSERVICE TESTINTERFACE TestTask] " +
+                            "cause \n└ file://" + WASTE +
                             "/tests/iTestResultMethodWithDetails.log"
             ));
         }

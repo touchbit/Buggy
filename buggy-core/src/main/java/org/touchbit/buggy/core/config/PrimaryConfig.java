@@ -56,6 +56,7 @@ public interface PrimaryConfig {
         private Boolean printSuite = false;
         private Boolean printCause = false;
         private Boolean printLog = false;
+        private Boolean printLogOnlyFail = false;
         private Boolean check = false;
         private Integer threads = 50;
         private Integer status;
@@ -189,6 +190,14 @@ public interface PrimaryConfig {
 
     default Boolean isPrintLogFile() {
         return DEFAULT_VALUES.printLog;
+    }
+
+    default void setPrintLogFileOnlyFail(Boolean printLogIfFail) {
+        DEFAULT_VALUES.printLogOnlyFail = printLogIfFail;
+    }
+
+    default Boolean isPrintLogFileOnlyFail() {
+        return DEFAULT_VALUES.printLogOnlyFail;
     }
 
     @Parameter(names = {V, VERSION}, hidden = true, description = "Print program version", validateValueWith = ValueValidator.class)

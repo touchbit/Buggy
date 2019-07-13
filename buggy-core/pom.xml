@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.3.5</version>
+        <version>0.3.7</version>
     </parent>
 
     <artifactId>buggy-core</artifactId>
     <name>Core module</name>
-    <version>0.3.5</version>
+    <version>0.3.7</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -78,21 +78,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.2</version>
                 <executions>
                     <execution>
+                        <phase>test</phase>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
+                        <configuration>
+                            <skip>${skip.deploy.test.jar}</skip>
+                        </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

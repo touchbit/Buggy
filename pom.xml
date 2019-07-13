@@ -7,8 +7,9 @@
     <groupId>org.touchbit.buggy</groupId>
     <artifactId>buggy</artifactId>
     <name>Buggy</name>
-    <version>0.3.5</version>
+    <version>0.3.7</version>
     <packaging>pom</packaging>
+    <description>Buggy is an add-on to TestNG for quickly creating test projects and easily customizing the launch of automated tests.</description>
 
     <modules>
         <module>buggy-core</module>
@@ -38,6 +39,8 @@
         <url>https://touchbit.org/</url>
     </organization>
     <inceptionYear>2018</inceptionYear>
+
+    <url>https://buggy.readthedocs.io/</url>
 
     <developers>
         <developer>
@@ -70,8 +73,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <log4j.version>2.9.1</log4j.version>
-        <junit.jupiter.version>5.3.1</junit.jupiter.version>
-        <feign.version>10.1.0</feign.version>
+        <junit.jupiter.version>5.5.0</junit.jupiter.version>
+        <feign.version>10.2.3</feign.version>
 
         <sonar.host.url>https://touchbit.org/sonar/</sonar.host.url>
         <sonar.projectKey>org.touchbit:buggy</sonar.projectKey>
@@ -106,6 +109,7 @@
     </repositories>
 
     <dependencies>
+        <!-- TEST SCOPE -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -127,19 +131,19 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito2</artifactId>
-            <version>2.0.0-beta.5</version>
+            <version>2.0.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <version>3.1.0</version>
+            <version>3.1.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>4.2.0</version>
+            <version>4.2.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -150,32 +154,32 @@
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-core</artifactId>
-                <version>0.3.5</version>
+                <version>0.3.7</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-feign</artifactId>
-                <version>0.3.5</version>
+                <version>0.3.7</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-okhttp</artifactId>
-                <version>0.3.5</version>
+                <version>0.3.7</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-testrail</artifactId>
-                <version>0.3.5</version>
+                <version>0.3.7</version>
                 <scope>compile</scope>
             </dependency>
             <!-- Self Test -->
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-core</artifactId>
-                <version>0.3.5</version>
+                <version>0.3.7</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -183,7 +187,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.0.0-beta1</version>
+                <version>7.0.0-beta7</version>
             </dependency>
             <dependency>
                 <groupId>com.beust</groupId>
@@ -193,12 +197,12 @@
             <dependency>
                 <groupId>org.atteo.classindex</groupId>
                 <artifactId>classindex</artifactId>
-                <version>3.4</version>
+                <version>3.7</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.6</version>
+                <version>3.9</version>
             </dependency>
             <dependency>
                 <groupId>org.touchbit.testrail4j</groupId>
@@ -245,139 +249,84 @@
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
-                <version>15.0</version>
+                <version>17.0.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>26.0-jre</version>
+                <version>28.0-jre</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.5</version>
-                <goals>
-                    <goal>update-child-modules</goal>
-                </goals>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <generateBackupPoms>false</generateBackupPoms>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.0.0</version>
-                <goals>
-                    <goal>dependencies</goal>
-                </goals>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
-                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-                    <detail>false</detail>
-                    <offline>true</offline>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.3.1</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-engine</artifactId>
-                        <version>${junit.jupiter.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <useSystemClassLoader>true</useSystemClassLoader>
-                    <reportsDirectory>${sonar.junit.reportPaths}</reportsDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
-                <executions>
-                    <execution>
-                        <id>pre-unit-test</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${sonar.jacoco.reportPaths}</destFile>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>${sonar.jacoco.reportPaths}</dataFile>
-                            <outputDirectory>${reports.path}/jacoco</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.5</version>
+                    <goals>
+                        <goal>update-child-modules</goal>
+                    </goals>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.0</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.platform</groupId>
+                            <artifactId>junit-platform-surefire-provider</artifactId>
+                            <version>1.3.2</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${junit.jupiter.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <useSystemClassLoader>true</useSystemClassLoader>
+                        <reportsDirectory>${sonar.junit.reportPaths}</reportsDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.1</version>
+                    <executions>
+                        <execution>
+                            <id>pre-unit-test</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                            <configuration>
+                                <destFile>${sonar.jacoco.reportPaths}</destFile>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                            <configuration>
+                                <dataFile>${sonar.jacoco.reportPaths}</dataFile>
+                                <outputDirectory>${reports.path}/jacoco</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
                     <version>3.4.0.905</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.6.1</version>
-                    <executions>
-                        <execution>
-                            <phase>compile</phase>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <source>${jdk.version}</source>
-                        <target>${jdk.version}</target>
-                        <encoding>${source.encoding}</encoding>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            </manifest>
-                        </archive>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -421,9 +370,24 @@
                         <dependency>
                             <groupId>org.atteo.classindex</groupId>
                             <artifactId>classindex-transformer</artifactId>
-                            <version>3.4</version>
+                            <version>3.7</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                    <executions>
+                        <execution>
+                            <phase>compile</phase>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                        <encoding>${source.encoding}</encoding>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -448,11 +412,8 @@
                     <executions>
                         <execution>
                             <phase>install</phase>
-                            <id>intall-this-jar</id>
                             <configuration>
-                                <file>target/${project.artifactId}-${project.version}.jar</file>
-                                <sources>target/${project.artifactId}-${project.version}-sources.jar</sources>
-                                <pomFile>dependency-reduced-pom.xml</pomFile>
+                                <pomFile>pom.xml</pomFile>
                                 <updateReleaseInfo>true</updateReleaseInfo>
                                 <createChecksum>true</createChecksum>
                             </configuration>
@@ -460,32 +421,50 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <groupId>net.nicoulaj.maven.plugins</groupId>
+                    <artifactId>checksum-maven-plugin</artifactId>
+                    <version>1.8</version>
                     <executions>
                         <execution>
-                            <id>local-buggy</id>
                             <goals>
-                                <goal>purge-local-repository</goal>
+                                <goal>artifacts</goal>
                             </goals>
+                            <phase>install</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <phase>install</phase>
                             <configuration>
-                                <resolutionFuzziness>groupId</resolutionFuzziness>
-                                <manualIncludes>
-                                    <manualInclude>${project.groupId}</manualInclude>
-                                </manualIncludes>
+                                <failOnError>false</failOnError>
+                                <failOnWarnings>false</failOnWarnings>
+                                <detectOfflineLinks>false</detectOfflineLinks>
                             </configuration>
                         </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                    <configuration>
+                        <passphrase/>
+                    </configuration>
+                    <executions>
                         <execution>
-                            <id>current-version</id>
+                            <id>sign-artifacts</id>
+                            <phase>install</phase>
                             <goals>
-                                <goal>get</goal>
+                                <goal>sign</goal>
                             </goals>
-                            <configuration>
-                                <transitive>false</transitive>
-                                <artifact>${project.groupId}:${project.artifactId}-core:${project.version}:jar</artifact>
-                                <remoteRepositories>touchbit::default::https://touchbit.org/repository/</remoteRepositories>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
@@ -494,15 +473,25 @@
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>1.6.8</version>
                     <extensions>true</extensions>
-                    <configuration>
-                        <serverId>sonatype</serverId>
-                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                        <updateReleaseInfo>true</updateReleaseInfo>
-                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>deploy</goal>
+                            </goals>
+                            <phase>deploy</phase>
+                            <configuration>
+                                <serverId>sonatype</serverId>
+                                <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                                <updateReleaseInfo>true</updateReleaseInfo>
+                                <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0-M1</version>
                     <configuration>
                         <skip>true</skip>
                     </configuration>
@@ -510,6 +499,93 @@
             </plugins>
         </pluginManagement>
     </build>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <skip.deploy.test.jar>false</skip.deploy.test.jar>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-project-info-reports-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <goals>
+                            <goal>dependencies</goal>
+                        </goals>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+                            <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                            <detail>false</detail>
+                            <offline>true</offline>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>nexus-deploy</id>
+            <activation>
+                <property>
+                    <name>sonatype-nexus-deploy</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <skip.deploy.test.jar>true</skip.deploy.test.jar>
+                <skipTests>true</skipTests>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>net.nicoulaj.maven.plugins</groupId>
+                        <artifactId>checksum-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <distributionManagement>
         <snapshotRepository>
             <id>sonatype</id>

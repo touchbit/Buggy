@@ -44,7 +44,7 @@ class OkHttpCallLoggingInterceptorTests extends BaseUnitTest {
         interceptor.intercept(chain);
         assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
                 "Request:\nPOST https://touchbit.org/\nHeaders:\n    request_header: [value]\nBody:\nRequestBody",
-                "Response:\nCode: 200\nMessage: OOOOOOK\nHeaders:\n    response_header: [value]\nBody:\n"
+                "Response:\nCode: 200\nMessage: OOOOOOK\nHeaders:\n    response_header: [value]\nBody:\n<no response body>"
         ));
     }
 
@@ -76,25 +76,6 @@ class OkHttpCallLoggingInterceptorTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check GET msg logging with null response body")
-    void unitTest_20181014212051() throws Exception {
-        OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(TEST_LOGGER);
-        Request request = new Request.Builder()
-                .url("https://touchbit.org/")
-                .get()
-                .header("request_header", "value")
-                .build();
-        Interceptor.Chain chain = mock(Interceptor.Chain.class);
-        when(chain.request()).thenReturn(request);
-        when(chain.proceed(request)).thenReturn(null);
-        interceptor.intercept(chain);
-        assertThat(TEST_LOGGER.takeLoggedMessages(), contains(
-                "Request:\nGET https://touchbit.org/\nHeaders:\n    request_header: [value]\nBody:\n<no request body>",
-                "Response: null"
-        ));
-    }
-
-    @Test
     @DisplayName("Check GET msg logging with null input stream")
     void unitTest_20181014212407() throws Exception {
         OkHttpCallLoggingInterceptor interceptor = new OkHttpCallLoggingInterceptor(TEST_LOGGER);
@@ -111,7 +92,7 @@ class OkHttpCallLoggingInterceptorTests extends BaseUnitTest {
                 .protocol(HTTP_1_1)
                 .message("OOOOOOK")
                 .header("response_header", "value")
-                .body(new RealResponseBody("contentTypeString", 100500L, null))
+                .body(new RealResponseBody("contentTypeString", 100500L, new Buffer()))
                 .build();
         when(chain.proceed(request)).thenReturn(response);
         interceptor.intercept(chain);

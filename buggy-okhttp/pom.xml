@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.touchbit.buggy</groupId>
         <artifactId>buggy</artifactId>
-        <version>0.3.5</version>
+        <version>0.3.7</version>
     </parent>
 
     <artifactId>buggy-okhttp</artifactId>
     <name>okHTTP3 utils</name>
     <description>okHTTP3 client utils</description>
-    <version>0.3.5</version>
+    <version>0.3.7</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.11.0</version>
+            <version>4.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -52,22 +52,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

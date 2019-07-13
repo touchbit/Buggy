@@ -99,6 +99,7 @@ public abstract class Buggy {
     }
 
     public static void reset() {
+        programName = "Buggy";
         testNG = new TestNG();
         jCommander = null;
         primaryConfigInitialized = false;
