@@ -50,8 +50,6 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
 
     protected long startTime;
     protected long finishTime;
-    private String arrow = " \u2B9E ";
-
     protected Logger testLog;
     protected Logger frameworkLog;
     protected Logger consoleLog;
@@ -75,10 +73,6 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         finishTime = new Date().getTime();
     }
 
-    public void setArrow(String a) {
-        arrow = a;
-    }
-
     protected @Nullable Details getDetails(IInvokedMethod method) {
         return getDetails(method.getTestMethod());
     }
@@ -99,7 +93,7 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         return (Suite) method.getRealClass().getAnnotation(Suite.class);
     }
 
-    protected String getURLEncodedLogFilePath(ITestNGMethod method) {
+    protected String getLogFilePath(ITestNGMethod method) {
         PrimaryConfig c = Buggy.getPrimaryConfig();
         String urlEncoded = StringUtils.encode(getInvokedMethodLogFileName(method));
         // Do not change the check. Feature parsing values by jCommander library.
@@ -107,9 +101,9 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
             String parentDir = c.getTestLogDir().getParentFile().getName();
             String logDir = new File(parentDir, c.getTestLogDir().getName()).getPath();
             String url = c.getArtifactsUrl().endsWith("/") ? c.getArtifactsUrl() : c.getArtifactsUrl() + "/";
-            return arrow + url + new File(logDir, urlEncoded).getPath();
+            return url + new File(logDir, urlEncoded).getPath();
         } else {
-            return arrow + "file://" + new File(c.getTestLogDir(), urlEncoded);
+            return "file://" + new File(c.getTestLogDir(), getInvokedMethodLogFileName(method));
         }
     }
 
@@ -119,24 +113,7 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
 
     protected String getInvokedMethodLogFileName(ITestNGMethod iTestNGMethod) {
         Method method = iTestNGMethod.getConstructorOrMethod().getMethod();
-        String caseIds = "";
-        String methodName = method.getName();
-        if (!iTestNGMethod.isTest()) {
-            return methodName + ".log";
-        }
-        Details details = getDetails(method);
-        if (details != null) {
-            List<Long> ids = new ArrayList<>();
-            for (long id : details.id()) {
-                if (id > 0) {
-                    ids.add(id);
-                }
-            }
-            if (!ids.isEmpty()) {
-                caseIds = Arrays.toString(details.id()) + "_";
-            }
-        }
-        return caseIds + methodName + ".log";
+        return method.getName() + ".log";
     }
 
     protected Method getRealMethod(ITestResult result) {
@@ -173,6 +150,10 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
     }
 
     protected String getIssues(Details details) {
+        String[] issues = details.issue();
+        if (issues.length == 0) {
+            return "";
+        }
         return Arrays.toString(details.issue());
     }
 
@@ -181,12 +162,12 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         for (Object o : appends) {
             stringJoiner.add(String.valueOf(o));
         }
-        String ref = isIssuesPresent(details) ? arrow + getIssues(details).trim() : "";
+        String ref = isIssuesPresent(details) ? "" + getIssues(details).trim() : "";
         String appendsResult = stringJoiner.toString().trim();
         if (ref.length() != 0) {
-            return ref + (appendsResult.length() > 0 ? " " + appendsResult : "");
+            return ref + (appendsResult.length() > 0 ? " " + appendsResult.trim() : "");
         }
-        return stringJoiner.length() != 0 ? arrow + stringJoiner : "";
+        return stringJoiner.length() != 0 ? stringJoiner.toString().trim() : "";
     }
 
     public int getTestCount() {

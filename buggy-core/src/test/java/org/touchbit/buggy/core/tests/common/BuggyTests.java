@@ -555,7 +555,7 @@ class BuggyTests extends BaseUnitTest {
     void unitTest_20181022014156() {
         Buggy.main(new String[]{"--print-log"});
         assertThat(TEST_LOGGER.takeLoggedMessages(),
-                is(hasItems("test_20181016172050.....................SUCCESS \u2B9E " +
+                is(hasItems("test_20181016172050.....................SUCCESS └ " +
                         "file://" + Buggy.getPrimaryConfig().getAbsoluteLogPath() + "/tests/test_20181016172050.log")));
     }
 

@@ -18,6 +18,8 @@ package org.touchbit.buggy.core.testng.listeners;
 
 import org.testng.ITestNGListener;
 import org.touchbit.buggy.core.Buggy;
+import org.touchbit.buggy.core.config.PrimaryConfig;
+import org.touchbit.buggy.core.utils.ExitHandlerExpectedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,11 +54,23 @@ public final class IntellijIdeaTestNgPluginListener extends BuggyExecutionListen
                     list.add(val);
                 }
             } else {
-                // ignore command
+                if (key.startsWith("buggy.primary.config.class")) {
+                    Buggy.setPrimaryConfigClass(getPrimaryConfig(val));
+                }
             }
         });
         String[] args = list.toArray(new String[0]);
         Buggy.prepare(args);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Class<PrimaryConfig> getPrimaryConfig(String val) {
+        try {
+            return  (Class<PrimaryConfig>) this.getClass().getClassLoader().loadClass(val);
+        } catch (Exception e) {
+            Buggy.getExitHandler().exitRun(1, "Unable to create a new instance of PrimaryConfig class", e);
+        }
+        throw new ExitHandlerExpectedException();
     }
 
     @Override

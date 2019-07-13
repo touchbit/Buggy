@@ -49,7 +49,7 @@ import static org.touchbit.buggy.core.utils.StringUtils.*;
  * <p>
  * Created by Shaburov Oleg on 31.07.2017.
  */
-@SuppressWarnings({"unused", "UnusedReturnValue", "WeakerAccess", "squid:S2629"})
+@SuppressWarnings({"unused", "UnusedReturnValue", "squid:S2629"})
 public class BuggyExecutionListener extends BaseBuggyExecutionListener
         implements IExecutionListener, IInvokedMethodListener, ISuiteListener, ITestListener, IClassListener {
 
@@ -210,7 +210,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
             msgBody = msgBody.replaceFirst("\\{}", String.valueOf(s));
         }
         String stepInfo = "Step " + stepNum + ". " + msgBody;
-        logger.info(" -----------\u2B9E {}", stepInfo);
+        logger.info(" ------------> {}", stepInfo);
         getSteps().add(stepInfo);
     }
 
@@ -384,23 +384,29 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     }
 
     public void resultLog(ITestNGMethod method, Status status, String details) {
+        PrimaryConfig config = Buggy.getPrimaryConfig();
         String methodName = method.getMethodName();
         Suite suite = getSuite(method);
         String statusName = status.name();
         StringJoiner resultMsg = new StringJoiner(" ");
-        if (Buggy.getPrimaryConfig().isPrintSuite()) {
-            StringJoiner sj = new StringJoiner(" ", " \u2B9E [", "] ");
+        if (config.isPrintSuite()) {
+            StringJoiner sj = new StringJoiner(" ", " [", "]");
+            sj.add(BuggyUtils.getComponent(suite).getName().trim());
             sj.add(BuggyUtils.getService(suite).getName().trim());
             sj.add(BuggyUtils.getInterface(suite).getName().trim());
             sj.add(suite.task().trim());
             resultMsg.add(sj.toString().trim());
         }
         testLog.info("{} - {} {}", methodName, statusName, method.getDescription());
-        if (Buggy.getPrimaryConfig().isPrintCause() || method.getInvocationCount() < 1) {
-            resultMsg.add(details.trim());
+        String detailsString = details.trim();
+        if ((config.isPrintCause() || method.getInvocationCount() < 1) && !detailsString.isEmpty()) {
+            resultMsg.add(detailsString);
         }
-        if (Buggy.getPrimaryConfig().isPrintLogFile() && method.getInvocationCount() > 0) {
-            resultMsg.add(getURLEncodedLogFilePath(method).trim());
+        String logPathString = getLogFilePath(method).trim();
+        if (config.isPrintLogFile() && method.getInvocationCount() > 0 && !logPathString.isEmpty() &&
+                (!config.isPrintLogFileOnlyFail() || (config.isPrintLogFileOnlyFail() && status != Status.SUCCESS))) {
+            resultMsg.add("\n└");
+            resultMsg.add(logPathString);
         }
         printASCIIStatus(status, StringUtils.dotFiller(methodName, 47, statusName) +
                 (resultMsg.length() > 0 ? " " + resultMsg.toString().trim() : ""));

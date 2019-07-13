@@ -22,6 +22,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 
+import java.nio.charset.Charset;
 import java.util.*;
 
 import static feign.Request.HttpMethod.POST;
@@ -53,11 +54,11 @@ class FeignCURLLoggingInterceptorTests extends BaseUnitTest {
                 .method(POST)
                 .uri("/api/v1", true)
                 .headers(headers)
-                .body("test-body");
+                .body(Request.Body.encoded("test-body".getBytes(), Charset.forName("utf-8")));
         interceptor.apply(rt);
         assertThat(TEST_LOGGER.takeLoggedMessages(),
                 contains("Playback curl:\ncurl -i -k -X POST 'http://touchbit.org/api/v1' " +
-                        "-H 'test_header: charset=utf-8; value' -H 'Content-Length: 9' --data 'test-body'"
+                        "-H 'Content-Length: 9' -H 'test_header: charset=utf-8; value' --data 'test-body'"
                 ));
     }
 

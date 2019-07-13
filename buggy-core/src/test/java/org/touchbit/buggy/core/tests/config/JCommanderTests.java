@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.Attributes;
 
@@ -36,10 +37,13 @@ class JCommanderTests extends BaseUnitTest {
 
     @Test
     @DisplayName("Check ArraySplitter.split(\"\")")
-    void unitTest_20180916231916() {
-        ArraySplitter splitter = new ArraySplitter();
-        List<String> result = splitter.split("");
-        assertThat(result, is(new ArrayList()));
+    void unitTest_20180916231916() throws ClassNotFoundException {
+        Class<?> configClass =  this.getClass()
+                .getClassLoader().loadClass("org.touchbit.buggy.core.config.UnitTestPrimaryConfig$UnitTestPrimaryConfigs");
+        System.out.println(configClass);
+        System.out.println(Arrays.toString(configClass.getInterfaces()));
+        System.out.println(Arrays.toString(configClass.getGenericInterfaces()));
+        System.out.println(Arrays.toString(configClass.getAnnotatedInterfaces()));
     }
 
     @Test
