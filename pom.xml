@@ -13,6 +13,8 @@
 
     <modules>
         <module>buggy-core</module>
+        <module>buggy-spring-boot-starter</module>
+        <module>buggy-spring-boot-starter-example</module>
         <module>buggy-feign</module>
         <module>buggy-min-example</module>
         <module>buggy-okhttp</module>
@@ -72,7 +74,7 @@
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <log4j.version>2.9.1</log4j.version>
+        <log4j.version>2.13.3</log4j.version>
         <junit.jupiter.version>5.5.0</junit.jupiter.version>
         <feign.version>10.2.3</feign.version>
 
@@ -187,12 +189,12 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.0.0-beta7</version>
+                <version>7.3.0</version>
             </dependency>
             <dependency>
                 <groupId>com.beust</groupId>
                 <artifactId>jcommander</artifactId>
-                <version>1.74</version>
+                <version>1.78</version>
             </dependency>
             <dependency>
                 <groupId>org.atteo.classindex</groupId>
@@ -219,6 +221,7 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j-impl</artifactId>
                 <version>${log4j.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>

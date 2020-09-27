@@ -4,7 +4,6 @@ import org.atteo.classindex.IndexSubclasses;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.testng.xml.Parameters;
 import org.touchbit.buggy.core.config.*;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.Buggy;
