@@ -7,7 +7,7 @@ import org.touchbit.buggy.spring.boot.starter.Buggy;
 public class SBBuggy extends Buggy {
 
     public static void main(String[] args) {
-        args = new String[]{"--force"};
+        args = new String[]{"--force", "-v"};
         SpringApplication.run(SBBuggy.class, args);
     }
 

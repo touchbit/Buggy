@@ -28,6 +28,11 @@ import static java.util.Objects.isNull;
  */
 public class StringUtils {
 
+    public static final int STRING_LEN = 47;
+    public static final String BLOCK = "=";
+    public static final String STEP = "\u2014";
+    public static final String DOT = ".";
+
     public static String underscoreFiller(Object prefix, int i) {
         return underscoreFiller(prefix, i, null);
     }
@@ -40,12 +45,32 @@ public class StringUtils {
         return dotFiller(prefix, i, null);
     }
 
+    public static String dotFiller(Object prefix) {
+        return dotFiller(prefix, STRING_LEN, null);
+    }
+
     public static String dotFiller(Object prefix, int i, Object suffix) {
         return filler(prefix, ".", i, suffix);
     }
 
+    public static String dotFiller(Object prefix, Object suffix) {
+        return filler(prefix, ".", STRING_LEN, suffix);
+    }
+
     public static String filler(Object prefix, String symbol, int i) {
         return filler(prefix, symbol, i, null);
+    }
+
+    public static String filler(String symbol) {
+        return filler(null, symbol, STRING_LEN, null);
+    }
+
+    public static String filler(Object prefix, String symbol) {
+        return filler(prefix, symbol, STRING_LEN, null);
+    }
+
+    public static String filler(Object prefix, String symbol, Object postfix) {
+        return filler(prefix, symbol, STRING_LEN, postfix);
     }
 
     public static String filler(Object prefix, String symbol, int length, Object postfix) {
@@ -99,6 +124,33 @@ public class StringUtils {
             return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
         } catch (Exception ignore) {
             return value;
+        }
+    }
+
+    public static void sPrint() {
+        println(filler(STEP));
+    }
+
+    public static void bPrint() {
+        println(filler(BLOCK));
+    }
+
+    public static void fPrint(String symbol) {
+        println(filler(symbol));
+    }
+
+    public static void fPrint(Object prefix, String symbol, Object postfix) {
+        println(filler(prefix, symbol, postfix));
+    }
+
+    public static void cPrint(String msg) {
+        if (msg != null && !msg.isEmpty()) {
+            int diff = STRING_LEN - msg.length();
+            if (diff > 0) {
+                int indent = diff / 2;
+                String result = filler("", " ", indent, "") + msg;
+                println(result);
+            }
         }
     }
 

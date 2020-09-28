@@ -1,69 +1,47 @@
-/*
- * Copyright © 2018 Shaburov Oleg
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package org.touchbit.buggy.spring.boot.starter;
 
-package org.touchbit.buggy.core.utils.log;
-
-import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.atteo.classindex.IndexSubclasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.touchbit.buggy.core.Buggy;
-import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
+import org.springframework.context.annotation.*;
 import org.touchbit.buggy.core.utils.IOHelper;
 import org.touchbit.buggy.core.utils.StringUtils;
+import org.touchbit.buggy.core.utils.log.XMLLogConfigurator;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 
-/**
- * Basic implementation of the test logger.
- * <p>
- * Created by Oleg Shaburov on 17.05.2018
- * shaburov.o.a@gmail.com
- */
-@SuppressWarnings({"WeakerAccess", "unused", "squid:S1118"})
-@IndexSubclasses
-public class BuggyLog {
+@Configuration()
+@ConditionalOnNotWebApplication
+@DependsOn({"initAndGetBuggyConfigurations", "isBuggyConfigured"})
+public class LoggerConfiguration extends BaseConfiguration {
 
     private static final String CONFIG = "log4j2.xml";
     private static final String DEFAULT_CONFIG = "buggy-log4j2.xml";
-
     public static final String LOG_FILE_NAME = "log.file.name";
     public static final String LOG_DIRECTORY = "log.directory";
 
-    protected static Logger console;
-    protected static Logger framework;
-    protected static Logger test;
+    @Autowired
+    private static boolean isBuggyConfigured;
+
+    private static Logger console;
+    private static Logger framework;
+    private static Logger test;
     private static String logPath;
-    private static Configuration configuration;
+    private static boolean isBuggyLoggerInitialized;
 
-    static {
-        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
-    }
-
-    public BuggyLog() {
+    public LoggerConfiguration() {
         loadDefaultConfig();
+        isBuggyLoggerInitialized = true;
     }
 
-    public BuggyLog(Logger consoleLogger, Logger frameworkLogger, Logger testLogger) {
-        checkBuggyConfiguration();
-        setConsoleLog(consoleLogger);
-        setFrameworkLog(frameworkLogger);
-        setTestLog(testLogger);
+    @Bean("isBuggyLoggerInitialized")
+    public boolean isBuggyLoggerInitialized() {
+        return isBuggyLoggerInitialized;
     }
 
     public static String getLogsDirPath() {
@@ -72,7 +50,7 @@ public class BuggyLog {
 
     public static void setLogsDirPath(String path) {
         if (path == null) {
-            throw new BuggyConfigurationException("The path to the log directory can not be empty");
+            exitRun("The path to the log directory can not be empty");
         }
         logPath = path;
         System.setProperty(LOG_DIRECTORY, logPath);
@@ -85,6 +63,7 @@ public class BuggyLog {
     public static synchronized void loadDefaultConfig() {
         checkBuggyConfiguration();
         Exception exception = null;
+        org.apache.logging.log4j.core.config.Configuration configuration = null;
         try {
             configuration = XMLLogConfigurator.reloadXMLConfiguration(CONFIG);
         } catch (Exception e) {
@@ -103,11 +82,12 @@ public class BuggyLog {
                     .dotFiller("Load " + DEFAULT_CONFIG + " configuration", 47,
                             exception != null ? "FAIL" : "OK"));
         }
-        if (exception == null) {
-            setTestLog(LoggerFactory.getLogger("Routing"));
-            setConsoleLog(LoggerFactory.getLogger("Console"));
-            setFrameworkLog(LoggerFactory.getLogger("Framework"));
-        }
+//        if (exception == null) { todo
+//        }
+        configuration.getLoggerContext().reconfigure();
+        setTestLog(LoggerFactory.getLogger("Routing"));
+        setConsoleLog(LoggerFactory.getLogger("Console"));
+        setFrameworkLog(LoggerFactory.getLogger("Framework"));
         StringUtils.sPrint();
         StringUtils.fPrint("Logger", " ", "Level");
         StringUtils.sPrint();
@@ -123,7 +103,7 @@ public class BuggyLog {
                                 .println(StringUtils.dotFiller(name, 47, v.getLevel()));
                     });
             framework.info("Log4j2 appenders: {}", configuration.getLoggerContext().getConfiguration().getAppenders());
-            framework.info("Log4j2 loggers: {}", configuration.getLoggerContext().getLoggers());
+            framework.info("Log4j2 loggers: {}", configuration.getLoggers());
             framework.info("Log4j2 configuration location: {}", configuration.getLoggerContext().getConfigLocation());
             String conf = IOHelper.readFile(new File(configuration.getLoggerContext().getConfigLocation()));
             framework.trace("Log4j2 configuration:\n{}", conf);
@@ -146,23 +126,23 @@ public class BuggyLog {
     }
 
     public static void setConsoleLog(Logger console) {
-        BuggyLog.console = console;
+        LoggerConfiguration.console = console;
     }
 
     public static void setFrameworkLog(Logger framework) {
-        BuggyLog.framework = framework;
+        LoggerConfiguration.framework = framework;
     }
 
     public static void setTestLog(Logger test) {
-        BuggyLog.test = test;
+        LoggerConfiguration.test = test;
     }
 
     private static void checkBuggyConfiguration() {
-        if (!Buggy.isPrimaryConfigInitialized()) {
-            Buggy.getExitHandler().exitRun(1, "The logger cannot be initialized before the Buggy configuration.");
+        if (isBuggyConfigured) {
+             exitRun("The logger cannot be initialized before the Buggy configuration.");
         }
         if (logPath == null) {
-            setLogsDirPath(Buggy.getPrimaryConfig().getAbsoluteLogPath());
+            setLogsDirPath("./");
         }
     }
 
