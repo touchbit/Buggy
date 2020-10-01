@@ -1,0 +1,51 @@
+<configuration debug="false">
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <!-- The root path to the log directory. It is initialized 1 time at startup. -->
+    <property name="sys:logback.configurationFile" value="buggy-logback.xml"/>
+    <property name="log.path" value="${env:log.directory:-${sys:log.directory:-.}}/logs"/>
+    <property name="test.log.pattern" value="%d{HH:mm:ss.SSS} - %m%n"/>
+    <property name="base.log.pattern" value="%d{HH:mm:ss.SSS} %-5level - %m%n"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.touchbit.buggy.spring.boot.starter.log.ConsoleLoggerColorLayout"/>
+        </encoder>
+    </appender>
+
+    <appender name="Framework" class="ch.qos.logback.core.FileAppender">
+        <file>${log.path}/Framework.log</file>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.touchbit.buggy.spring.boot.starter.log.FrameworkLoggerLayout"/>
+        </encoder>
+    </appender>
+
+    <appender name="TestSupervisor" class="ch.qos.logback.core.FileAppender">
+        <file>${log.path}/TestSupervisor.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>${base.log.pattern}</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="Framework"/>
+    </root>
+    <logger name="Console" level="ALL" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="Framework"/>
+    </logger>
+    <logger name="org.touchbit.buggy.spring.boot.starter.log.ConfigurationLogger" level="TRACE" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="Framework"/>
+    </logger>
+    <logger name="Framework" level="DEBUG" additivity="false">
+        <appender-ref ref="Framework"/>
+    </logger>
+
+    <!--    <logger name="Routing" level="debug" additivity="false">-->
+    <!--        <appender-ref ref="Routing"/>-->
+    <!--    </logger>-->
+    <logger name="org.touchbit.buggy.core.testng.listeners.TestSupervisor" level="INFO" additivity="false">
+        <appender-ref ref="TestSupervisor"/>
+    </logger>
+</configuration>

@@ -1,1 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.touchbit.buggy.spring.boot.starter.BuggyAutoConfiguration

@@ -1,0 +1,12 @@
+logging:
+  config: 'classpath:buggy-logback.xml'
+spring:
+  main:
+    allow-bean-definition-overriding: true
+buggy:
+  all: true
+  force: true
+  print-suite: true
+  print-cause: true
+  print-log: true
+  type: SYSTEM
