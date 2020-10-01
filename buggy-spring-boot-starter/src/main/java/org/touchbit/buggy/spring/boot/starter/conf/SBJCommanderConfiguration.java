@@ -36,6 +36,7 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
         includeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = JCConfiguration.class))
 public class SBJCommanderConfiguration implements SBConfiguration {
 
+    private static final JCommander JC = new JCommander();
     private final List<JCConfiguration> list;
     private final String[] args;
     private Map<Class<? extends JCConfiguration>, JCConfiguration> buggyConfigurations;
@@ -58,34 +59,39 @@ public class SBJCommanderConfiguration implements SBConfiguration {
 
     @PostConstruct
     public void postConstruct() {
+        if (BuggyConfig.getHelp()) {
+            ConfigurationLogger.stepDelimeter();
+            JC.usage();
+            exitRun(0);
+        }
         printConfigurationsParams(buggyConfigurations);
     }
 
     public void init() {
         if (buggyConfigurations == null) {
-            ConfigurationLogger.bPrint();
-            ConfigurationLogger.cbPrint("JCommander configuration construction");
-            ConfigurationLogger.sPrint();
+            ConfigurationLogger.blockDelimeter();
+            ConfigurationLogger.centerBold("JCommander configuration construction");
+            ConfigurationLogger.stepDelimeter();
             buggyConfigurations = new HashMap<>();
-            JCommander jc = new JCommander();
+
             for (JCConfiguration config : list) {
                 buggyConfigurations.put(config.getClass(), config);
                 checkConfiguration(config);
                 if (config.getClass().isAnnotationPresent(Parameters.class) &&
                         config.getClass().getAnnotation(Parameters.class).commandNames().length > 0) {
-                    jc.addCommand(config);
+                    JC.addCommand(config);
                 } else {
-                    jc.addObject(config);
+                    JC.addObject(config);
                 }
-                ConfigurationLogger.fdPrint(config.getClass().getSimpleName(), "OK");
+                ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "OK");
             }
             try {
-                jc.parse(args);
-                ConfigurationLogger.sPrint();
-                ConfigurationLogger.fdPrint("Parsing arguments", "OK");
+                JC.parse(args);
+                ConfigurationLogger.stepDelimeter();
+                ConfigurationLogger.dotPlaceholder("Parsing arguments", "OK");
             } catch (Exception e) {
-                ConfigurationLogger.sPrint();
-                ConfigurationLogger.fdPrint("Parsing arguments", "FAIL");
+                ConfigurationLogger.stepDelimeter();
+                ConfigurationLogger.dotPlaceholder("Parsing arguments", "FAIL");
                 printConfigurationsParams(buggyConfigurations);
                 if (!(e instanceof ParameterException)) {
                     e.printStackTrace();
@@ -100,7 +106,7 @@ public class SBJCommanderConfiguration implements SBConfiguration {
             Parameter parameter = field.getAnnotation(Parameter.class);
             if (parameter != null && !Modifier.isStatic(field.getModifiers())) {
                 String[] names = parameter.names();
-                ConfigurationLogger.fdPrint(config.getClass().getSimpleName(), "FAIL");
+                ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
                 printConfigurationParams(config);
                 exitRunWithErr("Field " + config.getClass().getSimpleName() + "#" + field.getName() +
                         " marked with @Parameter " + Arrays.toString(names) + " must be static.");
@@ -128,7 +134,7 @@ public class SBJCommanderConfiguration implements SBConfiguration {
                             "(method name must start with 'is' or 'set').";
                 }
                 if (error != null) {
-                    ConfigurationLogger.fdPrint(config.getClass().getSimpleName(), "FAIL");
+                    ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
                     printConfigurationParams(config);
                     exitRunWithErr(error);
                 }
@@ -146,10 +152,10 @@ public class SBJCommanderConfiguration implements SBConfiguration {
     public void printConfigurationParams(JCConfiguration config) {
         Map<String, Object> params = config.configurationToMap();
         if (params != null && !params.isEmpty()) {
-            ConfigurationLogger.sPrint();
-            ConfigurationLogger.cPrint(config.getClass().getSimpleName());
+            ConfigurationLogger.stepDelimeter();
+            ConfigurationLogger.center(config.getClass().getSimpleName());
             for (Map.Entry<String, Object> entry : params.entrySet()) {
-                ConfigurationLogger.fdPrint(entry.getKey(), entry.getValue());
+                ConfigurationLogger.dotPlaceholder(entry.getKey(), entry.getValue());
             }
         }
     }

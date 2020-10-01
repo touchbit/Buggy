@@ -90,15 +90,15 @@ public class ConfigurationLogger {
         return sb.toString();
     }
 
-    public static void sPrint() {
+    public static void stepDelimeter() {
         print(filler(STEP));
     }
 
-    public static void bPrint() {
+    public static void blockDelimeter() {
         print(filler(BLOCK));
     }
 
-    public static void fdPrint(Object prefix, Object postfix) {
+    public static void dotPlaceholder(Object prefix, Object postfix) {
         print(filler(prefix, DOT, postfix));
     }
 
@@ -106,15 +106,15 @@ public class ConfigurationLogger {
         print(filler(prefix, symbol, postfix));
     }
 
-    public static void cbPrint(String msg) {
-        print(BOLD.wrap(center(msg)));
+    public static void centerBold(String msg) {
+        print(BOLD.wrap(centerMsg(msg)));
     }
 
-    public static void cPrint(String msg) {
-        print(center(msg));
+    public static void center(String msg) {
+        print(centerMsg(msg));
     }
 
-    private static String center(String msg) {
+    private static String centerMsg(String msg) {
         if (msg != null && !msg.isEmpty()) {
             int diff = STRING_LEN - msg.length();
             if (diff > 0) {

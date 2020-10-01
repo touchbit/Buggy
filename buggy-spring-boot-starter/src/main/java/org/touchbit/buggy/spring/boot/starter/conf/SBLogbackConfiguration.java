@@ -42,9 +42,9 @@ public class SBLogbackConfiguration implements SBConfiguration {
 
     public SBLogbackConfiguration(Environment env) {
         loggingConfigFile = env.getProperty("logging.config");
-        ConfigurationLogger.bPrint();
-        ConfigurationLogger.cbPrint("Loading logback configuration");
-        ConfigurationLogger.sPrint();
+        ConfigurationLogger.blockDelimeter();
+        ConfigurationLogger.centerBold("Loading logback configuration");
+        ConfigurationLogger.stepDelimeter();
         URL logbackXml = getResource(LOGBACK_XML, this.getClass());
         URL buggyLogbackXml = getResource("buggy-logback.xml", this.getClass());
         LoggerContext context = null;
@@ -104,7 +104,7 @@ public class SBLogbackConfiguration implements SBConfiguration {
     }
 
     public LoggerContext reloadLogger(URL config) {
-        ConfigurationLogger.sPrint();
+        ConfigurationLogger.stepDelimeter();
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         // Already loaded. Return current context.
         if (DEFAULT_LOGGING_CONFIG_VALUE.equals(loggingConfigFile)) {

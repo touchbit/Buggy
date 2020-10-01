@@ -1,18 +1,18 @@
 package org.touchbit.buggy.spring.boot.starter.example;
 
 import org.springframework.boot.SpringApplication;
-import org.touchbit.buggy.spring.boot.starter.Buggy;
+import org.touchbit.buggy.spring.boot.starter.SBBuggy;
 import org.touchbit.buggy.spring.boot.starter.conf.BuggyConfig;
 
-public class SBBuggy extends Buggy {
+public class ExampleBuggyImpl extends SBBuggy {
 
     static {
         BuggyConfig.setForce(true);
+        BuggyConfig.setHelp(true);
     }
 
     public static void main(String[] args) {
-//        args = new String[]{"--force", "-v"};
-        SpringApplication.run(SBBuggy.class, args);
+        SpringApplication.run(ExampleBuggyImpl.class, args);
     }
 
 }

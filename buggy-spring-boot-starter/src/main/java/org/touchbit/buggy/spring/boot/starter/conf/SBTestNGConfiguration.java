@@ -33,13 +33,13 @@ public class SBTestNGConfiguration implements SBConfiguration {
         if (!isBuggyLoggerInitialized) {
             exitRunWithErr("Logger must be initialized");
         }
-        ConfigurationLogger.bPrint();
-        ConfigurationLogger.cbPrint("Loading TestNG configuration");
+        ConfigurationLogger.blockDelimeter();
+        ConfigurationLogger.centerBold("Loading TestNG configuration");
     }
 
     @Bean
     public TestNG testNG() {
-        ConfigurationLogger.sPrint();
+        ConfigurationLogger.stepDelimeter();
         return new TestNG();
     }
 
