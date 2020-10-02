@@ -14,29 +14,22 @@
  * limitations under the License.
  */
 
-package org.touchbit.buggy.core.goal.interfaze;
-
-import org.atteo.classindex.IndexSubclasses;
-import org.touchbit.buggy.core.goal.Goal;
+package org.touchbit.buggy.core.goal.component;
 
 /**
- * The tested interface. (example: API, WEB, IOS, ANDROID, TIZEN, DESKTOP etc.)
- * <p>
- * Created by Oleg Shaburov on 15.05.2018
+ * Created by Oleg Shaburov on 08.09.2018
  * shaburov.o.a@gmail.com
  */
-@IndexSubclasses
-public abstract class Interface implements Goal {
-
-    public String getName() {
-        return this.getClass().getSimpleName().toUpperCase();
-    }
-
-    public abstract String getDescription();
+public final class DefaultComponent extends Component {
 
     @Override
-    public String toString() {
-        return getName();
+    public String getName() {
+        return "DEFAULT";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Default component for test suites";
     }
 
 }
