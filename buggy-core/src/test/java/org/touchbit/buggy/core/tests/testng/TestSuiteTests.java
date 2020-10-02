@@ -20,7 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlTest;
-import org.touchbit.buggy.core.process.DefaultComponent;
+import org.touchbit.buggy.core.goal.component.AllComponents;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.config.TestClassWithoutSuite;
@@ -28,9 +28,9 @@ import org.touchbit.buggy.core.config.TestComponent;
 import org.touchbit.buggy.core.config.TestInterface;
 import org.touchbit.buggy.core.config.TestService;
 import org.touchbit.buggy.core.model.Suite;
-import org.touchbit.buggy.core.process.Component;
-import org.touchbit.buggy.core.process.Interface;
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.component.Component;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
+import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.testng.TestSuite;
 
 import java.lang.annotation.Annotation;
@@ -56,7 +56,7 @@ class TestSuiteTests extends BaseUnitTest {
         assertThat(suite.getComponent(), is(notNullValue()));
         assertThat(suite.getService(), is(notNullValue()));
         assertThat(suite.getSuite(), is(notNullValue()));
-        assertThat(suite.getSuite().task(), is(""));
+        assertThat(suite.getSuite().purpose(), is(""));
     }
 
     @Test
@@ -67,7 +67,7 @@ class TestSuiteTests extends BaseUnitTest {
         assertThat(suite.getComponent(), is(notNullValue()));
         assertThat(suite.getService(), is(notNullValue()));
         assertThat(suite.getSuite(), is(notNullValue()));
-        assertThat(suite.getSuite().task(), is(""));
+        assertThat(suite.getSuite().purpose(), is(""));
     }
 
     @Test
@@ -94,7 +94,7 @@ class TestSuiteTests extends BaseUnitTest {
         assertThat(testSuite.getComponent(), is(notNullValue()));
         assertThat(testSuite.getService(), is(notNullValue()));
         assertThat(testSuite.getSuite(), is(notNullValue()));
-        assertThat(testSuite.getSuite().task(), is("task"));
+        assertThat(testSuite.getSuite().purpose(), is("task"));
         assertThat(testSuite.getName(), is("name"));
     }
 
@@ -252,13 +252,13 @@ class TestSuiteTests extends BaseUnitTest {
         @Override
         public Class<? extends Annotation> annotationType() { return Suite.class; }
         @Override
-        public Class<? extends Component> component() { return DefaultComponent.class; }
+        public Class<? extends Component> component() { return AllComponents.class; }
         @Override
         public Class<? extends Service> service() { return TestService.class; }
         @Override
         public Class<? extends Interface> interfaze() { return TestInterface.class; }
         @Override
-        public String task() { return "task"; }
+        public String purpose() { return "task"; }
     };
 
     private static final Suite SUITE = new Suite() {
@@ -271,7 +271,7 @@ class TestSuiteTests extends BaseUnitTest {
         @Override
         public Class<? extends Interface> interfaze() { return TestInterface.class; }
         @Override
-        public String task() { return "task"; }
+        public String purpose() { return "task"; }
     };
 
     @SuppressWarnings("WeakerAccess")

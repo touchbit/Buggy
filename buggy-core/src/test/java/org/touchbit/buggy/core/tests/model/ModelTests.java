@@ -55,42 +55,6 @@ class ModelTests extends BaseUnitTest {
             assertThat(Type.values().length, is(4));
         }
 
-        @Test
-        @DisplayName("Check SMOKE.isIncludeOrEquals()")
-        void unitTest_20180922075454() {
-            assertThat(Type.SMOKE.isIncludeOrEquals(Type.SMOKE), is(true));
-            assertThat(Type.SMOKE.isIncludeOrEquals(Type.MODULE), is(false));
-            assertThat(Type.SMOKE.isIncludeOrEquals(Type.INTEGRATION), is(false));
-            assertThat(Type.SMOKE.isIncludeOrEquals(Type.SYSTEM), is(false));
-        }
-
-        @Test
-        @DisplayName("Check MODULE.isIncludeOrEquals()")
-        void unitTest_20180922075825() {
-            assertThat(Type.MODULE.isIncludeOrEquals(Type.SMOKE), is(true));
-            assertThat(Type.MODULE.isIncludeOrEquals(Type.MODULE), is(true));
-            assertThat(Type.MODULE.isIncludeOrEquals(Type.INTEGRATION), is(false));
-            assertThat(Type.MODULE.isIncludeOrEquals(Type.SYSTEM), is(false));
-        }
-
-        @Test
-        @DisplayName("Check INTEGRATION.isIncludeOrEquals()")
-        void unitTest_20180922075850() {
-            assertThat(Type.INTEGRATION.isIncludeOrEquals(Type.SMOKE), is(true));
-            assertThat(Type.INTEGRATION.isIncludeOrEquals(Type.MODULE), is(true));
-            assertThat(Type.INTEGRATION.isIncludeOrEquals(Type.INTEGRATION), is(true));
-            assertThat(Type.INTEGRATION.isIncludeOrEquals(Type.SYSTEM), is(false));
-        }
-
-        @Test
-        @DisplayName("Check SYSTEM.isIncludeOrEquals()")
-        void unitTest_20180922075855() {
-            assertThat(Type.SYSTEM.isIncludeOrEquals(Type.SMOKE), is(true));
-            assertThat(Type.SYSTEM.isIncludeOrEquals(Type.MODULE), is(true));
-            assertThat(Type.SYSTEM.isIncludeOrEquals(Type.INTEGRATION), is(true));
-            assertThat(Type.SYSTEM.isIncludeOrEquals(Type.SYSTEM), is(true));
-        }
-
     }
 
 }

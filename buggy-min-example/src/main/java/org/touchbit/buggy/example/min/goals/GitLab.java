@@ -16,7 +16,7 @@
 
 package org.touchbit.buggy.example.min.goals;
 
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.service.Service;
 
 /**
  * Created by Oleg Shaburov on 18.09.2018

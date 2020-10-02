@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-package org.touchbit.buggy.core.process;
+package org.touchbit.buggy.core.goal.interfaze;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.atteo.classindex.IndexSubclasses;
+import org.touchbit.buggy.core.goal.Goal;
 
 /**
- * Created by Oleg Shaburov on 08.09.2018
+ * The tested interface. (example: API, DAV, SMTP, IMAP, WEB, IOS, ANDROID, TIZEN, DESKTOP etc.)
+ * <p>
+ * Created by Oleg Shaburov on 15.05.2018
  * shaburov.o.a@gmail.com
  */
-public class DefaultComponent extends Component {
+@IndexSubclasses
+public abstract class Interface implements Goal {
 
-    @Override
-    public List<Service> getServices() {
-        return new ArrayList<>();
-    }
-
-    @Override
     public String getName() {
-        return "DEFAULT";
+        return this.getClass().getSimpleName().toUpperCase();
     }
 
+    public abstract String getDescription();
+
     @Override
-    public String getDescription() {
-        return "Default component";
+    public String toString() {
+        return getName();
     }
 
 }

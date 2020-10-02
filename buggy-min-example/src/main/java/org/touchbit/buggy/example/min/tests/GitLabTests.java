@@ -29,7 +29,7 @@ import org.touchbit.buggy.example.min.goals.GitLab;
  * Created by Oleg Shaburov on 18.09.2018
  * shaburov.o.a@gmail.com
  */
-@Suite(service = GitLab.class, interfaze = API.class, task = "common")
+@Suite(service = GitLab.class, interfaze = API.class, purpose = "common")
 @SuppressWarnings("squid:S00100")
 public class GitLabTests extends BaseTest {
 

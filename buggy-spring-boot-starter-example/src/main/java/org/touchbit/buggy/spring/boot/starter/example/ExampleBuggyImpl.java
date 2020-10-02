@@ -8,7 +8,6 @@ public class ExampleBuggyImpl extends SBBuggy {
 
     static {
         BuggyConfig.setForce(true);
-        BuggyConfig.setHelp(true);
     }
 
     public static void main(String[] args) {

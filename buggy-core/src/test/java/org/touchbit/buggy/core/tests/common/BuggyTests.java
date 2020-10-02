@@ -640,7 +640,7 @@ class BuggyTests extends BaseUnitTest {
 
     private abstract class AbstractBuggyListener implements BuggyListener {}
 
-    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, task = "PrivateTestSuite")
+    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, purpose = "PrivateTestSuite")
     private static class PrivateTestSuite extends TestSuite { }
 
     private static class PrivateBuggyTestsBuggyLog extends BuggyLog { }
@@ -656,7 +656,7 @@ class BuggyTests extends BaseUnitTest {
     @Parameters(commandNames = "junit")
     private static class PrivateSecondaryConfig implements SecondaryConfig { }
 
-    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, task = "task")
+    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, purpose = "task")
     public static class BuggyTestsClass {
         @org.testng.annotations.Test(description = "test_20181016172050 description")
         @Details

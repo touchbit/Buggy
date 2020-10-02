@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package org.touchbit.buggy.core.process;
-
-import org.atteo.classindex.IndexSubclasses;
+package org.touchbit.buggy.core.goal.component;
 
 /**
- * The tested service included in (belongs to) the system component
- * <p>
- * Created by Oleg Shaburov on 15.05.2018
+ * Created by Oleg Shaburov on 08.09.2018
  * shaburov.o.a@gmail.com
  */
-@IndexSubclasses
-public abstract class Service implements Goal {
-
-    public String getName() {
-        return this.getClass().getSimpleName().toUpperCase();
-    }
-
-    public abstract String getDescription();
+public final class AllComponents extends Component {
 
     @Override
-    public String toString() {
-        return getName();
+    public String getName() {
+        return "ALL";
+    }
+
+    @Override
+    public String getDescription() {
+        return "All components";
     }
 
 }

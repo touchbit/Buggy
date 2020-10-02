@@ -19,7 +19,7 @@ package org.touchbit.buggy.core.config.jcommander;
 import com.beust.jcommander.IStringConverter;
 import org.atteo.classindex.ClassIndex;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
-import org.touchbit.buggy.core.process.Goal;
+import org.touchbit.buggy.core.goal.Goal;
 
 /**
  * Created by Oleg Shaburov on 08.09.2018

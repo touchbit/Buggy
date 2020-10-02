@@ -32,15 +32,15 @@ import static org.touchbit.buggy.core.utils.StringUtils.underscoreFiller;
  * Created by Oleg Shaburov on 19.09.2018
  * shaburov.o.a@gmail.com
  */
-public class ValueValidator implements IValueValidator {
+public class ValueValidator implements IValueValidator<Object> {
 
     @Override
     public void validate(String name, Object value) {
         String stringValue = String.valueOf(value);
-        if ((name.equals(QUESTION_MARK) || name.equals(HELP)) && Boolean.valueOf(stringValue)) {
+        if ((name.equals(QUESTION_MARK) || name.equals(HELP)) && Boolean.parseBoolean(stringValue)) {
             Buggy.getExitHandler().exitRunWithUsage(0);
         }
-        if ((name.equals(V) || name.equals(VERSION)) && Boolean.valueOf(String.valueOf(stringValue))) {
+        if ((name.equals(V) || name.equals(VERSION)) && Boolean.parseBoolean(String.valueOf(stringValue))) {
             printManifestInfo();
             Buggy.getExitHandler().exitRun(0);
         }

@@ -16,7 +16,7 @@
 
 package org.touchbit.buggy.example.min.goals;
 
-import org.touchbit.buggy.core.process.Interface;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
 
 /**
  * Created by Oleg Shaburov on 18.09.2018

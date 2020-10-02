@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package org.touchbit.buggy.core.process;
+package org.touchbit.buggy.core.goal.component;
 
 import org.atteo.classindex.IndexSubclasses;
+import org.touchbit.buggy.core.goal.Goal;
 
 /**
- * The tested interface. (example: API, DAV, SMTP, IMAP, WEB, IOS, ANDROID, TIZEN, DESKTOP etc.)
+ * The tested component of the system
  * <p>
  * Created by Oleg Shaburov on 15.05.2018
  * shaburov.o.a@gmail.com
  */
 @IndexSubclasses
-public abstract class Interface implements Goal {
+public abstract class Component implements Goal {
+
+    public abstract String getDescription();
 
     public String getName() {
         return this.getClass().getSimpleName().toUpperCase();
     }
-
-    public abstract String getDescription();
 
     @Override
     public String toString() {

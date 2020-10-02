@@ -26,8 +26,8 @@ import org.touchbit.buggy.core.config.PrimaryConfig;
 import org.touchbit.buggy.core.config.TestInterface;
 import org.touchbit.buggy.core.config.TestService;
 import org.touchbit.buggy.core.model.Type;
-import org.touchbit.buggy.core.process.Interface;
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
+import org.touchbit.buggy.core.goal.service.Service;
 
 import java.io.File;
 import java.lang.reflect.Constructor;

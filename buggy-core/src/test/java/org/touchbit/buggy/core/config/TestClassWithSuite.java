@@ -25,7 +25,7 @@ import org.touchbit.buggy.core.test.BaseBuggyTest;
  * Created by Oleg Shaburov on 20.09.2018
  * shaburov.o.a@gmail.com
  */
-@Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, task = "unit_test")
+@Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, purpose = "unit_test")
 public class TestClassWithSuite extends BaseBuggyTest {
 
     @Test(description = "test_20181021171954")

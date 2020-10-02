@@ -26,9 +26,9 @@ import org.touchbit.buggy.core.config.TestNGTestClassWithSuite;
 import org.touchbit.buggy.core.config.TestService;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
-import org.touchbit.buggy.core.process.Component;
-import org.touchbit.buggy.core.process.Interface;
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.component.Component;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
+import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.exceptions.ExpectedImplementationException;
@@ -1600,7 +1600,7 @@ class BuggyExecutionListenerTests extends BaseUnitTest {
             }
 
             @Override
-            public String task() {
+            public String purpose() {
                 return "TestTask";
             }
         };

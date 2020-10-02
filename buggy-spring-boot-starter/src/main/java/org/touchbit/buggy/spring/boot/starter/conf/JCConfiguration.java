@@ -33,11 +33,7 @@ public interface JCConfiguration {
         Map<String, Object> map = new HashMap<>();
         addFieldValuesToMap(map);
         addMethodsValuesToMap(map);
-        Map<String, Object> sorted = new LinkedHashMap<>();
-        map.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .forEachOrdered(k -> sorted.put(k.getKey(), k.getValue()));
-        return sorted;
+        return sort(map);
     }
 
     /**
@@ -98,6 +94,15 @@ public interface JCConfiguration {
                 method.getValue().setAccessible(false);
             }
         }
+    }
+
+    /**
+     * Default no sort
+     * @param map - unsorted map
+     * @return - sorted map
+     */
+    default Map<String, Object> sort(Map<String, Object> map) {
+        return map;
     }
 
 }

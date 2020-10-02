@@ -327,7 +327,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         methods.forEach(method -> {
             Details details = getDetails(method);
             Type configType = Buggy.getPrimaryConfig().getType();
-            if (details != null && !configType.isIncludeOrEquals(details.type())) {
+            if (details != null) { // && !configType.isIncludeOrEquals(details.type())
                 method.setInvocationCount(0);
                 resultLog(method, Status.SKIP, buildDetailsMessage(details, details.type(), "test type"));
             }
@@ -394,7 +394,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
             sj.add(BuggyUtils.getComponent(suite).getName().trim());
             sj.add(BuggyUtils.getService(suite).getName().trim());
             sj.add(BuggyUtils.getInterface(suite).getName().trim());
-            sj.add(suite.task().trim());
+            sj.add(suite.purpose().trim());
             resultMsg.add(sj.toString().trim());
         }
         testLog.info("{} - {} {}", methodName, statusName, method.getDescription());

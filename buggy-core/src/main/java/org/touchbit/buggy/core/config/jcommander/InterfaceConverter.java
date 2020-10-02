@@ -17,7 +17,7 @@
 package org.touchbit.buggy.core.config.jcommander;
 
 import com.beust.jcommander.converters.DefaultListConverter;
-import org.touchbit.buggy.core.process.Interface;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
 
 /**
  * Created by Oleg Shaburov on 19.05.2018

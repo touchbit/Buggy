@@ -43,13 +43,13 @@ public @interface Details {
      */
     Status status() default SUCCESS;
 
-    /** Issues ID in the task-tracker system. Format: "MAPI-269" */
+    /** Issues ID in the task-tracker system. Format: "STORY-269" */
     String[] issue() default {""};
 
-    /** Defects ID in the task-tracker system. Format: "MAPI-269" */
+    /** Defects ID in the task-tracker system. Format: "BUG-269" */
     String[] bug() default {""};
 
     /** Type of auto test */
-    Type type() default Type.MODULE;
+    Type[] type() default {Type.REGRESSION};
 
 }

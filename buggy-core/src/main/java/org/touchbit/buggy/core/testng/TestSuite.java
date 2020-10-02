@@ -25,9 +25,9 @@ import org.testng.xml.XmlTest;
 import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.model.Suite;
-import org.touchbit.buggy.core.process.Component;
-import org.touchbit.buggy.core.process.Interface;
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.component.Component;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
+import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.utils.BuggyUtils;
 
 import java.util.*;

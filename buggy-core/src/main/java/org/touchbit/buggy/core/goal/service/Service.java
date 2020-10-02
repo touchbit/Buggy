@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package org.touchbit.buggy.core.process;
+package org.touchbit.buggy.core.goal.service;
 
 import org.atteo.classindex.IndexSubclasses;
-
-import java.util.List;
+import org.touchbit.buggy.core.goal.Goal;
 
 /**
- * The tested component of the system
+ * The tested service included in (belongs to) the system component
  * <p>
  * Created by Oleg Shaburov on 15.05.2018
  * shaburov.o.a@gmail.com
  */
 @IndexSubclasses
-public abstract class Component implements Goal {
-
-    public abstract List<Service> getServices();
-
-    public abstract String getDescription();
+public abstract class Service implements Goal {
 
     public String getName() {
         return this.getClass().getSimpleName().toUpperCase();
     }
+
+    public abstract String getDescription();
 
     @Override
     public String toString() {

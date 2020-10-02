@@ -18,9 +18,9 @@ import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.model.Type;
-import org.touchbit.buggy.core.process.Component;
-import org.touchbit.buggy.core.process.Interface;
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.component.Component;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
+import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.testng.listeners.BuggyExecutionListener;
 import org.touchbit.buggy.core.utils.log.BuggyLog;
 
@@ -368,10 +368,10 @@ public abstract class BaseUnitTest {
     }
 
     protected static Details getDetails(Status status, Type type, String... issue) {
-        return getDetails(new long[0], status, type, issue);
+        return getDetails(new long[0], status, new Type[]{type}, issue);
     }
 
-    protected static Details getDetails(long[] ids, Status status, Type type, String... issue) {
+    protected static Details getDetails(long[] ids, Status status, Type[] type, String... issue) {
         return new Details() {
             @Override
             public long[] id() { return ids; }
@@ -386,7 +386,7 @@ public abstract class BaseUnitTest {
             }
 
             @Override
-            public Type type() { return type; }
+            public Type[] type() { return type; }
             @Override
             public Class<? extends Annotation> annotationType() { return Details.class; }
         };
@@ -416,7 +416,7 @@ public abstract class BaseUnitTest {
             }
 
             @Override
-            public String task() {
+            public String purpose() {
                 return UUID.randomUUID().toString();
             }
         };

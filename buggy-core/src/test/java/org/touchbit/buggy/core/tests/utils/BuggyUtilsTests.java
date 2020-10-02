@@ -9,9 +9,9 @@ import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.Buggy;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.model.Suite;
-import org.touchbit.buggy.core.process.Component;
-import org.touchbit.buggy.core.process.Interface;
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.component.Component;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
+import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.testng.TestSuite;
 import org.touchbit.buggy.core.utils.BuggyUtils;
 import org.touchbit.buggy.core.utils.IOHelper;
@@ -349,10 +349,10 @@ class BuggyUtilsTests extends BaseUnitTest {
 
     public static @interface BuggyUtilsTestsInterface {}
 
-    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, task = "unit_test")
+    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, purpose = "unit_test")
     private static class PrivateTestClass {}
 
-    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, task = "unit_test")
+    @Suite(component = TestComponent.class, service = TestService.class, interfaze = TestInterface.class, purpose = "unit_test")
     public abstract static class AbstractTestClass {}
 
     private static final Suite SUITE_1 = new Suite() {
@@ -378,7 +378,7 @@ class BuggyUtilsTests extends BaseUnitTest {
         }
 
         @Override
-        public String task() {
+        public String purpose() {
             return "TestTask";
         }
     };
@@ -406,7 +406,7 @@ class BuggyUtilsTests extends BaseUnitTest {
         }
 
         @Override
-        public String task() {
+        public String purpose() {
             return "TestTask";
         }
     };
@@ -434,7 +434,7 @@ class BuggyUtilsTests extends BaseUnitTest {
         }
 
         @Override
-        public String task() {
+        public String purpose() {
             return "TestTask";
         }
     };
@@ -456,11 +456,6 @@ class BuggyUtilsTests extends BaseUnitTest {
     }
 
     private static class PrivateTestComponent extends Component {
-
-        @Override
-        public List<Service> getServices() {
-            return new ArrayList<Service>() {{add(new TestService());}};
-        }
 
         @Override
         public String getDescription() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.touchbit.buggy.core.process;
+package org.touchbit.buggy.core.goal;
 
 /**
  * Created by Oleg Shaburov on 08.09.2018

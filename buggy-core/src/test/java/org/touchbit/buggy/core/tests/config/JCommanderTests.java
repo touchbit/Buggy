@@ -10,14 +10,13 @@ import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.config.TestComponent;
 import org.touchbit.buggy.core.config.TestInterface;
 import org.touchbit.buggy.core.config.TestService;
-import org.touchbit.buggy.core.process.Component;
-import org.touchbit.buggy.core.process.Interface;
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.component.Component;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
+import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.utils.IOHelper;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -325,14 +324,10 @@ class JCommanderTests extends BaseUnitTest {
     private static class PrivateTestComponentJC extends Component {
 
         @Override
-        public List<Service> getServices() {
-            return new ArrayList<Service>() {{add(new TestService());}};
-        }
-
-        @Override
         public String getDescription() {
             return "PrivateTestComponentJC";
         }
+
     }
 
 }

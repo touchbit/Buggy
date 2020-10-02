@@ -1,6 +1,6 @@
 package org.touchbit.buggy.core.config;
 
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.service.Service;
 
 /**
  * Created by Oleg Shaburov on 16.09.2018

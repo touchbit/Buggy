@@ -9,6 +9,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebAppli
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.touchbit.buggy.core.goal.Goal;
+import org.touchbit.buggy.core.goal.component.AllComponents;
+import org.touchbit.buggy.core.goal.interfaze.AllInterfaces;
+import org.touchbit.buggy.core.goal.service.AllServices;
+import org.touchbit.buggy.core.model.Type;
 import org.touchbit.buggy.spring.boot.starter.log.ConfigurationLogger;
 import org.touchbit.buggy.spring.boot.starter.utils.JUtils;
 
@@ -33,16 +38,21 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 @ComponentScan(
         basePackages = "**.buggy",
         useDefaultFilters = false,
-        includeFilters = @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = JCConfiguration.class))
+        includeFilters = {
+                @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = JCConfiguration.class),
+                @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = Goal.class),
+        })
 public class SBJCommanderConfiguration implements SBConfiguration {
 
     private static final JCommander JC = new JCommander();
-    private final List<JCConfiguration> list;
+    private final List<JCConfiguration> jcConfigurations;
+    private final List<Goal> goals;
     private final String[] args;
     private Map<Class<? extends JCConfiguration>, JCConfiguration> buggyConfigurations;
 
-    public SBJCommanderConfiguration(List<JCConfiguration> list, ApplicationArguments args) {
-        this.list = list;
+    public SBJCommanderConfiguration(List<JCConfiguration> list, List<Goal> goals, ApplicationArguments args) {
+        this.goals = goals;
+        this.jcConfigurations = list;
         this.args = args.getSourceArgs();
         init();
     }
@@ -74,7 +84,7 @@ public class SBJCommanderConfiguration implements SBConfiguration {
             ConfigurationLogger.stepDelimeter();
             buggyConfigurations = new HashMap<>();
 
-            for (JCConfiguration config : list) {
+            for (JCConfiguration config : jcConfigurations) {
                 buggyConfigurations.put(config.getClass(), config);
                 checkConfiguration(config);
                 if (config.getClass().isAnnotationPresent(Parameters.class) &&
@@ -143,7 +153,7 @@ public class SBJCommanderConfiguration implements SBConfiguration {
     }
 
     public void printConfigurationsParams(Map<Class<? extends JCConfiguration>, JCConfiguration> configs) {
-        for (JCConfiguration autowiredConfig : list) {
+        for (JCConfiguration autowiredConfig : jcConfigurations) {
             JCConfiguration config = configs.get(autowiredConfig.getClass());
             printConfigurationParams(config);
         }

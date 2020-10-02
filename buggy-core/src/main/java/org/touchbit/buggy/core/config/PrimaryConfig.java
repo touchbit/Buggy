@@ -26,8 +26,8 @@ import org.touchbit.buggy.core.config.jcommander.ParameterValidator;
 import org.touchbit.buggy.core.config.jcommander.ServiceConverter;
 import org.touchbit.buggy.core.config.jcommander.ValueValidator;
 import org.touchbit.buggy.core.model.Type;
-import org.touchbit.buggy.core.process.Interface;
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
+import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.utils.BuggyUtils;
 import org.touchbit.buggy.core.utils.StringUtils;
 
@@ -109,7 +109,7 @@ public interface PrimaryConfig {
         return DEFAULT_VALUES.threads;
     }
 
-    @Parameter(names = {LOG}, hidden = true, description = "Absolute path to the directory for test logs.")
+    @Parameter(names = {LOGS_PATH}, hidden = true, description = "Absolute path to the directory for test logs.")
     default void setLogPath(String logDir) {
         DEFAULT_VALUES.logPath = logDir;
     }
@@ -147,7 +147,7 @@ public interface PrimaryConfig {
         return DEFAULT_VALUES.type;
     }
 
-    @Parameter(names = {STATUS}, hidden = true, description = "Completion with the specified status.")
+    @Parameter(names = {EXIT_STATUS}, hidden = true, description = "Completion with the specified status.")
     default void setStatus(Integer status) {
         DEFAULT_VALUES.status = status;
     }
