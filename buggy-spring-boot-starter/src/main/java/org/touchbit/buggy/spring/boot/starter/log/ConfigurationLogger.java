@@ -129,39 +129,16 @@ public class ConfigurationLogger {
         CONSOLE.info(msg);
     }
 
-    public static void errPrint(String msg, Exception t) {
-        String breakMsg = lineBreak(msg);
-        CONSOLE.error(RED.wrap(breakMsg), t);
+    public static void errPrint(String msg, Throwable t) {
+        CONSOLE.error(RED.wrap(msg), t);
     }
 
     public static void errPrint(String msg) {
-        String breakMsg = lineBreak(msg);
-        CONSOLE.error(RED.wrap(breakMsg));
+        CONSOLE.error(RED.wrap(msg));
     }
 
-    public static String lineBreak(String msg) {
-        StringJoiner sj = new StringJoiner("\n");
-        StringBuilder line = new StringBuilder();
-        for (String s : msg.split(" ")) {
-            String tmp = line + " " + s;
-            if (tmp.length() < 47) {
-                line.append(s).append(" ");
-            }
-            if (tmp.length() == 47) {
-                sj.add(tmp);
-                line = new StringBuilder();
-            }
-            if (tmp.length() > 47) {
-                if (line.length() == 0) {
-                    sj.add(s);
-                } else {
-                    sj.add(line.toString());
-                    line = new StringBuilder(s + " ");
-                }
-            }
-        }
-        sj.add(line);
-        return sj.toString();
+    public static Logger getLogger() {
+        return CONSOLE;
     }
 
 }

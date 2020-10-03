@@ -103,10 +103,7 @@ public class SBJCommanderConfiguration implements SBConfiguration {
                 ConfigurationLogger.stepDelimeter();
                 ConfigurationLogger.dotPlaceholder("Parsing arguments", "FAIL");
                 printConfigurationsParams(buggyConfigurations);
-                if (!(e instanceof ParameterException)) {
-                    e.printStackTrace();
-                }
-                exitRunWithErr(e);
+                exitRunWithErr(e.getMessage(), e);
             }
         }
     }

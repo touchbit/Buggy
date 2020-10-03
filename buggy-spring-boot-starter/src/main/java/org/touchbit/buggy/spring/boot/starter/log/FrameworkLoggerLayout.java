@@ -2,6 +2,8 @@ package org.touchbit.buggy.spring.boot.starter.log;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.util.CachingDateFormatter;
@@ -40,7 +42,12 @@ public class FrameworkLoggerLayout extends LayoutBase<ILoggingEvent> {
         String finalMessage = ANSI.unwrap(message);
         String time = TIME_FORMATTER.format(timestamp);
         Level level = event.getLevel();
-        return time + " " + level + " - " + finalMessage + CoreConstants.LINE_SEPARATOR;
+        IThrowableProxy throwableProxy = event.getThrowableProxy();
+        String tMsg = "";
+        if (throwableProxy != null) {
+            tMsg = CoreConstants.LINE_SEPARATOR + ThrowableProxyUtil.asString(throwableProxy);
+        }
+        return time + " " + level + " - " + finalMessage  + tMsg + CoreConstants.LINE_SEPARATOR;
     }
 
 }

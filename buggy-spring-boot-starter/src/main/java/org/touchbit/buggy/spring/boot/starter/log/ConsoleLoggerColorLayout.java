@@ -1,8 +1,11 @@
 package org.touchbit.buggy.spring.boot.starter.log;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
+import org.slf4j.MDC;
 
 import static ch.qos.logback.classic.Level.*;
 import static org.touchbit.buggy.spring.boot.starter.log.ANSI.*;
@@ -46,6 +49,12 @@ public class ConsoleLoggerColorLayout extends LayoutBase<ILoggingEvent> {
                 break;
             default:
                 return "";
+        }
+        IThrowableProxy throwableProxy = event.getThrowableProxy();
+        boolean withST = Boolean.parseBoolean(MDC.get("print.console.stacktrace"));
+        if (throwableProxy != null && withST) {
+            stringBuilder.append(CoreConstants.LINE_SEPARATOR);
+            stringBuilder.append(ThrowableProxyUtil.asString(throwableProxy));
         }
         stringBuilder.append(CoreConstants.LINE_SEPARATOR);
         return stringBuilder.toString();

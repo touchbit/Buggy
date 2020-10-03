@@ -6,6 +6,7 @@ import org.touchbit.buggy.spring.boot.starter.conf.JCConfiguration;
 public class ExampleConfiguration implements JCConfiguration {
 
     @Parameter(names = {"--example-host"}, description = "Example host.")
+//    @Parameter(names = {"-f"}, description = "Example host.")
     private static String exampleHost = "https://exmaole.com";
 
     @Parameter(names = {"--example-pass"}, password = true, description = "Example password.")

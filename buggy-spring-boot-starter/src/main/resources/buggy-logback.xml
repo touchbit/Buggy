@@ -34,7 +34,7 @@
         <appender-ref ref="Console"/>
         <appender-ref ref="Framework"/>
     </logger>
-    <logger name="org.touchbit.buggy.spring.boot.starter.log.ConfigurationLogger" level="TRACE" additivity="false">
+    <logger name="org.touchbit.buggy.spring.boot.starter.log.ConfigurationLogger" level="INFO" additivity="false">
         <appender-ref ref="Console"/>
         <appender-ref ref="Framework"/>
     </logger>

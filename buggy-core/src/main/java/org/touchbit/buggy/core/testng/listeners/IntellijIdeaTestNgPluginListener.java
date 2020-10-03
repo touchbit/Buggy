@@ -60,7 +60,7 @@ public final class IntellijIdeaTestNgPluginListener extends BuggyExecutionListen
             }
         });
         String[] args = list.toArray(new String[0]);
-        Buggy.prepare(args);
+//        Buggy.prepare(args);
     }
 
     @SuppressWarnings("unchecked")

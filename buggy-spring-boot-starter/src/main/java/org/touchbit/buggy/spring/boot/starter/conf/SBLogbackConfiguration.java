@@ -2,11 +2,15 @@ package org.touchbit.buggy.spring.boot.starter.conf;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.Loader;
 import ch.qos.logback.core.util.StatusPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +21,7 @@ import org.touchbit.buggy.spring.boot.starter.log.ConfigurationLogger;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.Iterator;
 
 /**
  * Logback loggers configuration
@@ -39,6 +44,7 @@ public class SBLogbackConfiguration implements SBConfiguration {
     private static Logger test;
     private final boolean isBuggyLoggerInitialized;
     private final String loggingConfigFile;
+    private final LoggerContext context;
 
     public SBLogbackConfiguration(Environment env) {
         loggingConfigFile = env.getProperty("logging.config");
@@ -47,21 +53,21 @@ public class SBLogbackConfiguration implements SBConfiguration {
         ConfigurationLogger.stepDelimeter();
         URL logbackXml = getResource(LOGBACK_XML, this.getClass());
         URL buggyLogbackXml = getResource("buggy-logback.xml", this.getClass());
-        LoggerContext context = null;
+        LoggerContext tmpContext = null;
         if (logbackXml != null) {
             ConfigurationLogger.fPrint(LOGBACK_XML, ".", "OK");
-            context = reloadLogger(logbackXml);
+            tmpContext = reloadLogger(logbackXml);
         } else {
             ConfigurationLogger.fPrint(LOGBACK_XML, ".", "FAIL");
         }
-
         if (logbackXml == null && buggyLogbackXml != null) {
             ConfigurationLogger.fPrint(BUGGY_LOGBACK_XML, ".", "OK");
-            context = reloadLogger(buggyLogbackXml);
+            tmpContext = reloadLogger(buggyLogbackXml);
         } else {
             ConfigurationLogger.fPrint(BUGGY_LOGBACK_XML, ".", "FAIL");
             exitRunWithErr("Logback configuration not found");
         }
+        context = tmpContext;
         if (context != null) {
             setTestLog(LoggerFactory.getLogger("Routing"));
             setConsoleLog(LoggerFactory.getLogger("Console"));
@@ -82,13 +88,20 @@ public class SBLogbackConfiguration implements SBConfiguration {
                     console.info(ConfigurationLogger.filler(name, ".", logger.getLevel()));
                 }
             }
+        } else {
+            exitRunWithErr("Unable to load Logback configuration.");
         }
         isBuggyLoggerInitialized = true;
     }
 
-    @Bean("isBuggyLoggerInitialized")
+    @Bean()
+//    @ConditionalOnMissingBean
     public boolean isBuggyLoggerInitialized() {
         return isBuggyLoggerInitialized;
+    }
+
+    public LoggerContext getContext() {
+        return context;
     }
 
     public static Logger console() {
@@ -141,4 +154,17 @@ public class SBLogbackConfiguration implements SBConfiguration {
         SBLogbackConfiguration.test = test;
     }
 
+    public static String getFrameworkLogFilePath() {
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        for (ch.qos.logback.classic.Logger logger : context.getLoggerList()) {
+            for (Iterator<Appender<ILoggingEvent>> index = logger.iteratorForAppenders(); index.hasNext();) {
+                Appender<ILoggingEvent> appender = index.next();
+                if (appender instanceof FileAppender && appender.getName().equalsIgnoreCase("Framework")) {
+                    FileAppender<ILoggingEvent> fileAppender = (FileAppender<ILoggingEvent>) appender;
+                    return fileAppender.getFile();
+                }
+            }
+        }
+        return null;
+    }
 }
