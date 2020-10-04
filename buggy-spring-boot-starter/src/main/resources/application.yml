@@ -2,22 +2,12 @@ logging:
   config: 'classpath:buggy-logback.xml'
   file:
     path: ./logs
-spring:
-  main:
-    allow-bean-definition-overriding: true
 buggy:
-  spring:
-    configuration:
-      jcommander:
-        scanner:
-          commands:
-            basePackage: "**.buggy"
-            useDefaultFilters: false
-      testng:
-        scanner:
-          suite:
-            basePackage: "**.buggy"
-            useDefaultFilters: false
-          listener:
-            basePackage: "**.buggy"
-            useDefaultFilters: false
+  commandsScannerBasePackages:
+  - "**.buggy"
+  goalsScannerBasePackages:
+  - "**.buggy"
+  suitesScannerBasePackages:
+  - "**.buggy"
+  listenersScannerBasePackages:
+  - "**.buggy"

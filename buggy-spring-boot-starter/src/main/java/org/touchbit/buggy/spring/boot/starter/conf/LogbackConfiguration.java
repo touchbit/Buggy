@@ -2,10 +2,12 @@ package org.touchbit.buggy.spring.boot.starter.conf;
 
 import ch.qos.logback.core.util.StatusPrinter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.touchbit.buggy.core.utils.log.BuggyLoggers;
 import org.touchbit.buggy.core.utils.log.ConfigurationLogger;
+import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -20,9 +22,12 @@ import java.io.PrintStream;
 @ConditionalOnNotWebApplication
 public class LogbackConfiguration implements IConfiguration {
 
-    private final boolean isBuggyLoggerInitialized;
+    private final boolean isLogbackConfigurationInitialized;
 
-    public LogbackConfiguration() {
+    public LogbackConfiguration(boolean isJCommanderConfigured) {
+        if (!isJCommanderConfigured) {
+            BuggyRunner.exit(1, "JCommander must be initialized");
+        }
         ConfigurationLogger.blockDelimiter();
         ConfigurationLogger.centerBold("Logback configuration (" + BuggyLoggers.LOGGING_CONFIG_FILE + ")");
         ConfigurationLogger.stepDelimiter();
@@ -42,12 +47,12 @@ public class LogbackConfiguration implements IConfiguration {
                 ConfigurationLogger.dotPlaceholder(name, logger.getLevel());
             }
         }
-        isBuggyLoggerInitialized = true;
+        isLogbackConfigurationInitialized = true;
     }
 
     @Bean()
-    public boolean isBuggyLoggerInitialized() {
-        return isBuggyLoggerInitialized;
+    public boolean isLogbackConfigurationInitialized() {
+        return isLogbackConfigurationInitialized;
     }
 
 }

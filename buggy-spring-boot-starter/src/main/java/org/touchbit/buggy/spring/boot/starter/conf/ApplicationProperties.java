@@ -1,89 +1,56 @@
 package org.touchbit.buggy.spring.boot.starter.conf;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Configuration
+import java.util.ArrayList;
+import java.util.List;
+
+@ConfigurationProperties("buggy")
 public class ApplicationProperties {
+    
+    private static final String BASE_BUGGY_SCAN_PACKAGE = "**.buggy";
+    private List<String> commandsScannerBasePackages = new ArrayList<>();
+    private List<String> goalsScannerBasePackages = new ArrayList<>();
+    private List<String> suitesScannerBasePackages = new ArrayList<>();
+    private List<String> listenersScannerBasePackages = new ArrayList<>();
 
-    @Value("${buggy.spring.configuration.testng.scanner.suite.basePackage:**.buggy}")
-    private String testNGScannerSuiteBasePackage;
-
-    @Value("${buggy.spring.configuration.testng.scanner.suite.useDefaultFilters:false}")
-    private boolean testNGScannerSuiteUseDefaultFilters;
-
-    @Value("${buggy.spring.configuration.testng.scanner.listener.basePackage:**.buggy}")
-    private String testNGScannerListenerBasePackage;
-
-    @Value("${buggy.spring.configuration.testng.scanner.listener.useDefaultFilters:false}")
-    private boolean testNGScannerListenerUseDefaultFilters;
-
-    @Value("${buggy.spring.configuration.jcommander.scanner.commands.basePackage:**.buggy}")
-    private String jCommanderScannerCommandsBasePackage;
-
-    @Value("${buggy.spring.configuration.jcommander.scanner.commands.useDefaultFilters:false}")
-    private boolean jCommanderScannerCommandsUseDefaultFilters;
-
-    public String getJCommanderScannerCommandsBasePackage() {
-        return jCommanderScannerCommandsBasePackage;
+    public ApplicationProperties() {
+        commandsScannerBasePackages.add(BASE_BUGGY_SCAN_PACKAGE);
+        goalsScannerBasePackages.add(BASE_BUGGY_SCAN_PACKAGE);
+        suitesScannerBasePackages.add(BASE_BUGGY_SCAN_PACKAGE);
+        listenersScannerBasePackages.add(BASE_BUGGY_SCAN_PACKAGE);
     }
 
-    public void setJCommanderScannerCommandsBasePackage(String jCommanderScannerCommandsBasePackage) {
-        this.jCommanderScannerCommandsBasePackage = jCommanderScannerCommandsBasePackage;
+    public List<String> getCommandsScannerBasePackages() {
+        return commandsScannerBasePackages;
     }
 
-    public boolean isJCommanderScannerCommandsUseDefaultFilters() {
-        return jCommanderScannerCommandsUseDefaultFilters;
+    public void setCommandsScannerBasePackages(List<String> commandsScannerBasePackages) {
+        this.commandsScannerBasePackages = commandsScannerBasePackages;
     }
 
-    public void setJCommanderScannerCommandsUseDefaultFilters(boolean jCommanderScannerCommandsUseDefaultFilters) {
-        this.jCommanderScannerCommandsUseDefaultFilters = jCommanderScannerCommandsUseDefaultFilters;
+    public List<String> getGoalsScannerBasePackages() {
+        return goalsScannerBasePackages;
     }
 
-    public String getTestNGScannerSuiteBasePackage() {
-        return testNGScannerSuiteBasePackage;
+    public void setGoalsScannerBasePackages(List<String> goalsScannerBasePackages) {
+        this.goalsScannerBasePackages = goalsScannerBasePackages;
     }
 
-    public void setTestNGScannerSuiteBasePackage(String testNGScannerSuiteBasePackage) {
-        this.testNGScannerSuiteBasePackage = testNGScannerSuiteBasePackage;
+    public List<String> getSuitesScannerBasePackages() {
+        return suitesScannerBasePackages;
     }
 
-    public boolean isTestNGScannerSuiteUseDefaultFilters() {
-        return testNGScannerSuiteUseDefaultFilters;
+    public void setSuitesScannerBasePackages(List<String> suitesScannerBasePackages) {
+        this.suitesScannerBasePackages = suitesScannerBasePackages;
     }
 
-    public void setTestNGScannerSuiteUseDefaultFilters(boolean testNGScannerSuiteUseDefaultFilters) {
-        this.testNGScannerSuiteUseDefaultFilters = testNGScannerSuiteUseDefaultFilters;
+    public List<String> getListenersScannerBasePackages() {
+        return listenersScannerBasePackages;
     }
 
-    public String getTestNGScannerListenerBasePackage() {
-        return testNGScannerListenerBasePackage;
-    }
-
-    public void setTestNGScannerListenerBasePackage(String testNGScannerListenerBasePackage) {
-        this.testNGScannerListenerBasePackage = testNGScannerListenerBasePackage;
-    }
-
-    public boolean isTestNGScannerListenerUseDefaultFilters() {
-        return testNGScannerListenerUseDefaultFilters;
-    }
-
-    public void setTestNGScannerListenerUseDefaultFilters(boolean testNGScannerListenerUseDefaultFilters) {
-        this.testNGScannerListenerUseDefaultFilters = testNGScannerListenerUseDefaultFilters;
-    }
-
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
-        c.setLocation(new ClassPathResource("application.yml"));
-        c.setIgnoreUnresolvablePlaceholders(true);
-        c.setIgnoreResourceNotFound(true);
-        c.setTrimValues(true);
-        c.setNullValue("");
-        return c;
+    public void setListenersScannerBasePackages(List<String> listenersScannerBasePackages) {
+        this.listenersScannerBasePackages = listenersScannerBasePackages;
     }
 
 }

@@ -164,15 +164,9 @@ public class BuggyConfig implements JCConfiguration {
         }
     }
 
-    public static void addTypes(List<Type> types) {
-        if (types != null && !types.isEmpty()) {
-            BuggyConfig.types.addAll(types);
-        }
-    }
-
-    public static void addTypes(Type... types) {
+    public static void setTypes(Type... types) {
         if (types != null) {
-            addTypes(Arrays.asList(types));
+            setTypes(Arrays.asList(types));
         }
     }
 
@@ -186,15 +180,24 @@ public class BuggyConfig implements JCConfiguration {
         }
     }
 
-    public static void addServices(List<Service> services) {
+    @SafeVarargs
+    public static <S extends Service> void setServices(S... services) {
         if (services != null) {
-            BuggyConfig.services.addAll(services);
+            setServices(Arrays.asList(services));
         }
     }
 
-    public static void addServices(Service... services) {
-        if (services != null) {
-            addServices(Arrays.asList(services));
+    @SafeVarargs
+    public static <S extends Service> void setServices(Class<S>... services) {
+        if (interfaces != null) {
+            BuggyConfig.services = new ArrayList<>();
+            for (Class<? extends Service> service : services) {
+                try {
+                    BuggyConfig.services.add(service.getDeclaredConstructor().newInstance());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -208,15 +211,24 @@ public class BuggyConfig implements JCConfiguration {
         }
     }
 
-    public static void addInterfaces(List<Interface> interfaces) {
+    @SafeVarargs
+    public static <I extends Interface> void setInterfaces(I... interfaces) {
         if (interfaces != null) {
-            BuggyConfig.interfaces.addAll(interfaces);
+            setInterfaces(Arrays.asList(interfaces));
         }
     }
 
-    public static void addInterfaces(Interface... interfaces) {
+    @SafeVarargs
+    public static <I extends Interface> void setInterfaces(Class<I>... interfaces) {
         if (interfaces != null) {
-            addInterfaces(Arrays.asList(interfaces));
+            BuggyConfig.interfaces = new ArrayList<>();
+            for (Class<? extends Interface> anInterface : interfaces) {
+                try {
+                    BuggyConfig.interfaces.add(anInterface.getDeclaredConstructor().newInstance());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -230,15 +242,24 @@ public class BuggyConfig implements JCConfiguration {
         }
     }
 
-    public static void addComponents(List<Component> components) {
+    @SafeVarargs
+    public static <C extends Component> void setComponents(C... components) {
         if (components != null) {
-            BuggyConfig.components.addAll(components);
+            setComponents(Arrays.asList(components));
         }
     }
 
-    public static void addComponents(Component... components) {
+    @SafeVarargs
+    public static <C extends Component> void setComponents(Class<C>... components) {
         if (components != null) {
-            addComponents(Arrays.asList(components));
+            BuggyConfig.components = new ArrayList<>();
+            for (Class<? extends Component> component : components) {
+                try {
+                    BuggyConfig.components.add(component.getDeclaredConstructor().newInstance());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

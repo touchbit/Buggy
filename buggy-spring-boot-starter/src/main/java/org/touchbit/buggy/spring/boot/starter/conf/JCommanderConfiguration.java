@@ -6,6 +6,7 @@ import com.beust.jcommander.Parameters;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {@link JCommander} spring boot configuration class.
@@ -31,6 +33,7 @@ import java.util.*;
  */
 @Configuration
 @ConditionalOnNotWebApplication
+@EnableConfigurationProperties(ApplicationProperties.class)
 public class JCommanderConfiguration implements IConfiguration {
 
     private final JCommander jCommander;
@@ -38,6 +41,7 @@ public class JCommanderConfiguration implements IConfiguration {
     private final ApplicationProperties properties;
     private final String[] args;
     private final Map<Class<? extends JCConfiguration>, JCConfiguration> buggyConfigurations = new HashMap<>();
+    private final boolean isJCommanderConfigured;
 
     public JCommanderConfiguration(final ApplicationProperties properties, final ApplicationArguments args) {
         this.properties = properties;
@@ -49,12 +53,18 @@ public class JCommanderConfiguration implements IConfiguration {
                 .forEach(this.jcConfigurations::add);
         this.jCommander = buildJCommander();
         parseArguments();
+        isJCommanderConfigured = true;
     }
 
     public void beforeConfiguration() {
         ConfigurationLogger.blockDelimiter();
         ConfigurationLogger.centerBold("JCommander configuration construction");
         ConfigurationLogger.stepDelimiter();
+    }
+
+    @Bean
+    public boolean isJCommanderConfigured() {
+        return isJCommanderConfigured;
     }
 
     @PostConstruct
@@ -81,9 +91,13 @@ public class JCommanderConfiguration implements IConfiguration {
     }
 
     public Set<JCConfiguration> scanJCConfigurations() {
-        final boolean useDefaultFilters = properties.isJCommanderScannerCommandsUseDefaultFilters();
-        final String basePackage = properties.getJCommanderScannerCommandsBasePackage();
-        final Set<BeanDefinition> defs = scanBeanDefinitions(useDefaultFilters, basePackage, JCConfiguration.class);
+        final Set<BeanDefinition> defs = new LinkedHashSet<>();
+        final List<String> basePackages = properties.getCommandsScannerBasePackages().stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+        for (String basePackage : basePackages) {
+            defs.addAll(scanBeanDefinitions(false, basePackage, JCConfiguration.class));
+        }
         return getBeanDefinitionInstances(defs, JCConfiguration.class);
     }
 

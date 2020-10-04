@@ -17,6 +17,7 @@
 package org.touchbit.buggy.core.model;
 
 import org.atteo.classindex.IndexAnnotated;
+import org.touchbit.buggy.core.goal.Goal;
 import org.touchbit.buggy.core.goal.component.Component;
 import org.touchbit.buggy.core.goal.component.AllComponents;
 import org.touchbit.buggy.core.goal.component.DefaultComponent;
