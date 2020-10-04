@@ -151,4 +151,23 @@ public class JUtils {
         }
     }
 
+    public static String getSimpleNameC(Object o) {
+        return getSimpleNameC(o.getClass());
+    }
+
+    public static String getSimpleNameC(Class<?> c) {
+        return getSimpleName(c) + ".class";
+    }
+
+    public static String getSimpleName(Object o) {
+        return getSimpleName(o.getClass());
+    }
+
+    public static String getSimpleName(Class<?> c) {
+        if (c != null) {
+            return c.getSimpleName();
+        }
+        return "<null>";
+    }
+
 }

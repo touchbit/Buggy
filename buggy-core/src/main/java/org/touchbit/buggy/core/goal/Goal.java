@@ -22,6 +22,14 @@ package org.touchbit.buggy.core.goal;
  */
 public interface Goal {
 
-    public String getName();
+    String getName();
+
+    default boolean isActive() {
+        return true;
+    }
+
+    default String getDescription() {
+        return "<no description>";
+    }
 
 }

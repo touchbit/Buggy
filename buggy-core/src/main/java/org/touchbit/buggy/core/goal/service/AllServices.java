@@ -11,4 +11,10 @@ public final class AllServices extends Service {
     public String getDescription() {
         return "All services";
     }
+
+    @Override
+    public boolean isActive() {
+        return false;
+    }
+
 }

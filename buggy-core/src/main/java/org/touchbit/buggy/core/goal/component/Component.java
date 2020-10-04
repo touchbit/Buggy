@@ -28,8 +28,6 @@ import org.touchbit.buggy.core.goal.Goal;
 @IndexSubclasses
 public abstract class Component implements Goal {
 
-    public abstract String getDescription();
-
     public String getName() {
         return this.getClass().getSimpleName().toUpperCase();
     }

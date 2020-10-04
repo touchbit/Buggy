@@ -29,7 +29,7 @@ public final class DefaultComponent extends Component {
 
     @Override
     public String getDescription() {
-        return "Default component for test suites";
+        return "Default component";
     }
 
 }

@@ -8,7 +8,6 @@ public class ExampleBuggyRunner extends BuggyRunner {
 
     static {
         BuggyConfig.setForce(true);
-        BuggyConfig.setVersion(true);
     }
 
     public static void main(String[] args) {

@@ -32,4 +32,9 @@ public final class AllComponents extends Component {
         return "All components";
     }
 
+    @Override
+    public boolean isActive() {
+        return false;
+    }
+
 }
