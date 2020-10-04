@@ -2,28 +2,24 @@ package org.touchbit.buggy.spring.boot.starter.conf;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.touchbit.buggy.core.goal.Goal;
-import org.touchbit.buggy.core.goal.component.AllComponents;
-import org.touchbit.buggy.core.goal.interfaze.AllInterfaces;
-import org.touchbit.buggy.core.goal.service.AllServices;
-import org.touchbit.buggy.core.model.Type;
-import org.touchbit.buggy.spring.boot.starter.log.ConfigurationLogger;
-import org.touchbit.buggy.spring.boot.starter.utils.JUtils;
+import org.touchbit.buggy.core.config.BuggyConfig;
+import org.touchbit.buggy.core.config.JCConfiguration;
+import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
+import org.touchbit.buggy.core.utils.log.ConfigurationLogger;
+import org.touchbit.buggy.core.utils.JUtils;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-
-import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 
 /**
  * {@link JCommander} spring boot configuration class.
@@ -35,31 +31,94 @@ import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
  */
 @Configuration
 @ConditionalOnNotWebApplication
-@ComponentScan(
-        basePackages = "**.buggy",
-        useDefaultFilters = false,
-        includeFilters = {
-                @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = JCConfiguration.class),
-                @ComponentScan.Filter(type = ASSIGNABLE_TYPE, classes = Goal.class),
-        })
-public class SBJCommanderConfiguration implements SBConfiguration {
+public class JCommanderConfiguration implements IConfiguration {
 
-    private static final JCommander JC = new JCommander();
-    private final List<JCConfiguration> jcConfigurations;
-    private final List<Goal> goals;
+    private final JCommander jCommander;
+    private final Set<JCConfiguration> jcConfigurations = new LinkedHashSet<>();
+    private final ApplicationProperties properties;
     private final String[] args;
-    private Map<Class<? extends JCConfiguration>, JCConfiguration> buggyConfigurations;
+    private final Map<Class<? extends JCConfiguration>, JCConfiguration> buggyConfigurations = new HashMap<>();
 
-    public SBJCommanderConfiguration(List<JCConfiguration> list, List<Goal> goals, ApplicationArguments args) {
-        this.goals = goals;
-        this.jcConfigurations = list;
+    public JCommanderConfiguration(final ApplicationProperties properties, final ApplicationArguments args) {
+        this.properties = properties;
         this.args = args.getSourceArgs();
-        init();
+        beforeConfiguration();
+        this.jcConfigurations.addAll(scanBuggyConfig());
+        scanJCConfigurations().stream()
+                .filter(i -> !(i instanceof BuggyConfig))
+                .forEach(this.jcConfigurations::add);
+        this.jCommander = buildJCommander();
+        parseArguments();
     }
 
-    @Bean("initAndGetBuggyConfigurations")
-    public Map<Class<? extends JCConfiguration>, JCConfiguration> getBuggyConfigurations() {
-        return buggyConfigurations;
+    public void beforeConfiguration() {
+        ConfigurationLogger.blockDelimiter();
+        ConfigurationLogger.centerBold("JCommander configuration construction");
+        ConfigurationLogger.stepDelimiter();
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (BuggyConfig.getHelp()) {
+            ConfigurationLogger.stepDelimiter();
+            jCommander.usage();
+            BuggyRunner.exit(0);
+        }
+        if (BuggyConfig.getVersion()) {
+            ConfigurationLogger.stepDelimiter();
+            ConfigurationLogger.centerBold("Version info");
+            JUtils.getBuggyManifest().forEach(ConfigurationLogger::dotPlaceholder);
+            BuggyRunner.exit(0);
+        }
+        printConfigurationsParams(buggyConfigurations);
+    }
+
+    private Set<BuggyConfig> scanBuggyConfig() {
+        final boolean useDefaultFilters = false;
+        final String basePackage = "org.touchbit.buggy.core.config";
+        final Set<BeanDefinition> defs = scanBeanDefinitions(useDefaultFilters, basePackage, BuggyConfig.class);
+        return getBeanDefinitionInstances(defs, BuggyConfig.class);
+    }
+
+    public Set<JCConfiguration> scanJCConfigurations() {
+        final boolean useDefaultFilters = properties.isJCommanderScannerCommandsUseDefaultFilters();
+        final String basePackage = properties.getJCommanderScannerCommandsBasePackage();
+        final Set<BeanDefinition> defs = scanBeanDefinitions(useDefaultFilters, basePackage, JCConfiguration.class);
+        return getBeanDefinitionInstances(defs, JCConfiguration.class);
+    }
+
+    private JCommander buildJCommander() {
+        JCommander jCommander = new JCommander();
+        for (JCConfiguration config : jcConfigurations) {
+            buggyConfigurations.put(config.getClass(), config);
+            checkConfiguration(config);
+            try {
+                if (config.getClass().isAnnotationPresent(Parameters.class) &&
+                        config.getClass().getAnnotation(Parameters.class).commandNames().length > 0) {
+                    jCommander.addCommand(config);
+                } else {
+                    jCommander.addObject(config);
+                }
+                ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "OK");
+            } catch (Exception e) {
+                ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
+                BuggyRunner.exit(1, "Unexpected error while loading Jcommander configs", e);
+            }
+        }
+        return jCommander;
+    }
+
+    public void parseArguments() {
+        try {
+            jCommander.parse(args);
+            ConfigurationLogger.stepDelimiter();
+            ConfigurationLogger.dotPlaceholder("Parsing arguments", "OK");
+        } catch (Exception e) {
+            ConfigurationLogger.stepDelimiter();
+            ConfigurationLogger.dotPlaceholder("Parsing arguments", "FAIL");
+            printConfigurationsParams(buggyConfigurations);
+            BuggyRunner.exit(e.getMessage(), e);
+        }
     }
 
     @Bean("isBuggyConfigured")
@@ -67,45 +126,9 @@ public class SBJCommanderConfiguration implements SBConfiguration {
         return buggyConfigurations.containsKey(BuggyConfig.class);
     }
 
-    @PostConstruct
-    public void postConstruct() {
-        if (BuggyConfig.getHelp()) {
-            ConfigurationLogger.stepDelimeter();
-            JC.usage();
-            exitRun(0);
-        }
-        printConfigurationsParams(buggyConfigurations);
-    }
-
-    public void init() {
-        if (buggyConfigurations == null) {
-            ConfigurationLogger.blockDelimeter();
-            ConfigurationLogger.centerBold("JCommander configuration construction");
-            ConfigurationLogger.stepDelimeter();
-            buggyConfigurations = new HashMap<>();
-
-            for (JCConfiguration config : jcConfigurations) {
-                buggyConfigurations.put(config.getClass(), config);
-                checkConfiguration(config);
-                if (config.getClass().isAnnotationPresent(Parameters.class) &&
-                        config.getClass().getAnnotation(Parameters.class).commandNames().length > 0) {
-                    JC.addCommand(config);
-                } else {
-                    JC.addObject(config);
-                }
-                ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "OK");
-            }
-            try {
-                JC.parse(args);
-                ConfigurationLogger.stepDelimeter();
-                ConfigurationLogger.dotPlaceholder("Parsing arguments", "OK");
-            } catch (Exception e) {
-                ConfigurationLogger.stepDelimeter();
-                ConfigurationLogger.dotPlaceholder("Parsing arguments", "FAIL");
-                printConfigurationsParams(buggyConfigurations);
-                exitRunWithErr(e.getMessage(), e);
-            }
-        }
+    @Bean()
+    public Map<Class<? extends JCConfiguration>, JCConfiguration> getBuggyConfigurations() {
+        return buggyConfigurations;
     }
 
     public void checkConfiguration(JCConfiguration config) {
@@ -115,7 +138,7 @@ public class SBJCommanderConfiguration implements SBConfiguration {
                 String[] names = parameter.names();
                 ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
                 printConfigurationParams(config);
-                exitRunWithErr("Field " + config.getClass().getSimpleName() + "#" + field.getName() +
+                BuggyRunner.exit(1, "Field " + config.getClass().getSimpleName() + "#" + field.getName() +
                         " marked with @Parameter " + Arrays.toString(names) + " must be static.");
             }
         }
@@ -143,7 +166,7 @@ public class SBJCommanderConfiguration implements SBConfiguration {
                 if (error != null) {
                     ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
                     printConfigurationParams(config);
-                    exitRunWithErr(error);
+                    BuggyRunner.exit(1, error);
                 }
             }
         }
@@ -159,7 +182,7 @@ public class SBJCommanderConfiguration implements SBConfiguration {
     public void printConfigurationParams(JCConfiguration config) {
         Map<String, Object> params = config.configurationToMap();
         if (params != null && !params.isEmpty()) {
-            ConfigurationLogger.stepDelimeter();
+            ConfigurationLogger.stepDelimiter();
             ConfigurationLogger.center(config.getClass().getSimpleName());
             for (Map.Entry<String, Object> entry : params.entrySet()) {
                 ConfigurationLogger.dotPlaceholder(entry.getKey(), entry.getValue());

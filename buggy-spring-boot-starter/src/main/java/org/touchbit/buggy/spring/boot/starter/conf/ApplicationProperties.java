@@ -9,17 +9,39 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 public class ApplicationProperties {
 
-    @Value("${buggy.configuration.testng.scanner.suite.basePackage:**.buggy1}")
+    @Value("${buggy.spring.configuration.testng.scanner.suite.basePackage:**.buggy}")
     private String testNGScannerSuiteBasePackage;
 
-    @Value("${buggy.configuration.testng.scanner.suite.useDefaultFilters:false}")
+    @Value("${buggy.spring.configuration.testng.scanner.suite.useDefaultFilters:false}")
     private boolean testNGScannerSuiteUseDefaultFilters;
 
-    @Value("${buggy.configuration.testng.scanner.listener.basePackage:**.buggy1}")
+    @Value("${buggy.spring.configuration.testng.scanner.listener.basePackage:**.buggy}")
     private String testNGScannerListenerBasePackage;
 
-    @Value("${buggy.configuration.testng.scanner.listener.useDefaultFilters:false}")
+    @Value("${buggy.spring.configuration.testng.scanner.listener.useDefaultFilters:false}")
     private boolean testNGScannerListenerUseDefaultFilters;
+
+    @Value("${buggy.spring.configuration.jcommander.scanner.commands.basePackage:**.buggy}")
+    private String jCommanderScannerCommandsBasePackage;
+
+    @Value("${buggy.spring.configuration.jcommander.scanner.commands.useDefaultFilters:false}")
+    private boolean jCommanderScannerCommandsUseDefaultFilters;
+
+    public String getJCommanderScannerCommandsBasePackage() {
+        return jCommanderScannerCommandsBasePackage;
+    }
+
+    public void setJCommanderScannerCommandsBasePackage(String jCommanderScannerCommandsBasePackage) {
+        this.jCommanderScannerCommandsBasePackage = jCommanderScannerCommandsBasePackage;
+    }
+
+    public boolean isJCommanderScannerCommandsUseDefaultFilters() {
+        return jCommanderScannerCommandsUseDefaultFilters;
+    }
+
+    public void setJCommanderScannerCommandsUseDefaultFilters(boolean jCommanderScannerCommandsUseDefaultFilters) {
+        this.jCommanderScannerCommandsUseDefaultFilters = jCommanderScannerCommandsUseDefaultFilters;
+    }
 
     public String getTestNGScannerSuiteBasePackage() {
         return testNGScannerSuiteBasePackage;

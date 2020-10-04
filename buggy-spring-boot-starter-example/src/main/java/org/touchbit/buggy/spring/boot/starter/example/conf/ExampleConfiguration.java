@@ -1,7 +1,7 @@
 package org.touchbit.buggy.spring.boot.starter.example.conf;
 
 import com.beust.jcommander.Parameter;
-import org.touchbit.buggy.spring.boot.starter.conf.JCConfiguration;
+import org.touchbit.buggy.core.config.JCConfiguration;
 
 public class ExampleConfiguration implements JCConfiguration {
 

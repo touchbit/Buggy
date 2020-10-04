@@ -1,11 +1,9 @@
-package org.touchbit.buggy.spring.boot.starter.conf;
+package org.touchbit.buggy.core.config;
 
 import com.beust.jcommander.Parameter;
-import org.springframework.core.annotation.Order;
 import org.touchbit.buggy.core.config.jcommander.InterfaceConverter;
 import org.touchbit.buggy.core.config.jcommander.ParameterValidator;
 import org.touchbit.buggy.core.config.jcommander.ServiceConverter;
-import org.touchbit.buggy.core.config.jcommander.ValueValidator;
 import org.touchbit.buggy.core.goal.component.AllComponents;
 import org.touchbit.buggy.core.goal.component.Component;
 import org.touchbit.buggy.core.goal.interfaze.AllInterfaces;
@@ -26,10 +24,10 @@ import static org.touchbit.buggy.core.model.BParallelMode.METHODS;
  * Created by Oleg Shaburov on 01.10.2020
  * shaburov.o.a@gmail.com
  */
-@Order(1)
+@SuppressWarnings("unused")
 public class BuggyConfig implements JCConfiguration {
 
-    @Parameter(names = HELP, help = true, description = "Print usage.")
+    @Parameter(names = {QUESTION_MARK, HELP}, help = true, description = "Print usage.")
     private static Boolean help = false;
 
     @Parameter(names = {F, FORCE}, description = "Running all tests, including those that fall.")
@@ -46,10 +44,7 @@ public class BuggyConfig implements JCConfiguration {
 
     private static Boolean printLogOnlyFail = false;
 
-    @Parameter(names = {SELF_CHECK}, description = "Check buggy configuration without test run.")
-    private static Boolean check = false;
-
-    @Parameter(names = {V, VERSION}, description = "Print program version", validateValueWith = ValueValidator.class)
+    @Parameter(names = {V, VERSION}, description = "Print program version")
     private static Boolean version = false;
 
     @Parameter(names = {THREADS}, description = "The number of threads to run the test methods.")
@@ -57,9 +52,6 @@ public class BuggyConfig implements JCConfiguration {
 
     @Parameter(names = {EXIT_STATUS}, description = "Completion with the specified status.")
     private static Integer status;
-
-    @Parameter(names = {LOGS_PATH}, description = "Absolute path to the directory for test logs.")
-    private static String logsPath = "logs";
 
     @Parameter(names = {ARTIFACTS_URL}, description = "The storage address for the builds (artifacts).")
     private static String artifactsUrl;
@@ -130,14 +122,6 @@ public class BuggyConfig implements JCConfiguration {
         BuggyConfig.printLogOnlyFail = printLogOnlyFail;
     }
 
-    public static Boolean getCheck() {
-        return check;
-    }
-
-    public static void setCheck(Boolean check) {
-        BuggyConfig.check = check;
-    }
-
     public static Boolean getVersion() {
         return version;
     }
@@ -160,14 +144,6 @@ public class BuggyConfig implements JCConfiguration {
 
     public static void setStatus(Integer status) {
         BuggyConfig.status = status;
-    }
-
-    public static String getLogsPath() {
-        return logsPath;
-    }
-
-    public static void setLogsPath(String logsPath) {
-        BuggyConfig.logsPath = logsPath;
     }
 
     public static String getArtifactsUrl() {

@@ -36,34 +36,7 @@ public class ValueValidator implements IValueValidator<Object> {
 
     @Override
     public void validate(String name, Object value) {
-        String stringValue = String.valueOf(value);
-        if ((name.equals(QUESTION_MARK) || name.equals(HELP)) && Boolean.parseBoolean(stringValue)) {
-            Buggy.getExitHandler().exitRunWithUsage(0);
-        }
-        if ((name.equals(V) || name.equals(VERSION)) && Boolean.parseBoolean(String.valueOf(stringValue))) {
-            printManifestInfo();
-            Buggy.getExitHandler().exitRun(0);
-        }
-    }
-
-    private static void printManifestInfo() {
-        Attributes attributes = BuggyUtils.getManifestAttributes();
-        printAttributes(attributes);
-    }
-
-    private static void printAttributes(Attributes attributes) {
-        StringJoiner stringJoiner = new StringJoiner("\n");
-        if (attributes != null) {
-            attributes.entrySet().stream()
-                    .filter(e -> String.valueOf(e.getKey()).startsWith("Implementation") && e.getValue() != null)
-                    .forEach(e -> stringJoiner.add(
-                            underscoreFiller(String.valueOf(e.getKey()).replace("Implementation-", ""),
-                                    47, e.getValue())));
-            if (stringJoiner.length() > 0) {
-                StringUtils.println(stringJoiner.toString());
-                StringUtils.println(CONSOLE_DELIMITER);
-            }
-        }
+        // TODO remove
     }
 
 }

@@ -151,31 +151,6 @@ public class BuggyUtils {
                 s1.interfaze().equals(s2.interfaze());
     }
 
-    public static Attributes getManifestAttributes() {
-        Manifest mf = getManifest();
-        return mf.getMainAttributes();
-    }
-
-    public static Manifest getManifest() {
-        InputStream inputStream = IOHelper.getResourceAsStream("./META-INF/MANIFEST.MF");
-        if (inputStream == null) {
-            inputStream = IOHelper.getResourceAsStream("META-INF/MANIFEST.MF");
-        }
-        return readManifest(inputStream);
-    }
-
-    private static Manifest readManifest(InputStream inputStream) {
-        Manifest manifest = new Manifest();
-        try {
-            if (inputStream != null) {
-                manifest.read(inputStream);
-            }
-            return manifest;
-        } catch (IOException ignore) {
-            return manifest;
-        }
-    }
-
     private BuggyUtils() {
         throw new IllegalStateException("Utility class. Prohibit instantiation.");
     }

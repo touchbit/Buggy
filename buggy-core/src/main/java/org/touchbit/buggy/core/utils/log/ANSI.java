@@ -1,4 +1,4 @@
-package org.touchbit.buggy.spring.boot.starter.log;
+package org.touchbit.buggy.core.utils.log;
 
 public enum ANSI {
 
@@ -16,14 +16,15 @@ public enum ANSI {
         this.symbol = symbol;
     }
 
-    public static String unwrap(String msg) {
+    public static String unwrap(final String msg) {
+        String resultMsg = msg;
         for (ANSI value : ANSI.values()) {
-            msg = msg.replace(value.symbol, "");
+            resultMsg = msg.replace(value.symbol, "");
         }
-        return msg;
+        return resultMsg;
     }
 
-    public String wrap(String msg) {
+    public String wrap(final String msg) {
         return this.symbol + msg + RESET.symbol;
     }
 

@@ -114,11 +114,6 @@ class BuggyUtilsTests extends BaseUnitTest {
         assertThat(BuggyUtils.equalsSuites(SUITE_1, SUITE_2), is(true));
     }
 
-    @Test
-    @DisplayName("Check getManifest()")
-    void unitTest_20180915185908() {
-        assertThat(BuggyUtils.getManifest(), is(notNullValue()));
-    }
 
     @Test
     @DisplayName("GIVEN InputStream == null WHEN readManifest THEN return empty Manifest")
@@ -159,14 +154,6 @@ class BuggyUtilsTests extends BaseUnitTest {
         };
         Manifest manifest = (Manifest) readManifest.invoke(buggyUtilsClass, inputStream);
         assertThat(manifest.getMainAttributes().entrySet(), is(empty()));
-    }
-
-    @Test
-    @DisplayName("Check getManifestAttributes()")
-    void unitTest_20180915192200() {
-        Attributes attributes = BuggyUtils.getManifestAttributes();
-        assertThat(attributes, is(notNullValue()));
-        assertThat(attributes.isEmpty(), is(false));
     }
 
     @Test

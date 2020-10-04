@@ -1,8 +1,7 @@
-package org.touchbit.buggy.spring.boot.starter.conf;
+package org.touchbit.buggy.core.config;
 
 import com.beust.jcommander.Parameter;
-import org.touchbit.buggy.spring.boot.starter.log.ConfigurationLogger;
-import org.touchbit.buggy.spring.boot.starter.utils.JUtils;
+import org.touchbit.buggy.core.utils.JUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -53,7 +52,7 @@ public interface JCConfiguration {
                         map.put(Arrays.toString(names), field.get(this));
                     }
                 } catch (Exception e) {
-                    ConfigurationLogger.errPrint(e.getMessage());
+//                    ConfigurationLogger.errPrint(e.getMessage()); TODO
                 } finally {
                     field.setAccessible(false);
                 }
@@ -89,7 +88,7 @@ public interface JCConfiguration {
                 method.getValue().setAccessible(true);
                 map.put(method.getKey().toString(), method.getValue().invoke(this));
             } catch (Exception e) {
-                ConfigurationLogger.errPrint(e.getMessage()); // TODO
+//                ConfigurationLogger.errPrint(e.getMessage()); TODO
             } finally {
                 method.getValue().setAccessible(false);
             }

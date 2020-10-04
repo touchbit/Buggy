@@ -26,7 +26,7 @@ public class BParameters {
     public static final String V = "-v";
     public static final String VERSION = "--version";
     public static final String QUESTION_MARK = "-?";
-    public static final String HELP = "-?, --help";
+    public static final String HELP = "--help";
     public static final String C = "-c";
     public static final String COMPONENTS = "--component";
     public static final String S = "-s";

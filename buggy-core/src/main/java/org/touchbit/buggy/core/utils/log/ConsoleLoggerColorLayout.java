@@ -1,4 +1,4 @@
-package org.touchbit.buggy.spring.boot.starter.log;
+package org.touchbit.buggy.core.utils.log;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
@@ -8,7 +8,7 @@ import ch.qos.logback.core.LayoutBase;
 import org.slf4j.MDC;
 
 import static ch.qos.logback.classic.Level.*;
-import static org.touchbit.buggy.spring.boot.starter.log.ANSI.*;
+import static org.touchbit.buggy.core.utils.log.ANSI.*;
 
 /**
  * Console logger layout for dividing logging levels by color.
@@ -28,9 +28,9 @@ public class ConsoleLoggerColorLayout extends LayoutBase<ILoggingEvent> {
      * Log format: message\n
      */
     @Override
-    public String doLayout(ILoggingEvent event) {
-        StringBuilder stringBuilder = new StringBuilder(128);
-        String msg = event.getFormattedMessage();
+    public String doLayout(final ILoggingEvent event) {
+        final StringBuilder stringBuilder = new StringBuilder(128);
+        final String msg = event.getFormattedMessage();
         switch (event.getLevel().levelInt) {
             case ERROR_INT:
                 stringBuilder.append(RED.wrap(msg));
@@ -50,8 +50,8 @@ public class ConsoleLoggerColorLayout extends LayoutBase<ILoggingEvent> {
             default:
                 return "";
         }
-        IThrowableProxy throwableProxy = event.getThrowableProxy();
-        boolean withST = Boolean.parseBoolean(MDC.get("print.console.stacktrace"));
+        final IThrowableProxy throwableProxy = event.getThrowableProxy();
+        final boolean withST = Boolean.parseBoolean(MDC.get("print.console.stacktrace"));
         if (throwableProxy != null && withST) {
             stringBuilder.append(CoreConstants.LINE_SEPARATOR);
             stringBuilder.append(ThrowableProxyUtil.asString(throwableProxy));
