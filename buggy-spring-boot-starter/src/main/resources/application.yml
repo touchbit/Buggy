@@ -4,10 +4,10 @@ logging:
     path: ./logs
 buggy:
   commandsScannerBasePackages:
-  - "**.buggy"
+    - "**.buggy"
   goalsScannerBasePackages:
-  - "**.buggy"
+    - "**.buggy"
   suitesScannerBasePackages:
-  - "**.buggy"
+    - "**.buggy"
   listenersScannerBasePackages:
-  - "**.buggy"
+    - "**.buggy"

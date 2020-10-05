@@ -12,9 +12,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.touchbit.buggy.core.config.BuggyConfig;
 import org.touchbit.buggy.core.config.JCConfiguration;
-import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
-import org.touchbit.buggy.core.utils.log.ConfigurationLogger;
 import org.touchbit.buggy.core.utils.JUtils;
+import org.touchbit.buggy.core.utils.log.ConfigurationLogger;
+import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;

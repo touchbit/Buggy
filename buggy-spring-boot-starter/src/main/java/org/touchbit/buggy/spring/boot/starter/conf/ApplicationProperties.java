@@ -7,7 +7,7 @@ import java.util.List;
 
 @ConfigurationProperties("buggy")
 public class ApplicationProperties {
-    
+
     private static final String BASE_BUGGY_SCAN_PACKAGE = "**.buggy";
     private List<String> commandsScannerBasePackages = new ArrayList<>();
     private List<String> goalsScannerBasePackages = new ArrayList<>();
