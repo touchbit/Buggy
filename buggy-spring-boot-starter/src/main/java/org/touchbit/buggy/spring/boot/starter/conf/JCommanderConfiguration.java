@@ -11,10 +11,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.touchbit.buggy.core.config.BuggyConfig;
-import org.touchbit.buggy.core.config.JCConfiguration;
+import org.touchbit.buggy.core.log.ConfigurationLogger;
 import org.touchbit.buggy.core.utils.JUtils;
-import org.touchbit.buggy.core.utils.log.ConfigurationLogger;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
+import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyJCommand;
+import org.touchbit.buggy.spring.boot.starter.jcommander.JCommand;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * {@link JCommander} spring boot configuration class.
- * {@link ComponentScan} searches for all implementations of the {@link JCConfiguration} class.
+ * {@link ComponentScan} searches for all implementations of the {@link JCommand} class.
  * The search is done for packages that contain a "buggy" package.
  * <p>
  * Created by Oleg Shaburov on 01.10.2020
@@ -37,20 +38,20 @@ import java.util.stream.Collectors;
 public class JCommanderConfiguration implements IConfiguration {
 
     private final JCommander jCommander;
-    private final Set<JCConfiguration> jcConfigurations = new LinkedHashSet<>();
+    private final Set<JCommand> JCommands = new LinkedHashSet<>();
     private final ApplicationProperties properties;
     private final String[] args;
-    private final Map<Class<? extends JCConfiguration>, JCConfiguration> buggyConfigurations = new HashMap<>();
+    private final Map<Class<? extends JCommand>, JCommand> buggyConfigurations = new HashMap<>();
     private final boolean isJCommanderConfigured;
 
     public JCommanderConfiguration(final ApplicationProperties properties, final ApplicationArguments args) {
         this.properties = properties;
         this.args = args.getSourceArgs();
         beforeConfiguration();
-        this.jcConfigurations.addAll(scanBuggyConfig());
+        this.JCommands.addAll(scanBuggyConfig());
         scanJCConfigurations().stream()
-                .filter(i -> !(i instanceof BuggyConfig))
-                .forEach(this.jcConfigurations::add);
+                .filter(i -> !(i instanceof BuggyJCommand))
+                .forEach(this.JCommands::add);
         this.jCommander = buildJCommander();
         parseArguments();
         isJCommanderConfigured = true;
@@ -74,7 +75,7 @@ public class JCommanderConfiguration implements IConfiguration {
             jCommander.usage();
             BuggyRunner.exit(0);
         }
-        if (BuggyConfig.getVersion()) {
+        if (BuggyConfig.isVersion()) {
             ConfigurationLogger.stepDelimiter();
             ConfigurationLogger.centerBold("Version info");
             JUtils.getBuggyManifest().forEach(ConfigurationLogger::dotPlaceholder);
@@ -83,27 +84,27 @@ public class JCommanderConfiguration implements IConfiguration {
         printConfigurationsParams(buggyConfigurations);
     }
 
-    private Set<BuggyConfig> scanBuggyConfig() {
+    private Set<BuggyJCommand> scanBuggyConfig() {
         final boolean useDefaultFilters = false;
         final String basePackage = "org.touchbit.buggy.core.config";
-        final Set<BeanDefinition> defs = scanBeanDefinitions(useDefaultFilters, basePackage, BuggyConfig.class);
-        return getBeanDefinitionInstances(defs, BuggyConfig.class);
+        final Set<BeanDefinition> defs = scanBeanDefinitions(useDefaultFilters, basePackage, BuggyJCommand.class);
+        return getBeanDefinitionInstances(defs, BuggyJCommand.class);
     }
 
-    public Set<JCConfiguration> scanJCConfigurations() {
+    public Set<JCommand> scanJCConfigurations() {
         final Set<BeanDefinition> defs = new LinkedHashSet<>();
         final List<String> basePackages = properties.getCommandsScannerBasePackages().stream()
                 .map(String::valueOf)
                 .collect(Collectors.toList());
         for (String basePackage : basePackages) {
-            defs.addAll(scanBeanDefinitions(false, basePackage, JCConfiguration.class));
+            defs.addAll(scanBeanDefinitions(false, basePackage, JCommand.class));
         }
-        return getBeanDefinitionInstances(defs, JCConfiguration.class);
+        return getBeanDefinitionInstances(defs, JCommand.class);
     }
 
     private JCommander buildJCommander() {
         JCommander jCommander = new JCommander();
-        for (JCConfiguration config : jcConfigurations) {
+        for (JCommand config : JCommands) {
             buggyConfigurations.put(config.getClass(), config);
             checkConfiguration(config);
             try {
@@ -141,11 +142,11 @@ public class JCommanderConfiguration implements IConfiguration {
     }
 
     @Bean()
-    public Map<Class<? extends JCConfiguration>, JCConfiguration> getBuggyConfigurations() {
+    public Map<Class<? extends JCommand>, JCommand> getBuggyConfigurations() {
         return buggyConfigurations;
     }
 
-    public void checkConfiguration(JCConfiguration config) {
+    public void checkConfiguration(JCommand config) {
         for (Field field : JUtils.getFields(config)) {
             Parameter parameter = field.getAnnotation(Parameter.class);
             if (parameter != null && !Modifier.isStatic(field.getModifiers())) {
@@ -186,14 +187,14 @@ public class JCommanderConfiguration implements IConfiguration {
         }
     }
 
-    public void printConfigurationsParams(Map<Class<? extends JCConfiguration>, JCConfiguration> configs) {
-        for (JCConfiguration autowiredConfig : jcConfigurations) {
-            JCConfiguration config = configs.get(autowiredConfig.getClass());
+    public void printConfigurationsParams(Map<Class<? extends JCommand>, JCommand> configs) {
+        for (JCommand autowiredConfig : JCommands) {
+            JCommand config = configs.get(autowiredConfig.getClass());
             printConfigurationParams(config);
         }
     }
 
-    public void printConfigurationParams(JCConfiguration config) {
+    public void printConfigurationParams(JCommand config) {
         Map<String, Object> params = config.configurationToMap();
         if (params != null && !params.isEmpty()) {
             ConfigurationLogger.stepDelimiter();

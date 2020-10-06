@@ -13,7 +13,6 @@ import org.touchbit.buggy.testrail.StatusMapper;
 import org.touchbit.testrail4j.core.type.Statuses;
 
 import static org.touchbit.buggy.core.model.Status.*;
-import static org.touchbit.buggy.core.model.Status.FAILED;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class DefaultTestRailListener extends BaseTestRailListener<Status> {
@@ -24,27 +23,6 @@ public abstract class DefaultTestRailListener extends BaseTestRailListener<Statu
 
     public DefaultTestRailListener(StatusMapper<Status> statusMapper) {
         super(statusMapper);
-    }
-
-    public static class DefaultStatusMapper implements StatusMapper<Status> {
-
-        @Override
-        public long getId(Status status) {
-            switch (status) {
-                case SUCCESS:
-                case FIXED:
-                case IMPLEMENTED: return Statuses.PASSED.getId();
-                case BLOCKED:
-                case SKIP:        return Statuses.BLOCKED.getId();
-                case UNTESTED:    return Statuses.UNTESTED.getId();
-                case FAILED:
-                case CORRUPTED:
-                case EXP_IMPL:
-                case EXP_FIX:     return Statuses.FAILED.getId();
-                default:
-                    throw new BuggyConfigurationException("Unhandled status received: " + status);
-            }
-        }
     }
 
     @Override
@@ -62,7 +40,7 @@ public abstract class DefaultTestRailListener extends BaseTestRailListener<Statu
     }
 
     protected void processErrorTest(Details details, ITestResult result, String throwableMsg) {
-        switch(details.status()) {
+        switch (details.status()) {
             case SKIP:
             case FAILED:
             case EXP_FIX:
@@ -93,7 +71,7 @@ public abstract class DefaultTestRailListener extends BaseTestRailListener<Statu
     }
 
     protected void processSuccessTest(Details details, ITestResult result, String throwableMsg) {
-        switch(details.status()) {
+        switch (details.status()) {
             case EXP_FIX:
             case BLOCKED:
                 addResult(result, details, FIXED,
@@ -114,6 +92,31 @@ public abstract class DefaultTestRailListener extends BaseTestRailListener<Statu
     @Override
     public boolean isEnable() {
         return BaseTestRailConfig.isTestRailEnable();
+    }
+
+    public static class DefaultStatusMapper implements StatusMapper<Status> {
+
+        @Override
+        public long getId(Status status) {
+            switch (status) {
+                case SUCCESS:
+                case FIXED:
+                case IMPLEMENTED:
+                    return Statuses.PASSED.getId();
+                case BLOCKED:
+                case SKIP:
+                    return Statuses.BLOCKED.getId();
+                case UNTESTED:
+                    return Statuses.UNTESTED.getId();
+                case FAILED:
+                case CORRUPTED:
+                case EXP_IMPL:
+                case EXP_FIX:
+                    return Statuses.FAILED.getId();
+                default:
+                    throw new BuggyConfigurationException("Unhandled status received: " + status);
+            }
+        }
     }
 
 }

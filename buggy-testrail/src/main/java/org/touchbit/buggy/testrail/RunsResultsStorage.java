@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 public class RunsResultsStorage {
 
     /**
-     *  key   - TestRail run id
-     *  value - list of test result objects {@link TRResult}
+     * key   - TestRail run id
+     * value - list of test result objects {@link TRResult}
      */
     private final Map<Long, List<TRResult>> runsResults;
 

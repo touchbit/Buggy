@@ -13,10 +13,10 @@ import org.touchbit.buggy.core.goal.interfaze.AllInterfaces;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.AllServices;
 import org.touchbit.buggy.core.goal.service.Service;
+import org.touchbit.buggy.core.log.ConfigurationLogger;
 import org.touchbit.buggy.core.model.Suite;
-import org.touchbit.buggy.core.testng.listeners.BuggyListener;
+import org.touchbit.buggy.core.testng.BuggyListener;
 import org.touchbit.buggy.core.utils.JUtils;
-import org.touchbit.buggy.core.utils.log.ConfigurationLogger;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 
 import javax.annotation.PostConstruct;

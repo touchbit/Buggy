@@ -8,11 +8,31 @@ import java.io.*;
  */
 public class SystemOutLogger extends UnitTestLogger {
 
-    public SystemOutLogger(File logFile){
+    public SystemOutLogger(File logFile) {
         OutputStream outputStream = getPrintStream(logFile);
         LoggerPrintStream loggerPrintStream = new LoggerPrintStream(this, outputStream);
         System.setOut(loggerPrintStream);
         System.setErr(loggerPrintStream);
+    }
+
+    private static OutputStream getPrintStream(File logFile) {
+        try {
+            if (logFile.createNewFile()) {
+                System.out.println("\nSystem.out log file path: " + logFile.getAbsolutePath() + "\n");
+                return new PrintStream(new BufferedOutputStream(new FileOutputStream(logFile)), true);
+            } else {
+                return new FakeOutputStream();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new FakeOutputStream();
+        }
+    }
+
+    public static class FakeOutputStream extends OutputStream {
+        @Override
+        public void write(int b) {
+        }
     }
 
     private class LoggerPrintStream extends PrintStream {
@@ -35,25 +55,6 @@ public class SystemOutLogger extends UnitTestLogger {
             super.println(line);
         }
 
-    }
-
-    private static OutputStream getPrintStream(File logFile) {
-        try {
-            if (logFile.createNewFile()) {
-                System.out.println("\nSystem.out log file path: " + logFile.getAbsolutePath() + "\n");
-                return new PrintStream(new BufferedOutputStream(new FileOutputStream(logFile)), true);
-            } else {
-                return new FakeOutputStream();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new FakeOutputStream();
-        }
-    }
-
-    public static class FakeOutputStream extends OutputStream {
-        @Override
-        public void write(int b) { }
     }
 
 }

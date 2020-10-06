@@ -24,7 +24,7 @@ import org.touchbit.buggy.core.config.TestService;
 import org.touchbit.buggy.core.goal.component.AllComponents;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by Oleg Shaburov on 19.09.2018

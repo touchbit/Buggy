@@ -4,9 +4,9 @@ import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Type;
+import org.touchbit.buggy.core.tests.BaseUnitTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

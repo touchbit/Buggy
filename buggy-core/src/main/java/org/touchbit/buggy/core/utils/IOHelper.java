@@ -21,9 +21,11 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import org.touchbit.buggy.core.exceptions.BuggyException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Properties;
 
 /**
  * Utility class work with OC.
@@ -33,6 +35,10 @@ import java.util.*;
  */
 @SuppressWarnings({"ResultOfMethodCallIgnored", "UnstableApiUsage", "WeakerAccess"})
 public class IOHelper {
+
+    private IOHelper() {
+        throw new IllegalStateException("Utility class. Prohibit instantiation.");
+    }
 
     public static void copyFile(String sourceFile, String destFile) throws IOException {
         File from = new File(sourceFile);
@@ -128,10 +134,6 @@ public class IOHelper {
         } catch (IOException e) {
             throw new BuggyException("Error reading file [" + file + "] from project resources", e);
         }
-    }
-
-    private IOHelper() {
-        throw new IllegalStateException("Utility class. Prohibit instantiation.");
     }
 
 }

@@ -22,7 +22,7 @@ import okhttp3.Response;
 import okio.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.touchbit.buggy.core.transport.interceptor.CURLLoggingInterceptor;
+import org.touchbit.buggy.core.transport.CURLLoggingInterceptor;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -60,7 +60,7 @@ public class OkHttpCURLLoggingInterceptor extends CURLLoggingInterceptor impleme
     }
 
     private String bodyToString(final Request request) throws IOException {
-        try (final Buffer buffer = new Buffer()){
+        try (final Buffer buffer = new Buffer()) {
             if (request.body() == null) {
                 return null;
             }

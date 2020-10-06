@@ -21,8 +21,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static org.touchbit.buggy.core.model.Status.SUCCESS;
-
 /**
  * Interface of binding test methods.
  * Custom statuses for tests are provided.
@@ -34,22 +32,30 @@ import static org.touchbit.buggy.core.model.Status.SUCCESS;
 @Target({ElementType.METHOD})
 public @interface Details {
 
-    /** Test-case identifiers */
+    /**
+     * Test-case identifiers
+     */
     long[] id() default -1;
 
     /**
      * Test status (see: {@link Status})
      * Used values: EXP_IMPL, EXP_FIX, BLOCKED, CORRUPTED
      */
-    Status status() default SUCCESS;
+    Status status();
 
-    /** Issues ID in the task-tracker system. Format: "STORY-269" */
+    /**
+     * Issues ID in the task-tracker system. Format: "STORY-269"
+     */
     String[] issue() default {""};
 
-    /** Defects ID in the task-tracker system. Format: "BUG-269" */
+    /**
+     * Defects ID in the task-tracker system. Format: "BUG-269"
+     */
     String[] bug() default {""};
 
-    /** Type of auto test */
+    /**
+     * Type of auto test
+     */
     Type[] type() default {Type.REGRESSION};
 
 }

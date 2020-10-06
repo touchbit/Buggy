@@ -1,9 +1,9 @@
 package org.touchbit.buggy.spring.boot.starter.example.conf;
 
 import com.beust.jcommander.Parameter;
-import org.touchbit.buggy.core.config.JCConfiguration;
+import org.touchbit.buggy.spring.boot.starter.jcommander.JCommand;
 
-public class ExampleConfiguration implements JCConfiguration {
+public class ExampleConfiguration implements JCommand {
 
     @Parameter(names = {"--example-host"}, description = "Example host.")
 //    @Parameter(names = {"-f"}, description = "Example host.")

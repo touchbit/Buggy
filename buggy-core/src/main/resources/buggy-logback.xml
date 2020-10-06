@@ -1,0 +1,54 @@
+<configuration debug="false">
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <property name="logging.file.path" value="${LOG_PATH:-./logs}"/>
+    <property name="test.log.pattern" value="%d{HH:mm:ss.SSS} - %m%n"/>
+    <property name="base.log.pattern" value="%d{HH:mm:ss.SSS} %-5level - %m%n"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.touchbit.buggy.core.log.layout.ConsoleLoggerColorLayout"/>
+        </encoder>
+    </appender>
+    <appender name="Framework" class="ch.qos.logback.core.FileAppender">
+        <file>${logging.file.path}/Framework.log</file>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.touchbit.buggy.core.log.layout.FrameworkLoggerLayout"/>
+        </encoder>
+    </appender>
+    <appender name="Sifting" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>sifting.log.file.path</key>
+            <defaultValue>default-sifting.log</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="${log.file.name}" class="ch.qos.logback.core.FileAppender">
+                <file>${logging.file.path}/${sifting.log.file.path}</file>
+                <layout class="org.touchbit.buggy.core.log.layout.ShiftingLoggerLayout"/>
+            </appender>
+        </sift>
+    </appender>
+    <appender name="TestSupervisor" class="ch.qos.logback.core.FileAppender">
+        <file>${logging.file.path}/TestSupervisor.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>${base.log.pattern}</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="Framework"/>
+    </root>
+    <logger name="Console" level="ALL" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="Framework"/>
+    </logger>
+    <logger name="Sifting" level="ALL" additivity="false">
+        <appender-ref ref="Sifting"/>
+    </logger>
+    <logger name="Framework" level="ALL" additivity="false">
+        <appender-ref ref="Framework"/>
+    </logger>
+    <logger name="org.touchbit.buggy.core.testng.TestSupervisor" level="ALL" additivity="false">
+        <appender-ref ref="TestSupervisor"/>
+    </logger>
+</configuration>

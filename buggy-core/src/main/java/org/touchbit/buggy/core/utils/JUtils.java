@@ -1,18 +1,24 @@
 package org.touchbit.buggy.core.utils;
 
+import org.touchbit.buggy.core.config.BuggyConfigYML;
+import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
+import org.touchbit.buggy.core.goal.Goal;
+import org.touchbit.buggy.core.model.Suite;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
-
-import static org.touchbit.buggy.core.utils.BuggyUtils.CONSOLE_DELIMITER;
-import static org.touchbit.buggy.core.utils.StringUtils.underscoreFiller;
 
 /**
  * Created by Oleg Shaburov on 01.10.2020
@@ -20,16 +26,63 @@ import static org.touchbit.buggy.core.utils.StringUtils.underscoreFiller;
  */
 public class JUtils {
 
+    public static final String BUGGY_CONFIG_YML = "buggy-config.yml";
+
     private JUtils() {
         throw new IllegalStateException("Utility class. Prohibit instantiation.");
     }
 
+    public static void initBuggyConfigurationYml() {
+        Representer representer = new Representer();
+        representer.getPropertyUtils().setSkipMissingProperties(true);
+        Yaml yaml = new Yaml(new Constructor(BuggyConfigYML.class), representer);
+        InputStream inputStream = JUtils.getCurrentThreadClassLoader().getResourceAsStream(BUGGY_CONFIG_YML);
+        yaml.load(inputStream);
+    }
+
+    public static <T extends Goal> T getGoal(Function<Suite, Class<T>> function, Suite s) {
+        Class<T> tClass = function.apply(s);
+        return JUtils.newInstance(tClass, BuggyConfigurationException::new);
+    }
+
+    @SafeVarargs
+    public static <T> List<T> getListWith(Supplier<T>... suppliers) {
+        return Arrays.stream(suppliers).map(Supplier::get).collect(Collectors.toList());
+    }
+
+    @SafeVarargs
+    public static <T> List<T> getListWith(T... tClasses) {
+        return Arrays.stream(tClasses).collect(Collectors.toList());
+    }
+
+    public static < U extends Exception> Object newInstance(String cName, BiFunction<String, Exception, U> s) throws U {
+        try {
+            Class<?> aClass = getCurrentThreadClassLoader().loadClass(cName);
+            return newInstance(aClass, s);
+        } catch (ClassNotFoundException e) {
+            throw s.apply("Unable to load class " + cName, e);
+        }
+    }
+
+    public static ClassLoader getCurrentThreadClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    public static <R, U extends Exception> R newInstance(Class<R> t, BiFunction<String, Exception, U> s) throws U {
+        try {
+            return t.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw s.apply("Unable to create an instance of " + t.getSimpleName() + ".class", e);
+        }
+    }
+
     public static boolean isJetBrainsIdeRun() {
-        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-        List<String> arguments = runtimeMxBean.getInputArguments();
-        return arguments.stream()
-                .anyMatch(v -> v.startsWith("-javaagent") &&
-                        (v.contains("JetBrains") || v.contains("IDEA") || v.contains("idea")));
+        for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
+            if (stackTraceElement.toString().contains("com.intellij.rt.testng")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String getRunPath() {
@@ -99,8 +152,7 @@ public class JUtils {
     private static boolean isLoadable(Class<?> clazz, ClassLoader classLoader) {
         try {
             return (clazz == classLoader.loadClass(clazz.getName()));
-        }
-        catch (ClassNotFoundException ignore) {
+        } catch (ClassNotFoundException ignore) {
             return false;
         }
     }

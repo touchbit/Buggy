@@ -16,7 +16,6 @@
 
 package org.touchbit.buggy.core.goal.service;
 
-import org.atteo.classindex.IndexSubclasses;
 import org.touchbit.buggy.core.goal.Goal;
 
 /**
@@ -25,7 +24,6 @@ import org.touchbit.buggy.core.goal.Goal;
  * Created by Oleg Shaburov on 15.05.2018
  * shaburov.o.a@gmail.com
  */
-@IndexSubclasses
 public abstract class Service implements Goal {
 
     public String getName() {

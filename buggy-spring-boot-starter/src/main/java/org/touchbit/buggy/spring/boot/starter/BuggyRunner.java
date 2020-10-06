@@ -3,25 +3,30 @@ package org.touchbit.buggy.spring.boot.starter;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.testng.TestNG;
+import org.testng.xml.XmlClass;
+import org.testng.xml.XmlSuite;
+import org.testng.xml.XmlTest;
 import org.touchbit.buggy.core.config.BuggyConfig;
 import org.touchbit.buggy.core.goal.Goal;
 import org.touchbit.buggy.core.goal.component.Component;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.Service;
-import org.touchbit.buggy.core.testng.listeners.BuggyListener;
-import org.touchbit.buggy.core.utils.log.BuggyLoggers;
-import org.touchbit.buggy.core.utils.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.BuggyLoggers;
+import org.touchbit.buggy.core.log.ConfigurationLogger;
+import org.touchbit.buggy.core.model.Suite;
+import org.touchbit.buggy.core.testng.BuggyListener;
+import org.touchbit.buggy.core.utils.JUtils;
+import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyJCommand;
 
-import java.util.Set;
+import java.util.*;
 
 import static org.touchbit.buggy.spring.boot.starter.conf.Qualifiers.*;
 
 @SpringBootApplication
-public class BuggyRunner implements ApplicationRunner {
+public class BuggyRunner implements CommandLineRunner {
 
     private Set<BuggyListener> allBuggyListeners;
     private Set<BuggyListener> enabledBuggyListeners;
@@ -35,21 +40,6 @@ public class BuggyRunner implements ApplicationRunner {
     private Set<Interface> allInterfaces;
     private Set<Interface> availableInterfaces;
     private TestNG testNG = new TestNG();
-
-    @Override
-    public void run(ApplicationArguments args) {
-        TestNG testNG = getTestNG();
-        try {
-            testNG.run();
-            if (BuggyConfig.getStatus() != null) {
-                exit(BuggyConfig.getStatus());
-            }
-            exit(testNG.getStatus());
-        } catch (Exception e) {
-            e.printStackTrace();
-            exit(1, "TestNG safely died.");
-        }
-    }
 
     public static void exit(String message, Exception e) {
         if (e != null) {
@@ -74,7 +64,7 @@ public class BuggyRunner implements ApplicationRunner {
             if (status == 0) {
                 ConfigurationLogger.info(message);
             } else {
-                if (BuggyLoggers.F_LOG == null) {
+                if (BuggyLoggers.FRAMEWORK == null) {
                     MDC.put("print.console.stacktrace", "true");
                 } else {
                     String frameworkLogFilePath = BuggyLoggers.getFrameworkLogFilePath();
@@ -90,6 +80,72 @@ public class BuggyRunner implements ApplicationRunner {
         ConfigurationLogger.dotPlaceholder("Exit code", status);
         ConfigurationLogger.blockDelimiter();
         System.exit(status);
+    }
+
+    @Override
+    public void run(String... args) {
+        Map<Suite, Set<Class<?>>> testClassesBySuitesMap = getTestClassesBySuitesMap(filteredTestClasses);
+        List<XmlSuite> xmlSuites = getXmlSuites(testClassesBySuitesMap);
+        TestNG testNG = getTestNG();
+        try {
+            testNG.setParallel(BuggyConfig.getParallelMode().getTestNGMode());
+            testNG.setSuiteThreadPoolSize(xmlSuites.isEmpty() ? 1 : xmlSuites.size());
+            testNG.setUseDefaultListeners(false);
+            for (BuggyListener enabledBuggyListener : enabledBuggyListeners) {
+                testNG.addListener(enabledBuggyListener);
+            }
+            testNG.setXmlSuites(xmlSuites);
+            testNG.run();
+            if (BuggyJCommand.getExitStatus() != null) {
+                exit(BuggyJCommand.getExitStatus());
+            }
+            exit(testNG.getStatus());
+        } catch (Exception e) {
+            exit(1, "TestNG safely died.", e);
+        }
+    }
+
+    public Map<Suite, Set<Class<?>>> getTestClassesBySuitesMap(Set<Class<?>> testClasses) {
+        Map<Suite, Set<Class<?>>> result = new HashMap<>();
+        for (Class<?> testClass : testClasses) {
+            if (testClass.isAnnotationPresent(Suite.class)) {
+                Suite suite = testClass.getAnnotation(Suite.class);
+                if (result.containsKey(suite)) {
+                    result.get(suite).add(testClass);
+                } else {
+                    Set<Class<?>> set = new LinkedHashSet<>();
+                    set.add(testClass);
+                    result.put(suite, set);
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<XmlSuite> getXmlSuites(Map<Suite, Set<Class<?>>> buggySuitesTests) {
+        List<XmlSuite> suites = new ArrayList<>();
+        for (Map.Entry<Suite, Set<Class<?>>> entry : buggySuitesTests.entrySet()) {
+            XmlSuite xmlSuite = new XmlSuite();
+            xmlSuite.setParallel(BuggyConfig.getParallelMode().getTestNGMode());
+            xmlSuite.setThreadCount(BuggyConfig.getThreads());
+            Suite buggySuite = entry.getKey();
+            try {
+                Component cGoal = JUtils.getGoal(Suite::component, buggySuite);
+                Service sGoal = JUtils.getGoal(Suite::service, buggySuite);
+                Interface iGoal = JUtils.getGoal(Suite::interfaze, buggySuite);
+                xmlSuite.setName(cGoal.getName() + " " + sGoal.getName() + " " + iGoal.getName() + " suite");
+            } catch (Exception e) {
+                exit(1, "Failed to generate TestNG XmlSuite list", e);
+            }
+            XmlTest testPackage = new XmlTest(xmlSuite);
+            testPackage.setName(UUID.randomUUID().toString());
+            for (Class<?> testClass : entry.getValue()) {
+                XmlClass xmlClass = new XmlClass(testClass);
+                testPackage.getXmlClasses().add(xmlClass);
+            }
+            suites.add(xmlSuite);
+        }
+        return suites;
     }
 
     public TestNG getTestNG() {
@@ -209,5 +265,4 @@ public class BuggyRunner implements ApplicationRunner {
     public void setAvailableInterfaces(Set<Interface> availableInterfaces) {
         this.availableInterfaces = availableInterfaces;
     }
-
 }

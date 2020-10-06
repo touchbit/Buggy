@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -9,14 +9,15 @@
     <name>Buggy</name>
     <version>0.3.7</version>
     <packaging>pom</packaging>
-    <description>Buggy is an add-on to TestNG for quickly creating test projects and easily customizing the launch of automated tests.</description>
+    <description>Buggy is an add-on to TestNG for quickly creating test projects and easily customizing the launch of
+        automated tests.
+    </description>
 
     <modules>
         <module>buggy-core</module>
         <module>buggy-spring-boot-starter</module>
         <module>buggy-spring-boot-starter-example</module>
         <module>buggy-feign</module>
-        <module>buggy-min-example</module>
         <module>buggy-okhttp</module>
         <module>buggy-testrail</module>
     </modules>

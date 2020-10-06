@@ -18,8 +18,8 @@ package org.touchbit.buggy.core.tests.utils;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.exceptions.AssertionException;
+import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.utils.StringUtils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -143,7 +143,7 @@ class StringUtilsTests extends BaseUnitTest {
     }
 
     @Test
-    @DisplayName("Check BuggyUtils constructor")
+    @DisplayName("Check JUtils constructor")
     void unitTest_20180915213419() throws NoSuchMethodException {
         checkUtilityClassConstructor(StringUtils.class);
     }

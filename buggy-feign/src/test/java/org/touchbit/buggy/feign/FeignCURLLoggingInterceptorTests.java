@@ -23,13 +23,14 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static feign.Request.HttpMethod.POST;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
 
 /**
  * Created by Oleg Shaburov on 13.10.2018

@@ -16,7 +16,9 @@
 
 package org.touchbit.buggy.okhttp;
 
-import okhttp3.*;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.tests.BaseUnitTest;

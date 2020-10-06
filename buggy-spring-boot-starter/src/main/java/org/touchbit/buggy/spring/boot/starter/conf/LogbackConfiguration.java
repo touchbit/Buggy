@@ -4,8 +4,8 @@ import ch.qos.logback.core.util.StatusPrinter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.touchbit.buggy.core.utils.log.BuggyLoggers;
-import org.touchbit.buggy.core.utils.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.BuggyLoggers;
+import org.touchbit.buggy.core.log.ConfigurationLogger;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 
 import java.io.ByteArrayOutputStream;
@@ -34,7 +34,7 @@ public class LogbackConfiguration implements IConfiguration {
         PrintStream printStream = new PrintStream(stream);
         StatusPrinter.setPrintStream(printStream);
         StatusPrinter.printInCaseOfErrorsOrWarnings(BuggyLoggers.LOGGER_CONTEXT);
-        BuggyLoggers.F_LOG.info(stream.toString());
+        BuggyLoggers.FRAMEWORK.info(stream.toString());
         for (ch.qos.logback.classic.Logger logger : BuggyLoggers.LOGGER_CONTEXT.getLoggerList()) {
             if (logger.getLevel() != null) {
                 String name = logger.getName();

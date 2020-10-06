@@ -17,8 +17,8 @@
 package org.touchbit.buggy.core.config;
 
 import org.testng.annotations.Test;
+import org.touchbit.buggy.core.BaseBuggyTest;
 import org.touchbit.buggy.core.model.Details;
-import org.touchbit.buggy.core.test.BaseBuggyTest;
 
 /**
  * Created by Oleg Shaburov on 20.09.2018

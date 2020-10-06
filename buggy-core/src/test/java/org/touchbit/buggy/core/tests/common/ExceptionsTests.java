@@ -18,8 +18,8 @@ package org.touchbit.buggy.core.tests.common;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.buggy.core.tests.BaseUnitTest;
 import org.touchbit.buggy.core.exceptions.*;
+import org.touchbit.buggy.core.tests.BaseUnitTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;

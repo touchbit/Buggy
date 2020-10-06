@@ -39,7 +39,7 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name= "Console" level="ALL" additivity="false">
+        <Logger name="Console" level="ALL" additivity="false">
             <AppenderRef ref="ASCII-Console"/>
         </Logger>
         <Logger name="Routing" level="TRACE" additivity="false">
@@ -51,7 +51,7 @@
         <Logger name="org.touchbit.buggy.core" level="all" additivity="false">
             <AppenderRef ref="Framework"/>
         </Logger>
-        <Logger name="org.touchbit.buggy.core.testng.listeners.TestSupervisor" level="INFO" additivity="false">
+        <Logger name="org.touchbit.buggy.core.testng.TestSupervisor" level="INFO" additivity="false">
             <AppenderRef ref="TestSupervisor"/>
         </Logger>
     </Loggers>
