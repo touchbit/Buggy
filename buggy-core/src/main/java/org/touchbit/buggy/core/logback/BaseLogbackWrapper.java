@@ -1,4 +1,4 @@
-package org.touchbit.buggy.core.log;
+package org.touchbit.buggy.core.logback;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.util.StatusPrinter;

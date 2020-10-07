@@ -1,13 +1,9 @@
-package org.touchbit.buggy.core.log;
+package org.touchbit.buggy.core.logback;
 
 import org.touchbit.buggy.core.utils.ANSI;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
-
 import static java.util.Objects.isNull;
 import static org.touchbit.buggy.core.utils.ANSI.BOLD;
-import static org.touchbit.buggy.core.utils.ANSI.RED;
 
 /**
  * Utility class for logging configuration events in TestNG format

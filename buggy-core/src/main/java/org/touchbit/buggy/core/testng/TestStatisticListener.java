@@ -5,7 +5,7 @@ import org.testng.IExecutionListener;
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
-import org.touchbit.buggy.core.log.ConfLogger;
+import org.touchbit.buggy.core.logback.ConfLogger;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.utils.TestNGHelper;

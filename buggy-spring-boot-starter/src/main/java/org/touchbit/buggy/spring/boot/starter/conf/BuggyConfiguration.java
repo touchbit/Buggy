@@ -13,7 +13,7 @@ import org.touchbit.buggy.core.goal.interfaze.AllInterfaces;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.AllServices;
 import org.touchbit.buggy.core.goal.service.Service;
-import org.touchbit.buggy.core.log.ConfLogger;
+import org.touchbit.buggy.core.logback.ConfLogger;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.testng.BuggyListener;
 import org.touchbit.buggy.core.utils.JUtils;

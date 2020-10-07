@@ -1,4 +1,4 @@
-package org.touchbit.buggy.core.log;
+package org.touchbit.buggy.core.logback;
 
 public class ConsoleLogger extends BaseLogbackWrapper {
 

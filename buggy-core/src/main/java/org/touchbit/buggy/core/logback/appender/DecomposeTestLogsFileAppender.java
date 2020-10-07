@@ -1,4 +1,4 @@
-package org.touchbit.buggy.core.log.appender;
+package org.touchbit.buggy.core.logback.appender;
 
 import ch.qos.logback.core.FileAppender;
 
@@ -9,20 +9,21 @@ import org.touchbit.buggy.core.model.IStatus;
 import org.touchbit.buggy.core.model.ResultStatus;
 import org.touchbit.buggy.core.utils.IOHelper;
 
-import static org.touchbit.buggy.core.log.BaseLogbackWrapper.LOG_PATH;
+import static org.touchbit.buggy.core.logback.BaseLogbackWrapper.LOG_PATH;
 import static org.touchbit.buggy.core.model.Status.*;
 
 public class DecomposeTestLogsFileAppender<E> extends FileAppender<E> {
 
-    public static final Map<File, IStatus> TEST_LOGS_WITH_STATUS = new HashMap<File, IStatus>();
+    public static final Map<File, IStatus> TEST_LOGS_WITH_STATUS = new HashMap<>();
     public static final String LOG_DIR = System.getProperty(LOG_PATH, "logs");
-    public static final File NEW_DIR = new File(LOG_DIR, "1_new");
-    public static final File CORRUPTED_DIR = new File(LOG_DIR, "2_corrupted");
-    public static final File BLOCKED_DIR = new File(LOG_DIR, "3_blocked");
-    public static final File FIXED_DIR = new File(LOG_DIR, "4_fixed");
-    public static final File IMPLEMENTED_DIR = new File(LOG_DIR, "5_implemented");
-    public static final File EXP_FIX_DIR = new File(LOG_DIR, "6_exp_fix");
-    public static final File EXP_IMPL_DIR = new File(LOG_DIR, "7_exp_impl");
+    public static final File FIXED_DIR = new File(LOG_DIR, "fixed");
+    public static final File IMPLEMENTED_DIR = new File(LOG_DIR, "implemented");
+    public static final File ERRORS = new File(LOG_DIR, "errors");
+    public static final File NEW_DIR = new File(ERRORS, "new");
+    public static final File CORRUPTED_DIR = new File(ERRORS, "corrupted");
+    public static final File BLOCKED_DIR = new File(ERRORS, "blocked");
+    public static final File EXP_FIX_DIR = new File(ERRORS, "exp_fix");
+    public static final File EXP_IMPL_DIR = new File(ERRORS, "exp_impl");
 
     @Override
     public void setFile(String file) {

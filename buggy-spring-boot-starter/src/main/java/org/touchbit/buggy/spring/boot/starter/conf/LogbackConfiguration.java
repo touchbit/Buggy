@@ -4,9 +4,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebAppli
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.touchbit.buggy.core.log.BaseLogbackWrapper;
-import org.touchbit.buggy.core.log.ConfLogger;
-import org.touchbit.buggy.core.log.FrameworkLogger;
+import org.touchbit.buggy.core.logback.BaseLogbackWrapper;
+import org.touchbit.buggy.core.logback.ConfLogger;
+import org.touchbit.buggy.core.logback.FrameworkLogger;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 
 import static org.springframework.boot.context.logging.LoggingApplicationListener.CONFIG_PROPERTY;

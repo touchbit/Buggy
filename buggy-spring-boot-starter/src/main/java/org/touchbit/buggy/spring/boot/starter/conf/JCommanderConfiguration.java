@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.touchbit.buggy.core.config.BuggyConfig;
-import org.touchbit.buggy.core.log.ConfLogger;
+import org.touchbit.buggy.core.logback.ConfLogger;
 import org.touchbit.buggy.core.utils.JUtils;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyJCommand;

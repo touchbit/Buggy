@@ -1,4 +1,4 @@
-package org.touchbit.buggy.core.log.layout;
+package org.touchbit.buggy.core.logback.layout;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;

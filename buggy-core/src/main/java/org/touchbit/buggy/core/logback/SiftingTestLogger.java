@@ -1,7 +1,7 @@
-package org.touchbit.buggy.core.log;
+package org.touchbit.buggy.core.logback;
 
 import org.slf4j.MDC;
-import org.touchbit.buggy.core.log.appender.DecomposeTestLogsFileAppender;
+import org.touchbit.buggy.core.logback.appender.DecomposeTestLogsFileAppender;
 import org.touchbit.buggy.core.model.IStatus;
 
 import java.io.File;

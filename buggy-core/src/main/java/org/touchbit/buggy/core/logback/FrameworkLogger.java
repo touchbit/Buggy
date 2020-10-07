@@ -1,4 +1,4 @@
-package org.touchbit.buggy.core.log;
+package org.touchbit.buggy.core.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;

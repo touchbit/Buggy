@@ -19,7 +19,7 @@ package org.touchbit.buggy.core;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.testng.annotations.Listeners;
-import org.touchbit.buggy.core.log.SiftingTestLogger;
+import org.touchbit.buggy.core.logback.SiftingTestLogger;
 import org.touchbit.buggy.core.testng.BuggyExecutionListener;
 import org.touchbit.buggy.core.testng.IntellijIdeaTestNgPluginListener;
 
