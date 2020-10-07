@@ -41,7 +41,6 @@ public enum Status implements IStatus {
     // Result statuses
     FIXED,
     IMPLEMENTED,
-    UNTESTED,
     SUCCESS,
     SKIP,
     FAILED,

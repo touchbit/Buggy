@@ -7,6 +7,7 @@ import java.util.*;
 
 import org.touchbit.buggy.core.model.IStatus;
 import org.touchbit.buggy.core.model.ResultStatus;
+import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.utils.IOHelper;
 
 import static org.touchbit.buggy.core.logback.BaseLogbackWrapper.LOG_PATH;
@@ -28,7 +29,7 @@ public class DecomposeTestLogsFileAppender<E> extends FileAppender<E> {
     @Override
     public void setFile(String file) {
         super.setFile(file);
-        TEST_LOGS_WITH_STATUS.put(new File(file), UNTESTED);
+        TEST_LOGS_WITH_STATUS.put(new File(file), NONE);
     }
 
     public static File getFile(String fileName) {
@@ -50,32 +51,41 @@ public class DecomposeTestLogsFileAppender<E> extends FileAppender<E> {
         for (Map.Entry<File, IStatus> log : TEST_LOGS_WITH_STATUS.entrySet()) {
             String fileName = log.getKey().getName();
             File destFile = null;
-            switch (ResultStatus.valueOf(log.getValue().getStatus())) {
-                case FAILED:
-                    destFile = new File(NEW_DIR, fileName);
-                    break;
-                case CORRUPTED:
-                    destFile = new File(CORRUPTED_DIR, fileName);
-                    break;
-                case BLOCKED:
-                    destFile = new File(BLOCKED_DIR, fileName);
-                    break;
-                case FIXED:
-                    destFile = new File(FIXED_DIR, fileName);
-                    break;
-                case IMPLEMENTED:
-                    destFile = new File(IMPLEMENTED_DIR, fileName);
-                    break;
-                case EXP_FIX:
-                    destFile = new File(EXP_FIX_DIR, fileName);
-                    break;
-                case EXP_IMPL:
-                    destFile = new File(EXP_IMPL_DIR, fileName);
-                    break;
-                case SUCCESS:
-                case SKIP:
-                default:
-                    // do nothing
+            IStatus testLogStatus = log.getValue();
+            ResultStatus resultStatus = null;
+            for (ResultStatus value : ResultStatus.values()) {
+                if (value.getStatus().equals(testLogStatus.getStatus())) {
+                    resultStatus = value;
+                }
+            }
+            if (resultStatus != null) {
+                switch (resultStatus) {
+                    case FAILED:
+                        destFile = new File(NEW_DIR, fileName);
+                        break;
+                    case CORRUPTED:
+                        destFile = new File(CORRUPTED_DIR, fileName);
+                        break;
+                    case BLOCKED:
+                        destFile = new File(BLOCKED_DIR, fileName);
+                        break;
+                    case FIXED:
+                        destFile = new File(FIXED_DIR, fileName);
+                        break;
+                    case IMPLEMENTED:
+                        destFile = new File(IMPLEMENTED_DIR, fileName);
+                        break;
+                    case EXP_FIX:
+                        destFile = new File(EXP_FIX_DIR, fileName);
+                        break;
+                    case EXP_IMPL:
+                        destFile = new File(EXP_IMPL_DIR, fileName);
+                        break;
+                    case SUCCESS:
+                    case SKIP:
+                    default:
+                        // do nothing
+                }
             }
             if (destFile != null) {
                 try {

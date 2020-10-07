@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static org.touchbit.buggy.core.model.Status.UNTESTED;
+import static org.touchbit.buggy.core.model.Status.NONE;
 
 /**
  * Interface of binding test methods.
@@ -37,27 +37,27 @@ public @interface Details {
     /**
      * Test-case identifiers
      */
-    long[] id() default -1;
+    String[] caseIDs() default {""};
 
     /**
      * Test status (see: {@link Status})
      * Used values: EXP_IMPL, EXP_FIX, BLOCKED, CORRUPTED
      */
-    Status status() default UNTESTED;
+    Status status() default NONE;
 
     /**
      * Issues ID in the task-tracker system. Format: "STORY-269"
      */
-    String[] issue() default {""};
+    String[] issues() default {};
 
     /**
      * Defects ID in the task-tracker system. Format: "BUG-354"
      */
-    String[] bug() default {""};
+    String[] bugs() default {};
 
     /**
      * Type of auto test
      */
-    Type[] type() default {Type.REGRESSION};
+    Type[] types() default {Type.REGRESSION};
 
 }

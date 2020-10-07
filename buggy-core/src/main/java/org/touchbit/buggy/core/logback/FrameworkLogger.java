@@ -16,14 +16,14 @@ public class FrameworkLogger extends BaseLogbackWrapper {
 
     public static File getLogFile() {
         for (ch.qos.logback.classic.Logger logger : getLoggerList()) {
-            List<FileAppender<ILoggingEvent>> collect = Stream.generate(logger.iteratorForAppenders()::next)
+            FileAppender<ILoggingEvent> appender = Stream.generate(logger.iteratorForAppenders()::next)
                     .limit(1000)
-                    .filter(appender -> appender instanceof FileAppender)
+                    .filter(a -> a instanceof FileAppender)
                     .filter(fileAppender -> fileAppender.getName().equals(FRAMEWORK_LOGGER_NAME))
                     .map(f -> (FileAppender<ILoggingEvent>) f)
-                    .collect(Collectors.toList());
-            if (!collect.isEmpty()) {
-                return new File(collect.get(1).getFile());
+                    .findFirst().orElse(null);
+            if (appender != null) {
+                return new File(appender.getFile());
             }
         }
         return null;

@@ -79,8 +79,10 @@ public class BuggyRunner implements CommandLineRunner {
                 if (file != null) {
                     frameworkLogPath = "\nFor more information see " + file.getName();
                 }
-                String eMsg = "\n" + e.getClass().getSimpleName() + ": " + e.getMessage();
-                ConfLogger.error(message + eMsg + frameworkLogPath, e);
+                if (e != null) {
+                    message += "\n" + e.getClass().getSimpleName() + ": " + e.getMessage();
+                }
+                ConfLogger.error(message + frameworkLogPath, e);
             }
         }
         ConfLogger.blockDelimiter();

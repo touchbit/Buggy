@@ -42,6 +42,7 @@ public final class BuggyConfig {
     private static List<Interface> interfaces = JUtils.getListWith(AllInterfaces::new);
     private static List<Type> types = JUtils.getListWith(ALL);
     private static String programName = "Buggy";
+    private static String taskTrackerIssueUrl = "";
 
     public static void setPrintLogFileOnlyFail(Boolean printLogIfFail) {
         BuggyConfig.printLogOnlyFail = printLogIfFail;
@@ -229,4 +230,11 @@ public final class BuggyConfig {
         BuggyConfig.programName = programName;
     }
 
+    public static String getTaskTrackerIssueUrl() {
+        return taskTrackerIssueUrl;
+    }
+
+    public static void setTaskTrackerIssueUrl(String taskTrackerIssueUrl) {
+        BuggyConfig.taskTrackerIssueUrl = taskTrackerIssueUrl;
+    }
 }

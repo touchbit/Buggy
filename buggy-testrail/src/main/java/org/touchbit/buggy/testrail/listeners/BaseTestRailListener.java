@@ -96,14 +96,14 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
         }
         try {
             Long runID = Long.parseLong(strRunID);
-            for (Long caseId : details.id()) {
+            for (String caseId : details.caseIDs()) {
                 if (statusMapper.getId(status) > 0) {
                     StringJoiner defects = new StringJoiner(", ");
-                    for (String bug : details.bug()) {
+                    for (String bug : details.bugs()) {
                         defects.add(bug);
                     }
                     TRResult trResult = new TRResult()
-                            .withCaseId(caseId)
+                            .withCaseId(Long.valueOf(caseId))
                             .withStatusId(statusMapper.getId(status))
                             .withComment(msg)
                             .withDefects(defects.toString());
@@ -122,7 +122,7 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
         Method method = testResult.getMethod().getConstructorOrMethod().getMethod();
         Details trCase = method.getAnnotation(Details.class);
 
-        String caseIds = trCase != null ? Arrays.toString(trCase.id()) + "_" : "";
+        String caseIds = trCase != null ? Arrays.toString(trCase.caseIDs()) + "_" : "";
         String prefix = caseIds + method.getName();
         return "\n" + attachLogfile(prefix) + "\n" + attachScreenshots(prefix);
     }

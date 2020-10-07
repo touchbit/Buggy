@@ -32,182 +32,182 @@ import static org.hamcrest.Matchers.is;
  */
 @DisplayName("BaseTelegramNotifier class tests")
 class BaseTelegramNotifierTests extends BaseUnitTest {
-
-    @Test
-    @DisplayName("Check onExecutionFinish report")
-    void unitTest_20180920225957() {
-        StringBuilder sb = new StringBuilder();
-        Notifier notifier = sb::append;
-        BaseTelegramNotifier telegram = new BaseTelegramNotifier(notifier) {
-            @Override
-            public boolean isEnable() {
-                testCount.set(0);
-                skippedTests.set(0);
-                corruptedError.set(0);
-                expFixError.set(0);
-                expImplError.set(0);
-                blockedError.set(0);
-                newError.set(0);
-                fixed.set(0);
-                implemented.set(0);
-                return true;
-            }
-        };
-        telegram.onExecutionFinish();
-        assertThat(sb.toString(), is("" +
-                "*Buggy*\n" +
-                "Run Results:\n" +
-                "`--------------------------------`\n" +
-                "`Running tests..................`0\n" +
-                "`--------------------------------`\n" +
-                "`Successful tests...............`0\n" +
-                "`Skipped tests..................`0\n" +
-                "`Failed tests...................`0\n" +
-                "`--------------------------------`\n" +
-                "`New Errors.....................`0\n" +
-                "`Waiting to fix a defect........`0\n" +
-                "`Waiting for the implementation.`0\n" +
-                "`Blocked tests..................`0\n" +
-                "`Corrupted tests................`0\n" +
-                "`--------------------------------`\n" +
-                "`Fixed defects..................`0\n" +
-                "`Implemented cases..............`0\n" +
-                "`--------------------------------`\n" +
-                "Test execution time: *00:00:00*\n" +
-                "[Logs](null)\n"));
-        BuggyConfig.setProgramName("");
-        sb = new StringBuilder();
-        notifier = sb::append;
-        telegram = new BaseTelegramNotifier(notifier) {
-            @Override
-            public boolean isEnable() {
-                testCount.set(0);
-                skippedTests.set(0);
-                corruptedError.set(0);
-                expFixError.set(0);
-                expImplError.set(0);
-                blockedError.set(0);
-                newError.set(0);
-                fixed.set(0);
-                implemented.set(0);
-                return true;
-            }
-        };
-        telegram.onExecutionFinish();
-        assertThat(sb.toString(), is("" +
-                "Run Results:\n" +
-                "`--------------------------------`\n" +
-                "`Running tests..................`0\n" +
-                "`--------------------------------`\n" +
-                "`Successful tests...............`0\n" +
-                "`Skipped tests..................`0\n" +
-                "`Failed tests...................`0\n" +
-                "`--------------------------------`\n" +
-                "`New Errors.....................`0\n" +
-                "`Waiting to fix a defect........`0\n" +
-                "`Waiting for the implementation.`0\n" +
-                "`Blocked tests..................`0\n" +
-                "`Corrupted tests................`0\n" +
-                "`--------------------------------`\n" +
-                "`Fixed defects..................`0\n" +
-                "`Implemented cases..............`0\n" +
-                "`--------------------------------`\n" +
-                "Test execution time: *00:00:00*\n" +
-                "[Logs](null)\n"));
-    }
-
-    @Test
-    @DisplayName("Check report with program name")
-    void unitTest_20180920231126() {
-        StringBuilder sb = new StringBuilder();
-        BuggyConfig.setProgramName("unitTest_20180920231126");
-        Notifier notifier = sb::append;
-        BaseTelegramNotifier telegram = new BaseTelegramNotifier(notifier) {
-            @Override
-            public boolean isEnable() {
-                testCount.set(0);
-                skippedTests.set(0);
-                corruptedError.set(0);
-                expFixError.set(0);
-                expImplError.set(0);
-                blockedError.set(0);
-                newError.set(0);
-                fixed.set(0);
-                implemented.set(0);
-                return true;
-            }
-        };
-        telegram.onExecutionFinish();
-        assertThat(sb.toString(), is("" +
-                "*unitTest_20180920231126*\n" +
-                "Run Results:\n" +
-                "`--------------------------------`\n" +
-                "`Running tests..................`0\n" +
-                "`--------------------------------`\n" +
-                "`Successful tests...............`0\n" +
-                "`Skipped tests..................`0\n" +
-                "`Failed tests...................`0\n" +
-                "`--------------------------------`\n" +
-                "`New Errors.....................`0\n" +
-                "`Waiting to fix a defect........`0\n" +
-                "`Waiting for the implementation.`0\n" +
-                "`Blocked tests..................`0\n" +
-                "`Corrupted tests................`0\n" +
-                "`--------------------------------`\n" +
-                "`Fixed defects..................`0\n" +
-                "`Implemented cases..............`0\n" +
-                "`--------------------------------`\n" +
-                "Test execution time: *00:00:00*\n" +
-                "[Logs](null)\n"));
-    }
-
-    @Test
-    @DisplayName("Check report with ArtifactsUrl")
-    void unitTest_20180920231553() {
-        StringBuilder sb = new StringBuilder();
-        BuggyConfig.setProgramName(null);
-        Notifier notifier = sb::append;
-        BuggyConfig.setArtifactsUrl("http://build.url");
-        try {
-            BaseTelegramNotifier telegram = new BaseTelegramNotifier(notifier) {
-                @Override
-                public boolean isEnable() {
-                    testCount.set(6);
-                    skippedTests.set(1);
-                    corruptedError.incrementAndGet();
-                    expFixError.incrementAndGet();
-                    expImplError.incrementAndGet();
-                    blockedError.incrementAndGet();
-                    newError.incrementAndGet();
-                    fixed.incrementAndGet();
-                    implemented.incrementAndGet();
-                    return true;
-                }
-            };
-            telegram.onExecutionFinish();
-            assertThat(sb.toString(), is("Run Results:\n" +
-                    "`--------------------------------`\n" +
-                    "`Running tests..................`6\n" +
-                    "`--------------------------------`\n" +
-                    "`Successful tests...............`1\n" +
-                    "`Skipped tests..................`1\n" +
-                    "`Failed tests...................`5\n" +
-                    "`--------------------------------`\n" +
-                    "`New Errors.....................`[1](http://build.url/errors/new/)\n" +
-                    "`Waiting to fix a defect........`[1](http://build.url/errors/exp_fix/)\n" +
-                    "`Waiting for the implementation.`[1](http://build.url/errors/exp_impl/)\n" +
-                    "`Blocked tests..................`[1](http://build.url/errors/blocked/)\n" +
-                    "`Corrupted tests................`[1](http://build.url/errors/corrupted/)\n" +
-                    "`--------------------------------`\n" +
-                    "`Fixed defects..................`[1](http://build.url/fixed/exp_fix/)\n" +
-                    "`Implemented cases..............`[1](http://build.url/fixed/exp_impl/)\n" +
-                    "`--------------------------------`\n" +
-                    "Test execution time: *00:00:00*\n" +
-                    "[Logs](http://build.url)\n"));
-        } finally {
-            BuggyConfig.setArtifactsUrl(null);
-        }
-    }
+//
+//    @Test
+//    @DisplayName("Check onExecutionFinish report")
+//    void unitTest_20180920225957() {
+//        StringBuilder sb = new StringBuilder();
+//        Notifier notifier = sb::append;
+//        BaseTelegramNotifier telegram = new BaseTelegramNotifier(notifier) {
+//            @Override
+//            public boolean isEnable() {
+//                testCount.set(0);
+//                skippedTests.set(0);
+//                corruptedError.set(0);
+//                expFixError.set(0);
+//                expImplError.set(0);
+//                blockedError.set(0);
+//                newError.set(0);
+//                fixed.set(0);
+//                implemented.set(0);
+//                return true;
+//            }
+//        };
+//        telegram.onExecutionFinish();
+//        assertThat(sb.toString(), is("" +
+//                "*Buggy*\n" +
+//                "Run Results:\n" +
+//                "`--------------------------------`\n" +
+//                "`Running tests..................`0\n" +
+//                "`--------------------------------`\n" +
+//                "`Successful tests...............`0\n" +
+//                "`Skipped tests..................`0\n" +
+//                "`Failed tests...................`0\n" +
+//                "`--------------------------------`\n" +
+//                "`New Errors.....................`0\n" +
+//                "`Waiting to fix a defect........`0\n" +
+//                "`Waiting for the implementation.`0\n" +
+//                "`Blocked tests..................`0\n" +
+//                "`Corrupted tests................`0\n" +
+//                "`--------------------------------`\n" +
+//                "`Fixed defects..................`0\n" +
+//                "`Implemented cases..............`0\n" +
+//                "`--------------------------------`\n" +
+//                "Test execution time: *00:00:00*\n" +
+//                "[Logs](null)\n"));
+//        BuggyConfig.setProgramName("");
+//        sb = new StringBuilder();
+//        notifier = sb::append;
+//        telegram = new BaseTelegramNotifier(notifier) {
+//            @Override
+//            public boolean isEnable() {
+//                testCount.set(0);
+//                skippedTests.set(0);
+//                corruptedError.set(0);
+//                expFixError.set(0);
+//                expImplError.set(0);
+//                blockedError.set(0);
+//                newError.set(0);
+//                fixed.set(0);
+//                implemented.set(0);
+//                return true;
+//            }
+//        };
+//        telegram.onExecutionFinish();
+//        assertThat(sb.toString(), is("" +
+//                "Run Results:\n" +
+//                "`--------------------------------`\n" +
+//                "`Running tests..................`0\n" +
+//                "`--------------------------------`\n" +
+//                "`Successful tests...............`0\n" +
+//                "`Skipped tests..................`0\n" +
+//                "`Failed tests...................`0\n" +
+//                "`--------------------------------`\n" +
+//                "`New Errors.....................`0\n" +
+//                "`Waiting to fix a defect........`0\n" +
+//                "`Waiting for the implementation.`0\n" +
+//                "`Blocked tests..................`0\n" +
+//                "`Corrupted tests................`0\n" +
+//                "`--------------------------------`\n" +
+//                "`Fixed defects..................`0\n" +
+//                "`Implemented cases..............`0\n" +
+//                "`--------------------------------`\n" +
+//                "Test execution time: *00:00:00*\n" +
+//                "[Logs](null)\n"));
+//    }
+//
+//    @Test
+//    @DisplayName("Check report with program name")
+//    void unitTest_20180920231126() {
+//        StringBuilder sb = new StringBuilder();
+//        BuggyConfig.setProgramName("unitTest_20180920231126");
+//        Notifier notifier = sb::append;
+//        BaseTelegramNotifier telegram = new BaseTelegramNotifier(notifier) {
+//            @Override
+//            public boolean isEnable() {
+//                testCount.set(0);
+//                skippedTests.set(0);
+//                corruptedError.set(0);
+//                expFixError.set(0);
+//                expImplError.set(0);
+//                blockedError.set(0);
+//                newError.set(0);
+//                fixed.set(0);
+//                implemented.set(0);
+//                return true;
+//            }
+//        };
+//        telegram.onExecutionFinish();
+//        assertThat(sb.toString(), is("" +
+//                "*unitTest_20180920231126*\n" +
+//                "Run Results:\n" +
+//                "`--------------------------------`\n" +
+//                "`Running tests..................`0\n" +
+//                "`--------------------------------`\n" +
+//                "`Successful tests...............`0\n" +
+//                "`Skipped tests..................`0\n" +
+//                "`Failed tests...................`0\n" +
+//                "`--------------------------------`\n" +
+//                "`New Errors.....................`0\n" +
+//                "`Waiting to fix a defect........`0\n" +
+//                "`Waiting for the implementation.`0\n" +
+//                "`Blocked tests..................`0\n" +
+//                "`Corrupted tests................`0\n" +
+//                "`--------------------------------`\n" +
+//                "`Fixed defects..................`0\n" +
+//                "`Implemented cases..............`0\n" +
+//                "`--------------------------------`\n" +
+//                "Test execution time: *00:00:00*\n" +
+//                "[Logs](null)\n"));
+//    }
+//
+//    @Test
+//    @DisplayName("Check report with ArtifactsUrl")
+//    void unitTest_20180920231553() {
+//        StringBuilder sb = new StringBuilder();
+//        BuggyConfig.setProgramName(null);
+//        Notifier notifier = sb::append;
+//        BuggyConfig.setArtifactsUrl("http://build.url");
+//        try {
+//            BaseTelegramNotifier telegram = new BaseTelegramNotifier(notifier) {
+//                @Override
+//                public boolean isEnable() {
+//                    testCount.set(6);
+//                    skippedTests.set(1);
+//                    corruptedError.incrementAndGet();
+//                    expFixError.incrementAndGet();
+//                    expImplError.incrementAndGet();
+//                    blockedError.incrementAndGet();
+//                    newError.incrementAndGet();
+//                    fixed.incrementAndGet();
+//                    implemented.incrementAndGet();
+//                    return true;
+//                }
+//            };
+//            telegram.onExecutionFinish();
+//            assertThat(sb.toString(), is("Run Results:\n" +
+//                    "`--------------------------------`\n" +
+//                    "`Running tests..................`6\n" +
+//                    "`--------------------------------`\n" +
+//                    "`Successful tests...............`1\n" +
+//                    "`Skipped tests..................`1\n" +
+//                    "`Failed tests...................`5\n" +
+//                    "`--------------------------------`\n" +
+//                    "`New Errors.....................`[1](http://build.url/errors/new/)\n" +
+//                    "`Waiting to fix a defect........`[1](http://build.url/errors/exp_fix/)\n" +
+//                    "`Waiting for the implementation.`[1](http://build.url/errors/exp_impl/)\n" +
+//                    "`Blocked tests..................`[1](http://build.url/errors/blocked/)\n" +
+//                    "`Corrupted tests................`[1](http://build.url/errors/corrupted/)\n" +
+//                    "`--------------------------------`\n" +
+//                    "`Fixed defects..................`[1](http://build.url/fixed/exp_fix/)\n" +
+//                    "`Implemented cases..............`[1](http://build.url/fixed/exp_impl/)\n" +
+//                    "`--------------------------------`\n" +
+//                    "Test execution time: *00:00:00*\n" +
+//                    "[Logs](http://build.url)\n"));
+//        } finally {
+//            BuggyConfig.setArtifactsUrl(null);
+//        }
+//    }
 //
 //    @Test
 //    @DisplayName("Check failed notification")

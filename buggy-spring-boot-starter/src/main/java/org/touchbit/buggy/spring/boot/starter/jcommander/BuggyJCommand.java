@@ -154,12 +154,19 @@ public final class BuggyJCommand implements JCommand {
         BuggyConfig.setProgramName(programName);
     }
 
+    @Parameter(names = {"--task-tracker-issue-url"}, description = "TODO")
+    public static void setTaskTrackerIssueUrl(String taskTrackerIssueUrl) {
+        BuggyConfig.setTaskTrackerIssueUrl(taskTrackerIssueUrl);
+    }
+
     public static Boolean isHelp() {
         return BuggyConfig.isHelp();
     }
+
     public static Boolean isPrintLogFileOnlyFail() {
         return BuggyConfig.isPrintLog();
     }
+
     public static Boolean isForce() {
         return BuggyConfig.isForce();
     }
@@ -210,6 +217,10 @@ public final class BuggyJCommand implements JCommand {
 
     public static String getProgramName() {
         return BuggyConfig.getProgramName();
+    }
+
+    public static String getTaskTrackerIssueUrl() {
+        return BuggyConfig.getTaskTrackerIssueUrl();
     }
 
     @Override

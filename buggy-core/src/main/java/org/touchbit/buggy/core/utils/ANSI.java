@@ -8,6 +8,7 @@ public enum ANSI {
     GREEN("\u001B[32m"),
     BLUE("\u001B[34m"),
     PURPLE("\u001B[35m"),
+    NONE(""),
     ;
 
     String symbol;
@@ -25,6 +26,9 @@ public enum ANSI {
     }
 
     public String wrap(final String msg) {
+        if (this.equals(NONE)) {
+            return msg;
+        }
         return this.symbol + msg + RESET.symbol;
     }
 

@@ -2,26 +2,33 @@ package org.touchbit.buggy.core.utils;
 
 import org.jetbrains.annotations.Nullable;
 import org.testng.IInvokedMethod;
+import org.testng.ITestClass;
 import org.testng.ITestNGMethod;
-import org.touchbit.buggy.core.model.Details;
+import org.testng.ITestResult;
 
 import java.lang.reflect.Method;
 
 public class TestNGHelper {
 
-    @Nullable
-    public static Details getDetails(IInvokedMethod method) {
-        return getDetails(method.getTestMethod());
+    public static Method getRealMethod(ITestResult result) {
+        return getRealMethod(result.getMethod());
     }
 
-    @Nullable
-    public static Details getDetails(ITestNGMethod method) {
-        return getDetails(method.getConstructorOrMethod().getMethod());
+    public static Method getRealMethod(IInvokedMethod method) {
+        return getRealMethod(method.getTestMethod());
     }
 
-    @Nullable
-    public static Details getDetails(Method method) {
-        return method.getAnnotation(Details.class);
+    public static Method getRealMethod(ITestNGMethod method) {
+        return method.getConstructorOrMethod().getMethod();
+    }
+
+
+    public static String getClassSimpleName(IInvokedMethod method) {
+        return method.getTestMethod().getRealClass().getSimpleName();
+    }
+
+    public static String getMethodName(IInvokedMethod method) {
+        return method.getTestMethod().getMethodName();
     }
 
     private TestNGHelper() {

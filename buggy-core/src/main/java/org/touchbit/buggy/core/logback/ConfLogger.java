@@ -1,5 +1,6 @@
 package org.touchbit.buggy.core.logback;
 
+import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.utils.ANSI;
 
 import static java.util.Objects.isNull;
@@ -34,7 +35,7 @@ public class ConfLogger {
     }
 
     public static void dotPlaceholder(Object prefix, Object postfix, ANSI ansi, boolean isWrapCondition) {
-        String msg = filler(prefix, DOT, postfix);
+        String msg = getDotPlaceholder(prefix, postfix);
         if (isWrapCondition) {
             msg = ansi.wrap(msg);
         }
@@ -42,7 +43,11 @@ public class ConfLogger {
     }
 
     public static void dotPlaceholder(Object prefix, Object postfix) {
-        info(filler(prefix, DOT, postfix));
+        info(getDotPlaceholder(prefix, postfix));
+    }
+
+    public static String getDotPlaceholder(Object prefix, Object postfix) {
+        return filler(prefix, DOT, postfix);
     }
 
     public static void underscorePlaceholder(Object prefix, Object postfix) {
@@ -117,5 +122,6 @@ public class ConfLogger {
     public static void error(String msg) {
         CONSOLE.error(msg);
     }
+
 
 }

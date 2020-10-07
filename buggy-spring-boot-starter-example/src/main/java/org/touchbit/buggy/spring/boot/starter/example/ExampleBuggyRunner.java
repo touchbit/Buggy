@@ -14,6 +14,7 @@ public class ExampleBuggyRunner extends BuggyRunner {
         BuggyJCommand.setPrintLog(true);
         BuggyJCommand.setPrintSuite(true);
         BuggyJCommand.setPrintCause(true);
+        BuggyJCommand.setTaskTrackerIssueUrl("https://example.jira.com/issues/");
     }
 
     public static void main(String[] args) {

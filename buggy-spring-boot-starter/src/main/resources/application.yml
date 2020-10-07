@@ -1,7 +1,7 @@
 logging:
   config: 'classpath:buggy-logback.xml'
   file:
-    path: logs
+    path: /tmp/logs
 buggy:
   commandsScannerBasePackages:
     - "**.buggy"

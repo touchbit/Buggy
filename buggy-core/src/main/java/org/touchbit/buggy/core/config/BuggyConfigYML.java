@@ -79,4 +79,11 @@ public final class BuggyConfigYML {
         BuggyConfig.setProgramName(programName);
     }
 
+    public String getTaskTrackerIssueUrl() {
+        return BuggyConfig.getTaskTrackerIssueUrl();
+    }
+
+    public void setTaskTrackerIssueUrl(String taskTrackerIssueUrl) {
+        BuggyConfig.setTaskTrackerIssueUrl(taskTrackerIssueUrl);
+    }
 }

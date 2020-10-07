@@ -106,7 +106,7 @@ public abstract class DefaultTestRailListener extends BaseTestRailListener<Statu
                 case BLOCKED:
                 case SKIP:
                     return Statuses.BLOCKED.getId();
-                case UNTESTED:
+                case NONE:
                     return Statuses.UNTESTED.getId();
                 case FAILED:
                 case CORRUPTED:

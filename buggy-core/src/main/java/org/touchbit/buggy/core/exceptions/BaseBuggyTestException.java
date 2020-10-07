@@ -32,11 +32,11 @@ public abstract class BaseBuggyTestException extends RuntimeException {
         sb.append(brief);
         if (details != null) {
             String[] tmp;
-            tmp = details.issue();
+            tmp = details.issues();
             if (tmp.length > 0) {
                 sb.append(". Related issues: ").append(Arrays.toString(tmp));
             }
-            tmp = details.bug();
+            tmp = details.bugs();
             if (tmp.length > 0) {
                 sb.append(". Related bugs: ").append(Arrays.toString(tmp));
             }

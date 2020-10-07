@@ -146,13 +146,13 @@ public abstract class BaseUnitTest {
     }
 
     protected static Details getDetails(Status status, Type type, String... issue) {
-        return getDetails(new long[0], status, new Type[]{type}, issue);
+        return getDetails(new String[] {"0"}, status, new Type[]{type}, issue);
     }
 
-    protected static Details getDetails(long[] ids, Status status, Type[] type, String... issue) {
+    protected static Details getDetails(String[] ids, Status status, Type[] type, String... issue) {
         return new Details() {
             @Override
-            public long[] id() {
+            public String[] caseIDs() {
                 return ids;
             }
 
@@ -162,17 +162,17 @@ public abstract class BaseUnitTest {
             }
 
             @Override
-            public String[] issue() {
+            public String[] issues() {
                 return issue;
             }
 
             @Override
-            public String[] bug() {
+            public String[] bugs() {
                 return new String[]{};
             }
 
             @Override
-            public Type[] type() {
+            public Type[] types() {
                 return type;
             }
 
@@ -268,12 +268,12 @@ public abstract class BaseUnitTest {
 
         return new BuggyExecutionListener(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER) {
 
-            @Override
-            public void copyFile(File sourceFile, File destFile) throws IOException {
-                if (!withOverrideCopyFile) {
-                    super.copyFile(sourceFile, destFile);
-                }
-            }
+//            @Override
+//            public void copyFile(File sourceFile, File destFile) throws IOException {
+//                if (!withOverrideCopyFile) {
+//                    super.copyFile(sourceFile, destFile);
+//                }
+//            }
 
         };
 
@@ -303,43 +303,6 @@ public abstract class BaseUnitTest {
         public UnitTestBuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger, Details details) {
             super(testLogger, frameworkLogger, consoleLogger);
             this.details = details;
-            testCount.set(0);
-            skippedTests.set(0);
-            corruptedError.set(0);
-            expFixError.set(0);
-            expImplError.set(0);
-            blockedError.set(0);
-            newError.set(0);
-            fixed.set(0);
-            implemented.set(0);
-        }
-
-        @Override
-        public void resultLog(ITestNGMethod method, Status status, String details) {
-            this.method = method;
-            this.status = status;
-            this.msg = details;
-        }
-
-        @Override
-        protected @Nullable Details getDetails(Method method) {
-            return details;
-        }
-
-        @Override
-        public void copyFile(File sourceFile, File destFile) {
-            this.sourceFile = sourceFile;
-            this.targetFile = destFile;
-        }
-
-        @Override
-        public void printASCIIStatus(Status status, String msg) {
-            super.printASCIIStatus(status, msg);
-        }
-
-        @Override
-        public void increment(Status status) {
-            super.increment(status);
         }
 
     }

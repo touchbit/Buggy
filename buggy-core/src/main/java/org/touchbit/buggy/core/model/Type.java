@@ -48,6 +48,9 @@ public enum Type {
     SYSTEM,
     ACCEPTANCE,
     // Helper type for filtering.
+    SLOW,
+    NORMAL,
+    FAST,
     ALL,
     ;
 

@@ -50,7 +50,7 @@ public class TestStatisticListener implements BuggyListener, IExecutionListener,
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         if (method.isTestMethod()) {
-            Details details = TestNGHelper.getDetails(method);
+            Details details = getDetails(method);
             if (details == null) {
                 notDetailedTests.incrementAndGet(); // TODO remove after --check realisation
             }
@@ -79,7 +79,7 @@ public class TestStatisticListener implements BuggyListener, IExecutionListener,
                         case EXP_IMPL:
                             implemented.incrementAndGet();
                             break;
-                        case UNTESTED:
+                        case NONE:
                             break;
                         default:
                             // do nothing
@@ -99,7 +99,7 @@ public class TestStatisticListener implements BuggyListener, IExecutionListener,
                         case EXP_IMPL:
                             waitingForImplementation.incrementAndGet();
                             break;
-                        case UNTESTED:
+                        case NONE:
                         default:
                             newErrors.incrementAndGet();
                     }
