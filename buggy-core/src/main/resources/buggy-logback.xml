@@ -12,6 +12,7 @@
     </appender>
     <appender name="Framework" class="ch.qos.logback.core.FileAppender">
         <file>${logging.file.path}/Framework.log</file>
+        <append>false</append>
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
             <layout class="org.touchbit.buggy.core.log.layout.FrameworkLoggerLayout"/>
         </encoder>
@@ -24,12 +25,14 @@
         <sift>
             <appender class="org.touchbit.buggy.core.log.appender.DecomposeTestLogsFileAppender">
                 <file>${logging.file.path}/${sifting.test.log.file.path}</file>
+                <append>false</append>
                 <layout class="org.touchbit.buggy.core.log.layout.ShiftingLoggerLayout"/>
             </appender>
         </sift>
     </appender>
     <appender name="TestSupervisor" class="ch.qos.logback.core.FileAppender">
         <file>${logging.file.path}/TestSupervisor.log</file>
+        <append>false</append>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>${base.log.pattern}</Pattern>
         </encoder>

@@ -18,10 +18,10 @@ import java.util.Date;
 public class ShiftingLoggerLayout extends LayoutBase<ILoggingEvent> {
 
     private static final CachingDateFormatter TIME_FORMATTER = new CachingDateFormatter("HH:mm:ss.SSS");
-    private static final CachingDateFormatter DATE_FORMATTER = new CachingDateFormatter("dd:MM:YYYY");
+    private static final CachingDateFormatter DATE_FORMATTER = new CachingDateFormatter("dd.MM.YYYY");
 
     /**
-     * Print welcome message in the format: 17:28:14.985 INFO - Launch date: 30:09:2020
+     * Print welcome message in the format: 17:28:14.985 INFO - Launch date: 30.09.2020
      */
     @Override
     public String getPresentationHeader() {
