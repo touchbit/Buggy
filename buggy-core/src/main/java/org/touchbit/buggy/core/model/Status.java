@@ -24,6 +24,13 @@ package org.touchbit.buggy.core.model;
  */
 public enum Status implements IStatus {
 
+//    EXP_IMPL,
+//    EXP_FIX,
+//    BLOCKED,
+//    CORRUPTED,
+//    UNTESTED,
+//    ;
+//
     // Test method statuses
     EXP_IMPL,
     EXP_FIX,

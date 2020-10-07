@@ -13,7 +13,7 @@ import org.touchbit.buggy.core.goal.interfaze.AllInterfaces;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.AllServices;
 import org.touchbit.buggy.core.goal.service.Service;
-import org.touchbit.buggy.core.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.ConfLogger;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.testng.BuggyListener;
 import org.touchbit.buggy.core.utils.JUtils;
@@ -75,32 +75,32 @@ public class BuggyConfiguration implements IConfiguration {
         if (!isLogbackConfigurationInitialized) {
             BuggyRunner.exit(1, "LogbackConfiguration must be initialized");
         }
-        ConfigurationLogger.blockDelimiter();
-        ConfigurationLogger.centerBold("Preparing TestNG configuration");
-        ConfigurationLogger.stepDelimiter();
+        ConfLogger.blockDelimiter();
+        ConfLogger.centerBold("Preparing TestNG configuration");
+        ConfLogger.stepDelimiter();
     }
 
     @PostConstruct
     public void printConfigurationInfo() {
-        ConfigurationLogger.center("TestNG listeners");
+        ConfLogger.center("TestNG listeners");
         for (BuggyListener buggyListener : allBuggyListeners) {
             if (buggyListener.isEnable()) {
-                ConfigurationLogger.dotPlaceholder(buggyListener.getClass().getSimpleName(), "Enable");
+                ConfLogger.dotPlaceholder(buggyListener.getClass().getSimpleName(), "Enable");
             } else {
-                ConfigurationLogger.dotPlaceholder(buggyListener.getClass().getSimpleName(), "Disable");
+                ConfLogger.dotPlaceholder(buggyListener.getClass().getSimpleName(), "Disable");
             }
         }
-        ConfigurationLogger.stepDelimiter();
-        ConfigurationLogger.center("Available suites goals");
-        ConfigurationLogger.stepDelimiter();
-        ConfigurationLogger.center("Components");
-        availableComponents.forEach(g -> ConfigurationLogger.dotPlaceholder(JUtils.getSimpleNameC(g), g.getName()));
-        ConfigurationLogger.stepDelimiter();
-        ConfigurationLogger.center("Services");
-        availableServices.forEach(g -> ConfigurationLogger.dotPlaceholder(JUtils.getSimpleNameC(g), g.getName()));
-        ConfigurationLogger.stepDelimiter();
-        ConfigurationLogger.center("Interfaces");
-        availableInterfaces.forEach(g -> ConfigurationLogger.dotPlaceholder(JUtils.getSimpleNameC(g), g.getName()));
+        ConfLogger.stepDelimiter();
+        ConfLogger.center("Available suites goals");
+        ConfLogger.stepDelimiter();
+        ConfLogger.center("Components");
+        availableComponents.forEach(g -> ConfLogger.dotPlaceholder(JUtils.getSimpleNameC(g), g.getName()));
+        ConfLogger.stepDelimiter();
+        ConfLogger.center("Services");
+        availableServices.forEach(g -> ConfLogger.dotPlaceholder(JUtils.getSimpleNameC(g), g.getName()));
+        ConfLogger.stepDelimiter();
+        ConfLogger.center("Interfaces");
+        availableInterfaces.forEach(g -> ConfLogger.dotPlaceholder(JUtils.getSimpleNameC(g), g.getName()));
     }
 
     public Set<Class<?>> filterTestClassesByBuggyConfig(Set<Class<?>> testClassesWithSuiteAnnotation) {

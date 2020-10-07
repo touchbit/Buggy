@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static org.touchbit.buggy.core.model.Status.NONE;
+import static org.touchbit.buggy.core.model.Status.UNTESTED;
 
 /**
  * Interface of binding test methods.
@@ -43,7 +43,7 @@ public @interface Details {
      * Test status (see: {@link Status})
      * Used values: EXP_IMPL, EXP_FIX, BLOCKED, CORRUPTED
      */
-    Status status() default NONE;
+    Status status() default UNTESTED;
 
     /**
      * Issues ID in the task-tracker system. Format: "STORY-269"

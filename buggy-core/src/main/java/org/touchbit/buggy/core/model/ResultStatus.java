@@ -32,7 +32,6 @@ public enum ResultStatus implements IStatus {
     IMPLEMENTED,
     EXP_FIX,
     EXP_IMPL,
-    UNTESTED,
     SKIP,
     ;
 

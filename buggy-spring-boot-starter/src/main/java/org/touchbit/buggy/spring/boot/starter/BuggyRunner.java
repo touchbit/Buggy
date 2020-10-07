@@ -13,7 +13,7 @@ import org.touchbit.buggy.core.goal.Goal;
 import org.touchbit.buggy.core.goal.component.Component;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.Service;
-import org.touchbit.buggy.core.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.ConfLogger;
 import org.touchbit.buggy.core.log.FrameworkLogger;
 import org.touchbit.buggy.core.log.appender.DecomposeTestLogsFileAppender;
 import org.touchbit.buggy.core.model.Suite;
@@ -70,22 +70,22 @@ public class BuggyRunner implements CommandLineRunner {
 
     public static void exit(int status, String message, Exception e) {
         if (message != null) {
-            ConfigurationLogger.blockDelimiter();
+            ConfLogger.blockDelimiter();
             String frameworkLogPath = "";
             if (status == 0) {
-                ConfigurationLogger.info(message);
+                ConfLogger.info(message);
             } else {
                 File file = FrameworkLogger.getLogFile();
                 if (file != null) {
                     frameworkLogPath = "\nFor more information see " + file.getName();
                 }
                 String eMsg = "\n" + e.getClass().getSimpleName() + ": " + e.getMessage();
-                ConfigurationLogger.error(message + eMsg + frameworkLogPath, e);
+                ConfLogger.error(message + eMsg + frameworkLogPath, e);
             }
         }
-        ConfigurationLogger.blockDelimiter();
-        ConfigurationLogger.dotPlaceholder("Exit code", status);
-        ConfigurationLogger.blockDelimiter();
+        ConfLogger.blockDelimiter();
+        ConfLogger.dotPlaceholder("Exit code", status);
+        ConfLogger.blockDelimiter();
         System.exit(status);
     }
 

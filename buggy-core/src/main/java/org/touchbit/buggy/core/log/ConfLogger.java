@@ -1,5 +1,10 @@
 package org.touchbit.buggy.core.log;
 
+import org.touchbit.buggy.core.utils.ANSI;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+
 import static java.util.Objects.isNull;
 import static org.touchbit.buggy.core.utils.ANSI.BOLD;
 import static org.touchbit.buggy.core.utils.ANSI.RED;
@@ -10,7 +15,7 @@ import static org.touchbit.buggy.core.utils.ANSI.RED;
  * Created by Oleg Shaburov on 01.10.2020
  * shaburov.o.a@gmail.com
  */
-public class ConfigurationLogger {
+public class ConfLogger {
 
     public static final int CONF_STRING_LEN = 47;
     public static final String CONF_BLOCK = "=";
@@ -20,7 +25,7 @@ public class ConfigurationLogger {
 
     private static final ConsoleLogger CONSOLE = new ConsoleLogger();
 
-    private ConfigurationLogger() {
+    private ConfLogger() {
         throw new IllegalStateException("Utility class. Prohibit instantiation.");
     }
 
@@ -30,6 +35,14 @@ public class ConfigurationLogger {
 
     public static void blockDelimiter() {
         info(filler(CONF_BLOCK));
+    }
+
+    public static void dotPlaceholder(Object prefix, Object postfix, ANSI ansi, boolean isWrapCondition) {
+        String msg = filler(prefix, DOT, postfix);
+        if (isWrapCondition) {
+            msg = ansi.wrap(msg);
+        }
+        info(msg);
     }
 
     public static void dotPlaceholder(Object prefix, Object postfix) {

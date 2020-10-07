@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.touchbit.buggy.core.log.BaseLogbackWrapper;
-import org.touchbit.buggy.core.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.ConfLogger;
 import org.touchbit.buggy.core.log.FrameworkLogger;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 
@@ -32,9 +32,9 @@ public class LogbackConfiguration implements IConfiguration {
         if (!isJCommanderConfigured) {
             BuggyRunner.exit(1, "JCommander must be initialized");
         }
-        ConfigurationLogger.blockDelimiter();
-        ConfigurationLogger.centerBold("Logback configuration (" + BaseLogbackWrapper.getConfFileName() + ")");
-        ConfigurationLogger.stepDelimiter();
+        ConfLogger.blockDelimiter();
+        ConfLogger.centerBold("Logback configuration (" + BaseLogbackWrapper.getConfFileName() + ")");
+        ConfLogger.stepDelimiter();
         new FrameworkLogger().info(BaseLogbackWrapper.getInCaseOfErrorsOrWarnings());
         for (ch.qos.logback.classic.Logger logger : BaseLogbackWrapper.getLoggerList()) {
             if (logger.getLevel() != null) {
@@ -44,7 +44,7 @@ public class LogbackConfiguration implements IConfiguration {
                     name = c.getSimpleName() + ".class";
                 } catch (ClassNotFoundException ignore) {
                 }
-                ConfigurationLogger.dotPlaceholder(name, logger.getLevel());
+                ConfLogger.dotPlaceholder(name, logger.getLevel());
             }
         }
         isLogbackConfigurationInitialized = true;

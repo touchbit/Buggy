@@ -27,7 +27,7 @@ public class DecomposeTestLogsFileAppender<E> extends FileAppender<E> {
     @Override
     public void setFile(String file) {
         super.setFile(file);
-        TEST_LOGS_WITH_STATUS.put(new File(file), NONE);
+        TEST_LOGS_WITH_STATUS.put(new File(file), UNTESTED);
     }
 
     public static File getFile(String fileName) {
@@ -73,7 +73,6 @@ public class DecomposeTestLogsFileAppender<E> extends FileAppender<E> {
                     break;
                 case SUCCESS:
                 case SKIP:
-                case UNTESTED:
                 default:
                     // do nothing
             }

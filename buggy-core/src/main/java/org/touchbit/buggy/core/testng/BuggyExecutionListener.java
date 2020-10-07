@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.testng.*;
 import org.touchbit.buggy.core.config.BuggyConfig;
 import org.touchbit.buggy.core.exceptions.CorruptedTestException;
-import org.touchbit.buggy.core.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.ConfLogger;
 import org.touchbit.buggy.core.log.SiftingTestLogger;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
@@ -101,7 +101,8 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     @Override
     public void onExecutionFinish() {
         super.onExecutionFinish();
-        printTestStatistic();
+        System.out.println(" >>>>>>>>>>>>>>> " + this.getClass());
+//        printTestStatistic();
     }
 
     @Override
@@ -472,7 +473,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     }
 
     protected void printTestStatistic() {
-        ConfigurationLogger.blockDelimiter();
+        ConfLogger.blockDelimiter();
 //        if (Buggy.getBuggyErrors() > 0) {
 //            consoleLog.error(StringUtils.dotFiller("Framework errors", 47, Buggy.getBuggyErrors()));
 //        }
@@ -491,7 +492,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         if (errorCount > 0) {
             checkWarnAndPrint("Failed tests", errorCount);
             checkErrorAndPrint("New Errors", newError.get());
-            ConfigurationLogger.blockDelimiter();
+            ConfLogger.blockDelimiter();
             checkWarnAndPrint("Waiting to fix a defect", expFixError.get());
             checkWarnAndPrint("Waiting for implementation", expImplError.get());
             checkWarnAndPrint("Blocked tests", blockedError.get());
@@ -501,14 +502,14 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
             consoleLog.info(result);
         }
         if (fixedCount > 0) {
-            ConfigurationLogger.blockDelimiter();
+            ConfLogger.blockDelimiter();
             checkDebugAndPrint("Fixed cases", fixed.get());
             checkDebugAndPrint("Implemented cases", implemented.get());
         }
-        ConfigurationLogger.blockDelimiter();
+        ConfLogger.blockDelimiter();
         consoleLog.info(StringUtils.dotFiller("Execution time", 47, org.apache.commons.lang3.time.DurationFormatUtils
                 .formatDuration(finishTime - startTime, "HH:mm:ss,SSS")));
-        ConfigurationLogger.blockDelimiter();
+        ConfLogger.blockDelimiter();
     }
 
     protected void checkDebugAndPrint(String msg, int count) {

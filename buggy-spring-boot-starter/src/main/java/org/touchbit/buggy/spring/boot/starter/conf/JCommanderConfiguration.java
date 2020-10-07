@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.touchbit.buggy.core.config.BuggyConfig;
-import org.touchbit.buggy.core.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.ConfLogger;
 import org.touchbit.buggy.core.utils.JUtils;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyJCommand;
@@ -58,9 +58,9 @@ public class JCommanderConfiguration implements IConfiguration {
     }
 
     public void beforeConfiguration() {
-        ConfigurationLogger.blockDelimiter();
-        ConfigurationLogger.centerBold("JCommander configuration construction");
-        ConfigurationLogger.stepDelimiter();
+        ConfLogger.blockDelimiter();
+        ConfLogger.centerBold("JCommander configuration construction");
+        ConfLogger.stepDelimiter();
     }
 
     @Bean
@@ -71,14 +71,14 @@ public class JCommanderConfiguration implements IConfiguration {
     @PostConstruct
     public void postConstruct() {
         if (BuggyConfig.isHelp()) {
-            ConfigurationLogger.stepDelimiter();
+            ConfLogger.stepDelimiter();
             jCommander.usage();
             BuggyRunner.exit(0);
         }
         if (BuggyConfig.isVersion()) {
-            ConfigurationLogger.stepDelimiter();
-            ConfigurationLogger.centerBold("Version info");
-            JUtils.getBuggyManifest().forEach(ConfigurationLogger::dotPlaceholder);
+            ConfLogger.stepDelimiter();
+            ConfLogger.centerBold("Version info");
+            JUtils.getBuggyManifest().forEach(ConfLogger::dotPlaceholder);
             BuggyRunner.exit(0);
         }
         printConfigurationsParams(buggyConfigurations);
@@ -114,9 +114,9 @@ public class JCommanderConfiguration implements IConfiguration {
                 } else {
                     jCommander.addObject(config);
                 }
-                ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "OK");
+                ConfLogger.dotPlaceholder(config.getClass().getSimpleName(), "OK");
             } catch (Exception e) {
-                ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
+                ConfLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
                 BuggyRunner.exit(1, "Unexpected error while loading Jcommander configs", e);
             }
         }
@@ -126,11 +126,11 @@ public class JCommanderConfiguration implements IConfiguration {
     public void parseArguments() {
         try {
             jCommander.parse(args);
-            ConfigurationLogger.stepDelimiter();
-            ConfigurationLogger.dotPlaceholder("Parsing arguments", "OK");
+            ConfLogger.stepDelimiter();
+            ConfLogger.dotPlaceholder("Parsing arguments", "OK");
         } catch (Exception e) {
-            ConfigurationLogger.stepDelimiter();
-            ConfigurationLogger.dotPlaceholder("Parsing arguments", "FAIL");
+            ConfLogger.stepDelimiter();
+            ConfLogger.dotPlaceholder("Parsing arguments", "FAIL");
             printConfigurationsParams(buggyConfigurations);
             BuggyRunner.exit(e.getMessage(), e);
         }
@@ -151,7 +151,7 @@ public class JCommanderConfiguration implements IConfiguration {
             Parameter parameter = field.getAnnotation(Parameter.class);
             if (parameter != null && !Modifier.isStatic(field.getModifiers())) {
                 String[] names = parameter.names();
-                ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
+                ConfLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
                 printConfigurationParams(config);
                 BuggyRunner.exit(1, "Field " + config.getClass().getSimpleName() + "#" + field.getName() +
                         " marked with @Parameter " + Arrays.toString(names) + " must be static.");
@@ -179,7 +179,7 @@ public class JCommanderConfiguration implements IConfiguration {
                             "(method name must start with 'is' or 'set').";
                 }
                 if (error != null) {
-                    ConfigurationLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
+                    ConfLogger.dotPlaceholder(config.getClass().getSimpleName(), "FAIL");
                     printConfigurationParams(config);
                     BuggyRunner.exit(1, error);
                 }
@@ -197,10 +197,10 @@ public class JCommanderConfiguration implements IConfiguration {
     public void printConfigurationParams(JCommand config) {
         Map<String, Object> params = config.configurationToMap();
         if (params != null && !params.isEmpty()) {
-            ConfigurationLogger.stepDelimiter();
-            ConfigurationLogger.center(config.getClass().getSimpleName());
+            ConfLogger.stepDelimiter();
+            ConfLogger.center(config.getClass().getSimpleName());
             for (Map.Entry<String, Object> entry : params.entrySet()) {
-                ConfigurationLogger.dotPlaceholder(entry.getKey(), entry.getValue());
+                ConfLogger.dotPlaceholder(entry.getKey(), entry.getValue());
             }
         }
     }
