@@ -18,7 +18,6 @@
 
     <properties>
         <sonar.projectKey>org.touchbit:buggy-spring-boot-starter-example</sonar.projectKey>
-        <log4j.version>2.13.3</log4j.version>
     </properties>
 
     <dependencies>

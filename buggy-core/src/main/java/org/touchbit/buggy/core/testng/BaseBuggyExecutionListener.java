@@ -20,8 +20,11 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.testng.*;
 import org.touchbit.buggy.core.config.BuggyConfig;
-import org.touchbit.buggy.core.log.BuggyLoggers;
+import org.touchbit.buggy.core.log.ConsoleLogger;
+import org.touchbit.buggy.core.log.FrameworkLogger;
+import org.touchbit.buggy.core.log.SiftingTestLogger;
 import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.IStatus;
 import org.touchbit.buggy.core.model.Suite;
 
 import java.io.File;
@@ -58,13 +61,13 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
     public void onExecutionStart() {
         startTime = new Date().getTime();
         if (testLog == null) {
-            testLog = BuggyLoggers.SIFTING;
+            testLog = new SiftingTestLogger();
         }
         if (frameworkLog == null) {
-            frameworkLog = BuggyLoggers.FRAMEWORK;
+            frameworkLog = new FrameworkLogger();
         }
         if (consoleLog == null) {
-            consoleLog = BuggyLoggers.CONSOLE;
+            consoleLog = new ConsoleLogger();
         }
     }
 
@@ -93,15 +96,21 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         return (Suite) method.getRealClass().getAnnotation(Suite.class);
     }
 
-    protected String getLogFilePath(ITestNGMethod method) {
+    protected String getLogFilePath(ITestNGMethod method, IStatus status) {
         // Do not change the check. Feature parsing values by jCommander library.
         if (!"null".equalsIgnoreCase(String.valueOf(BuggyConfig.getArtifactsUrl()))) {
             return BuggyConfig.getArtifactsUrl().endsWith("/") ?
                     BuggyConfig.getArtifactsUrl() :
                     BuggyConfig.getArtifactsUrl() + "/";
         } else {
-            return "file://" + new File(new File(BuggyLoggers.getFrameworkLogFilePath()).getAbsolutePath() +
-                    "/" + getInvokedMethodLogFileName(method));
+            String fileName = getInvokedMethodLogFileName(method);
+            SiftingTestLogger.setTestStatus(fileName, status);
+            File file = SiftingTestLogger.getSiftingLogFile(fileName);
+            if (file != null) {
+                return "file://" + file.getAbsolutePath();
+            } else {
+                return "Log file not found: " + fileName;
+            }
         }
     }
 

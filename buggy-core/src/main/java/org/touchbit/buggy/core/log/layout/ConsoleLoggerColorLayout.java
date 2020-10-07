@@ -50,12 +50,6 @@ public class ConsoleLoggerColorLayout extends LayoutBase<ILoggingEvent> {
             default:
                 return "";
         }
-        final IThrowableProxy throwableProxy = event.getThrowableProxy();
-        final boolean withST = Boolean.parseBoolean(MDC.get("print.console.stacktrace"));
-        if (throwableProxy != null && withST) {
-            stringBuilder.append(CoreConstants.LINE_SEPARATOR);
-            stringBuilder.append(ThrowableProxyUtil.asString(throwableProxy));
-        }
         stringBuilder.append(CoreConstants.LINE_SEPARATOR);
         return stringBuilder.toString();
     }

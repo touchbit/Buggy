@@ -21,6 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static org.touchbit.buggy.core.model.Status.NONE;
+
 /**
  * Interface of binding test methods.
  * Custom statuses for tests are provided.
@@ -41,7 +43,7 @@ public @interface Details {
      * Test status (see: {@link Status})
      * Used values: EXP_IMPL, EXP_FIX, BLOCKED, CORRUPTED
      */
-    Status status();
+    Status status() default NONE;
 
     /**
      * Issues ID in the task-tracker system. Format: "STORY-269"
@@ -49,7 +51,7 @@ public @interface Details {
     String[] issue() default {""};
 
     /**
-     * Defects ID in the task-tracker system. Format: "BUG-269"
+     * Defects ID in the task-tracker system. Format: "BUG-354"
      */
     String[] bug() default {""};
 

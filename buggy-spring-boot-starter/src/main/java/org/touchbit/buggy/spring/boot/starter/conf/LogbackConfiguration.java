@@ -1,15 +1,15 @@
 package org.touchbit.buggy.spring.boot.starter.conf;
 
-import ch.qos.logback.core.util.StatusPrinter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.touchbit.buggy.core.log.BuggyLoggers;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.touchbit.buggy.core.log.BaseLogbackWrapper;
 import org.touchbit.buggy.core.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.FrameworkLogger;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import static org.springframework.boot.context.logging.LoggingApplicationListener.CONFIG_PROPERTY;
 
 /**
  * Logback loggers configuration
@@ -23,19 +23,20 @@ public class LogbackConfiguration implements IConfiguration {
 
     private final boolean isLogbackConfigurationInitialized;
 
-    public LogbackConfiguration(boolean isJCommanderConfigured) {
+    public LogbackConfiguration(boolean isJCommanderConfigured, ConfigurableEnvironment environment) {
+        String property = environment.getProperty(CONFIG_PROPERTY);
+
+        if (property != null) {
+            System.setProperty(CONFIG_PROPERTY, property);
+        }
         if (!isJCommanderConfigured) {
             BuggyRunner.exit(1, "JCommander must be initialized");
         }
         ConfigurationLogger.blockDelimiter();
-        ConfigurationLogger.centerBold("Logback configuration (" + BuggyLoggers.LOGGING_CONFIG_FILE + ")");
+        ConfigurationLogger.centerBold("Logback configuration (" + BaseLogbackWrapper.getConfFileName() + ")");
         ConfigurationLogger.stepDelimiter();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(stream);
-        StatusPrinter.setPrintStream(printStream);
-        StatusPrinter.printInCaseOfErrorsOrWarnings(BuggyLoggers.LOGGER_CONTEXT);
-        BuggyLoggers.FRAMEWORK.info(stream.toString());
-        for (ch.qos.logback.classic.Logger logger : BuggyLoggers.LOGGER_CONTEXT.getLoggerList()) {
+        new FrameworkLogger().info(BaseLogbackWrapper.getInCaseOfErrorsOrWarnings());
+        for (ch.qos.logback.classic.Logger logger : BaseLogbackWrapper.getLoggerList()) {
             if (logger.getLevel() != null) {
                 String name = logger.getName();
                 try {

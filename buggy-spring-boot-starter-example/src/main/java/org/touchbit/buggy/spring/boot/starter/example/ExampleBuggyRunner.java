@@ -14,7 +14,6 @@ public class ExampleBuggyRunner extends BuggyRunner {
         BuggyJCommand.setPrintLog(true);
         BuggyJCommand.setPrintSuite(true);
         BuggyJCommand.setPrintCause(true);
-        BuggyJCommand.setComponents(DefaultComponent.class);
     }
 
     public static void main(String[] args) {

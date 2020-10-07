@@ -70,7 +70,7 @@ public class JCommanderConfiguration implements IConfiguration {
 
     @PostConstruct
     public void postConstruct() {
-        if (BuggyConfig.getHelp()) {
+        if (BuggyConfig.isHelp()) {
             ConfigurationLogger.stepDelimiter();
             jCommander.usage();
             BuggyRunner.exit(0);
@@ -86,7 +86,7 @@ public class JCommanderConfiguration implements IConfiguration {
 
     private Set<BuggyJCommand> scanBuggyConfig() {
         final boolean useDefaultFilters = false;
-        final String basePackage = "org.touchbit.buggy.core.config";
+        final String basePackage = "org.touchbit.buggy.spring.boot.starter.jcommander";
         final Set<BeanDefinition> defs = scanBeanDefinitions(useDefaultFilters, basePackage, BuggyJCommand.class);
         return getBeanDefinitionInstances(defs, BuggyJCommand.class);
     }

@@ -29,6 +29,7 @@ public enum Status implements IStatus {
     EXP_FIX,
     BLOCKED,
     CORRUPTED,
+    NONE,
 
     // Result statuses
     FIXED,

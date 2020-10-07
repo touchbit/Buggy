@@ -1,7 +1,7 @@
 <configuration debug="false">
     <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
-    <property name="logging.file.path" value="${LOG_PATH:-./logs}"/>
+    <property name="logging.file.path" value="${LOG_PATH:-logs}"/>
     <property name="test.log.pattern" value="%d{HH:mm:ss.SSS} - %m%n"/>
     <property name="base.log.pattern" value="%d{HH:mm:ss.SSS} %-5level - %m%n"/>
 
@@ -18,12 +18,12 @@
     </appender>
     <appender name="Sifting" class="ch.qos.logback.classic.sift.SiftingAppender">
         <discriminator>
-            <key>sifting.log.file.path</key>
+            <key>sifting.test.log.file.path</key>
             <defaultValue>default-sifting.log</defaultValue>
         </discriminator>
         <sift>
-            <appender name="${log.file.name}" class="ch.qos.logback.core.FileAppender">
-                <file>${logging.file.path}/${sifting.log.file.path}</file>
+            <appender class="org.touchbit.buggy.core.log.appender.DecomposeTestLogsFileAppender">
+                <file>${logging.file.path}/${sifting.test.log.file.path}</file>
                 <layout class="org.touchbit.buggy.core.log.layout.ShiftingLoggerLayout"/>
             </appender>
         </sift>

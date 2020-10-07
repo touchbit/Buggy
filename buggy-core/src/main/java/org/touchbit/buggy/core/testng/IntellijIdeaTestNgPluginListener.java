@@ -17,7 +17,6 @@
 package org.touchbit.buggy.core.testng;
 
 import org.testng.ITestNGListener;
-import org.touchbit.buggy.core.log.BuggyLoggers;
 import org.touchbit.buggy.core.utils.JUtils;
 
 /**
@@ -29,15 +28,15 @@ import org.touchbit.buggy.core.utils.JUtils;
 public final class IntellijIdeaTestNgPluginListener extends BuggyExecutionListener implements ITestNGListener {
 
     public IntellijIdeaTestNgPluginListener() {
-        if (JUtils.isJetBrainsIdeRun()) {
-            BuggyLoggers.SIFTING.info("IntellijIdeaTestNgPluginListener enabled");
+        if (JUtils.isJetBrainsIdeTestNGPluginRun()) {
+            consoleLog.info("IntellijIdeaTestNgPluginListener enabled");
             JUtils.initBuggyConfigurationYml();
         }
     }
 
     @Override
     public final boolean isEnable() {
-        return JUtils.isJetBrainsIdeRun();
+        return JUtils.isJetBrainsIdeTestNGPluginRun();
     }
 
 }

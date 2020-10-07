@@ -48,11 +48,11 @@ public final class BuggyConfig {
     }
 
     public static Boolean isPrintLogFileOnlyFail() {
-        return BuggyConfig.printLogOnlyFail;
+        return printLogOnlyFail;
     }
 
-    public static Boolean getHelp() {
-        return help;
+    public static Boolean isHelp() {
+        return BuggyConfig.help;
     }
 
     public static void setHelp(Boolean help) {

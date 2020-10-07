@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.testng.*;
 import org.touchbit.buggy.core.config.BuggyConfig;
 import org.touchbit.buggy.core.exceptions.CorruptedTestException;
-import org.touchbit.buggy.core.log.BuggyLoggers;
 import org.touchbit.buggy.core.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.SiftingTestLogger;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
@@ -57,9 +57,9 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     }
 
     public BuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger) {
-        testLog = testLogger;
-        frameworkLog = frameworkLogger;
-        consoleLog = consoleLogger;
+//        testLog = testLogger;
+//        frameworkLog = frameworkLogger;
+//        consoleLog = consoleLogger;
     }
 
     /**
@@ -178,7 +178,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
         STEPS.set(new ArrayList<>());
         String methodName = getMethodName(method);
-        BuggyLoggers.setSiftingLogFilePath(getInvokedMethodLogFileName(method));
+        SiftingTestLogger.setTestLogFileName(getInvokedMethodLogFileName(method));
         if (method.isTestMethod()) {
             testLog.info("Test method is running:\n{} - {}", methodName, getDescription(method));
         } else {
@@ -402,7 +402,7 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
         if ((BuggyConfig.isPrintCause() || method.getInvocationCount() < 1) && !detailsString.isEmpty()) {
             resultMsg.add(detailsString);
         }
-        String logPathString = getLogFilePath(method).trim();
+        String logPathString = getLogFilePath(method, status).trim();
         if (BuggyConfig.isPrintLog() && method.getInvocationCount() > 0 && !logPathString.isEmpty() &&
                 (!BuggyConfig.isPrintLogFileOnlyFail() || status != Status.SUCCESS)) {
             resultMsg.add("\n  └");

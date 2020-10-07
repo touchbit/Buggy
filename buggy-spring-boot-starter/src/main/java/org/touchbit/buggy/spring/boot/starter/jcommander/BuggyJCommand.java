@@ -154,6 +154,64 @@ public final class BuggyJCommand implements JCommand {
         BuggyConfig.setProgramName(programName);
     }
 
+    public static Boolean isHelp() {
+        return BuggyConfig.isHelp();
+    }
+    public static Boolean isPrintLogFileOnlyFail() {
+        return BuggyConfig.isPrintLog();
+    }
+    public static Boolean isForce() {
+        return BuggyConfig.isForce();
+    }
+
+    public static Boolean isPrintSuite() {
+        return BuggyConfig.isPrintSuite();
+    }
+
+    public static Boolean isPrintCause() {
+        return BuggyConfig.isPrintCause();
+    }
+
+    public static Boolean isPrintLog() {
+        return BuggyConfig.isPrintLog();
+    }
+
+    public static Boolean isVersion() {
+        return BuggyConfig.isVersion();
+    }
+
+    public static Integer getThreads() {
+        return BuggyConfig.getThreads();
+    }
+
+    public static String getArtifactsUrl() {
+        return BuggyConfig.getArtifactsUrl();
+    }
+
+    public static List<Type> getTypes() {
+        return BuggyConfig.getTypes();
+    }
+
+    public static List<Service> getServices() {
+        return BuggyConfig.getServices();
+    }
+
+    public static List<Interface> getInterfaces() {
+        return BuggyConfig.getInterfaces();
+    }
+
+    public static List<Component> getComponents() {
+        return BuggyConfig.getComponents();
+    }
+
+    public static ParallelMode getParallelMode() {
+        return BuggyConfig.getParallelMode();
+    }
+
+    public static String getProgramName() {
+        return BuggyConfig.getProgramName();
+    }
+
     @Override
     public Map<String, Object> sort(Map<String, Object> map) {
         String[] sort = new String[]

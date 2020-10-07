@@ -10,6 +10,8 @@ import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -76,7 +78,7 @@ public class JUtils {
         }
     }
 
-    public static boolean isJetBrainsIdeRun() {
+    public static boolean isJetBrainsIdeTestNGPluginRun() {
         for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
             if (stackTraceElement.toString().contains("com.intellij.rt.testng")) {
                 return true;
@@ -85,14 +87,30 @@ public class JUtils {
         return false;
     }
 
-    public static String getRunPath() {
+    public static boolean isJetBrainsIdeConsoleRun() {
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        List<String> arguments = runtimeMxBean.getInputArguments();
+        return arguments.stream()
+                .anyMatch(v -> v.startsWith("-javaagent") &&
+                        (v.contains("JetBrains") || v.contains("IDEA") || v.contains("idea")));
+    }
+
+    public static String getJetBrainsIdeConsoleRunTargetPath() {
         String runDir = System.getProperty("user.dir");
-        if (isJetBrainsIdeRun()) {
+        if (isJetBrainsIdeConsoleRun()) {
             String javaClassPath = System.getProperty("java.class.path");
             if (javaClassPath != null && !javaClassPath.isEmpty()) {
                 String firstClassPath = javaClassPath.split(":")[0];
                 if (firstClassPath.contains("/target/") && firstClassPath.contains(runDir)) {
-                    return firstClassPath.substring(0, firstClassPath.indexOf("/target/")) + "/target";
+                    String moduleTarget = firstClassPath.replace(runDir, "")
+                            .replace("classes", "");
+                    if (moduleTarget.startsWith("/")) {
+                        moduleTarget = moduleTarget.replaceFirst("/", "");
+                    }
+                    while (moduleTarget.endsWith("/")) {
+                        moduleTarget = moduleTarget.substring(0, moduleTarget.length() - 1);
+                    }
+                    return moduleTarget;
                 }
             }
         }

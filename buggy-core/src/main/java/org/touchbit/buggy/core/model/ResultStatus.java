@@ -24,12 +24,16 @@ package org.touchbit.buggy.core.model;
  */
 public enum ResultStatus implements IStatus {
 
+    SUCCESS,
+    FAILED,
+    CORRUPTED,
+    BLOCKED,
     FIXED,
     IMPLEMENTED,
+    EXP_FIX,
+    EXP_IMPL,
     UNTESTED,
-    SUCCESS,
     SKIP,
-    FAILED,
     ;
 
     @Override

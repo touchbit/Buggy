@@ -1,6 +1,5 @@
 package org.touchbit.buggy.spring.boot.starter;
 
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
@@ -14,19 +13,31 @@ import org.touchbit.buggy.core.goal.Goal;
 import org.touchbit.buggy.core.goal.component.Component;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.Service;
-import org.touchbit.buggy.core.log.BuggyLoggers;
 import org.touchbit.buggy.core.log.ConfigurationLogger;
+import org.touchbit.buggy.core.log.FrameworkLogger;
+import org.touchbit.buggy.core.log.appender.DecomposeTestLogsFileAppender;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.testng.BuggyListener;
 import org.touchbit.buggy.core.utils.JUtils;
 import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyJCommand;
 
+import java.io.File;
 import java.util.*;
 
+import static org.springframework.boot.context.logging.LoggingApplicationListener.CONFIG_PROPERTY;
+import static org.springframework.boot.logging.LogFile.FILE_PATH_PROPERTY;
 import static org.touchbit.buggy.spring.boot.starter.conf.Qualifiers.*;
 
 @SpringBootApplication
 public class BuggyRunner implements CommandLineRunner {
+
+    static {
+        if (JUtils.isJetBrainsIdeConsoleRun()) {
+            System.setProperty(FILE_PATH_PROPERTY, JUtils.getJetBrainsIdeConsoleRunTargetPath() + "/logs");
+        }
+        // If application.yml does not contain a variable 'logging.config'
+        System.setProperty(CONFIG_PROPERTY, "classpath:buggy-logback.xml");
+    }
 
     private Set<BuggyListener> allBuggyListeners;
     private Set<BuggyListener> enabledBuggyListeners;
@@ -64,13 +75,9 @@ public class BuggyRunner implements CommandLineRunner {
             if (status == 0) {
                 ConfigurationLogger.info(message);
             } else {
-                if (BuggyLoggers.FRAMEWORK == null) {
-                    MDC.put("print.console.stacktrace", "true");
-                } else {
-                    String frameworkLogFilePath = BuggyLoggers.getFrameworkLogFilePath();
-                    if (frameworkLogFilePath != null && !frameworkLogFilePath.isEmpty()) {
-                        frameworkLogPath = "\nFor more information see " + frameworkLogFilePath;
-                    }
+                File file = FrameworkLogger.getLogFile();
+                if (file != null) {
+                    frameworkLogPath = "\nFor more information see " + file.getName();
                 }
                 String eMsg = "\n" + e.getClass().getSimpleName() + ": " + e.getMessage();
                 ConfigurationLogger.error(message + eMsg + frameworkLogPath, e);
@@ -84,6 +91,7 @@ public class BuggyRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        // TODO exit_1 if test methods names not unique
         Map<Suite, Set<Class<?>>> testClassesBySuitesMap = getTestClassesBySuitesMap(filteredTestClasses);
         List<XmlSuite> xmlSuites = getXmlSuites(testClassesBySuitesMap);
         TestNG testNG = getTestNG();
@@ -96,12 +104,15 @@ public class BuggyRunner implements CommandLineRunner {
             }
             testNG.setXmlSuites(xmlSuites);
             testNG.run();
+            DecomposeTestLogsFileAppender.decomposeTestLogs();
             if (BuggyJCommand.getExitStatus() != null) {
                 exit(BuggyJCommand.getExitStatus());
             }
             exit(testNG.getStatus());
         } catch (Exception e) {
             exit(1, "TestNG safely died.", e);
+        } finally {
+            DecomposeTestLogsFileAppender.decomposeTestLogs();
         }
     }
 

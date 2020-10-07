@@ -19,7 +19,6 @@ package org.touchbit.buggy.core.testng;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.testng.IExecutionListener;
 import org.touchbit.buggy.core.config.BuggyConfig;
-import org.touchbit.buggy.core.log.BuggyLoggers;
 import org.touchbit.buggy.core.model.Notifier;
 import org.touchbit.buggy.core.utils.StringUtils;
 
@@ -103,7 +102,7 @@ public abstract class BaseTelegramNotifier extends BaseBuggyExecutionListener im
         try {
             notifier.report(sj.toString());
         } catch (Exception e) {
-            BuggyLoggers.CONSOLE.error("Failed to send message to Telegram.", e);
+//            BuggyLoggers.CONSOLE.error("Failed to send message to Telegram.", e); TODO
         }
     }
 

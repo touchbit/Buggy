@@ -19,7 +19,7 @@ package org.touchbit.buggy.core;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.testng.annotations.Listeners;
-import org.touchbit.buggy.core.log.BuggyLoggers;
+import org.touchbit.buggy.core.log.SiftingTestLogger;
 import org.touchbit.buggy.core.testng.BuggyExecutionListener;
 import org.touchbit.buggy.core.testng.IntellijIdeaTestNgPluginListener;
 
@@ -35,7 +35,7 @@ public abstract class BaseBuggyTest {
     protected static Logger log;
 
     protected BaseBuggyTest() {
-        this(BuggyLoggers.SIFTING);
+        this(new SiftingTestLogger());
     }
 
     protected BaseBuggyTest(final Logger logger) {

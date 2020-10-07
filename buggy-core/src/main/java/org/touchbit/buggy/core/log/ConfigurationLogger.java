@@ -18,6 +18,8 @@ public class ConfigurationLogger {
     public static final String DOT = ".";
     public static final String UNDERSCORE = "_";
 
+    private static final ConsoleLogger CONSOLE = new ConsoleLogger();
+
     private ConfigurationLogger() {
         throw new IllegalStateException("Utility class. Prohibit instantiation.");
     }
@@ -96,15 +98,15 @@ public class ConfigurationLogger {
     }
 
     public static void info(String msg) {
-        BuggyLoggers.CONSOLE.info(msg);
+        CONSOLE.info(msg);
     }
 
     public static void error(String msg, Throwable t) {
-        BuggyLoggers.CONSOLE.error(RED.wrap(msg), t);
+        CONSOLE.error(msg, t);
     }
 
     public static void error(String msg) {
-        BuggyLoggers.CONSOLE.error(RED.wrap(msg));
+        CONSOLE.error(msg);
     }
 
 }

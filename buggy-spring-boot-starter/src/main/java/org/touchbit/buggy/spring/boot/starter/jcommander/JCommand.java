@@ -78,7 +78,7 @@ public interface JCommand {
                     map.put(Arrays.toString(names), "*****");
                 } else {
                     String mName = method.getName();
-                    String is = "is" + mName.substring(2);
+                    String is = "is" + mName.substring(3);
                     String get = "get" + mName.substring(3);
                     methods.stream()
                             .filter(m -> (m.getName().equalsIgnoreCase(is) || m.getName().equalsIgnoreCase(get)))

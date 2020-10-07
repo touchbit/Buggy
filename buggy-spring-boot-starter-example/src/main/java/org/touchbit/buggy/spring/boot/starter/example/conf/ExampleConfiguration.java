@@ -6,7 +6,6 @@ import org.touchbit.buggy.spring.boot.starter.jcommander.JCommand;
 public class ExampleConfiguration implements JCommand {
 
     @Parameter(names = {"--example-host"}, description = "Example host.")
-//    @Parameter(names = {"-f"}, description = "Example host.")
     private static String exampleHost = "https://exmaole.com";
 
     @Parameter(names = {"--example-pass"}, password = true, description = "Example password.")
