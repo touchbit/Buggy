@@ -13,8 +13,8 @@ public class ExampleBuggyRunner extends BuggyRunner {
         BuggyConfiguration.setPrintSuite(true);
         BuggyConfiguration.setPrintCause(true);
         BuggyConfiguration.setInterfaces(API.class);
+        BuggyConfiguration.setPrintLogOnlyFail(true);
         BuggyConfiguration.setTaskTrackerIssueUrl("https://jira.com/issues/");
-
         SpringApplication.run(ExampleBuggyRunner.class, args);
     }
 

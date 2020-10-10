@@ -21,4 +21,10 @@ public class ExampleTests2 extends BaseBuggyTest {
                 "     4) [Professor] expected:<'[well kempt]'> but was:<'[bloodied and dishevelled]'>");
     }
 
+    @Test(description = "")
+    @Details(status = Status.EXP_IMPL, bugs = "JIRA-321")
+    public void test_1() {
+
+    }
+
 }

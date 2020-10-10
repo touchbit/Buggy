@@ -19,7 +19,7 @@ import static org.touchbit.buggy.core.utils.ANSI.*;
  * Created by Oleg Shaburov on 30.09.2020
  * shaburov.o.a@gmail.com
  */
-public class ConsoleLoggerColorLayout extends LayoutBase<ILoggingEvent> {
+public class ConsoleLoggerColorLayout<E extends ILoggingEvent> extends LayoutBase<E> {
 
     /**
      * Log format: message\n

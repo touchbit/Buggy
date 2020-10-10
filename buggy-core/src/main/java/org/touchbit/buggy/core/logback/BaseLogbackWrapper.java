@@ -13,25 +13,9 @@ import java.util.List;
 
 public class BaseLogbackWrapper extends MarkerIgnoringBase {
 
-    public static final String LOG_PATH = "LOG_PATH";
     protected static final String CONSOLE_LOGGER_NAME = "Console";
     protected static final String FRAMEWORK_LOGGER_NAME = "Framework";
     protected static final String SIFTING_LOGGER_NAME = "Sifting";
-    private static final String LOGGING_CONFIG = "logging.config";
-    private static final String LOGBACK_CONFIG = "logback.configurationFile";
-
-    static {
-        if (System.getProperty("logback.configurationFile") == null) {
-            System.setProperty("logback.configurationFile", "buggy-logback.xml");
-        }
-        if (JUtils.isJetBrainsIdeTestNGPluginRun()) {
-            System.setProperty(LOG_PATH, "target/logs");
-        } else if (JUtils.isJetBrainsIdeConsoleRun()) {
-            System.setProperty(LOG_PATH, JUtils.getJetBrainsIdeConsoleRunTargetPath() + "/logs");
-        } else {
-            System.setProperty(LOG_PATH, "logs");
-        }
-    }
 
     private final Logger logger;
 
@@ -41,7 +25,7 @@ public class BaseLogbackWrapper extends MarkerIgnoringBase {
     }
 
     public static String getConfFileName() {
-        return System.getProperty(LOGGING_CONFIG, System.getProperty(LOGBACK_CONFIG, "undefined"))
+        return System.getProperty("logging.config", System.getProperty("logback.configurationFile", "undefined"))
                 .replace("classpath:", "");
     }
 

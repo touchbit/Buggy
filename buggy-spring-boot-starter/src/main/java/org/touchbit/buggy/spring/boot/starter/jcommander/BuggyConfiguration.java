@@ -59,7 +59,7 @@ public final class BuggyConfiguration implements JCommand {
         BuggyConfigurationYML.setForce(force);
     }
 
-    @Parameter(names = {PRINT_SUITE}, description = "Display information on the Suite in the console log.")
+    @Parameter(names = {TEST_SUITE_INFO}, description = "Display information on the Suite in the console log.")
     public static void setPrintSuite(Boolean printSuite) {
         BuggyConfigurationYML.setPrintSuite(printSuite);
     }
@@ -69,7 +69,7 @@ public final class BuggyConfiguration implements JCommand {
         BuggyConfigurationYML.setPrintCause(printCause);
     }
 
-    @Parameter(names = {PRINT_LOG}, description = "Print the test log file path in the console log")
+    @Parameter(names = {TEST_LOG_FILE_PATH}, description = "Print the test log file path in the console log")
     public static void setPrintLog(Boolean printLog) {
         BuggyConfigurationYML.setPrintLog(printLog);
     }
@@ -228,7 +228,7 @@ public final class BuggyConfiguration implements JCommand {
     @Override
     public Map<String, Object> sort(Map<String, Object> map) {
         String[] sort = new String[]
-                {THREADS, PARALLEL_MODE, F, PRINT_LOG, PRINT_CAUSE, PRINT_SUITE,
+                {THREADS, PARALLEL_MODE, F, TEST_LOG_FILE_PATH, PRINT_CAUSE, TEST_SUITE_INFO,
                         C, S, I, T, LOGS_PATH, ARTIFACTS_URL, EXIT_STATUS};
         Map<String, Object> sorted = new LinkedHashMap<>();
         for (String s : sort) {

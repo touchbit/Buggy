@@ -11,9 +11,9 @@ import org.touchbit.buggy.spring.boot.starter.example.goal.GitHub;
 @Suite(component = GitHub.class, service = Actions.class, interfaze = API.class)
 public class ExampleTests extends BaseBuggyTest {
 
-    @Test
+    @Test(invocationCount = 10)
     @Details
-    public void test_1() {
+    public void invocationCount_10() {
         step("test_1");
     }
 

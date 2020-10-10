@@ -41,11 +41,14 @@ public class BParameters {
     public static final String F = "-f";
     public static final String FORCE = "--force-run";
     public static final String ARTIFACTS_URL = "--artifacts-url";
-    public static final String EXIT_STATUS = "--exit-status";
-    public static final String ALL = "--all";
-    public static final String PRINT_SUITE = "--print-suite";
+    public static final String EXIT_STATUS  = "--exit-status";
+    public static final String TEST_CASE_TITLE    = "--test-case-title";
+    public static final String TEST_SUITE_INFO    = "--test-suite-info";
+    public static final String TEST_LOG_FILE_PATH = "--test-log-file-path";
+    public static final String TEST_ISSUES_INFO   = "--test-issues-info";
+    public static final String TEST_BUGS_INFO     = "--test-bugs-info";
+    public static final String OUTPUT_RULE        = "--output-rule";
     public static final String PRINT_CAUSE = "--print-cause";
-    public static final String PRINT_LOG = "--print-log";
     public static final String PRINT_LOG_IF_FAIL = "--print-log-if-fail";
     public static final String PROGRAM_NAME = "--program-name";
 

@@ -49,12 +49,14 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-        SiftingTestLogger.setTestLogFileName(getLogFileName(method));
+        SiftingTestLogger.setTestLogFileName(method);
     }
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         TEST.info("Date: {}", new Date());
+        ResultStatus resultStatus = getResultStatus(method);
+        SiftingTestLogger.setTestResultStatus(resultStatus);
         Boolean printLog = BuggyConfigurationYML.isPrintLog();
         Boolean printSuite = BuggyConfigurationYML.isPrintSuite();
         Boolean printCause = BuggyConfigurationYML.isPrintCause();
@@ -76,7 +78,7 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
             String[] bugs = details.bugs();
             String indent = " ";
 
-            String dotPlaceholder = ConfLogger.getDotPlaceholder(methodName, status);
+            String dotPlaceholder = ConfLogger.getDotPlaceholder(methodName, resultStatus);
             StringBuilder message = new StringBuilder();
             message.append(dotPlaceholder);
             if (printSuite) {
@@ -95,7 +97,7 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
                 indent += indent;
             }
             if (printLog) {
-                message.append("\n  Log:   ").append(getLogFilePath(method.getTestMethod(), status));
+                message.append("\n  Log:   ").append(getLogFilePath());
                 indent += indent;
             }
             if (printCause && bugs.length > 0) {
@@ -255,21 +257,18 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
 //        }
 //    }
 
-
-    protected String getLogFilePath(ITestNGMethod method, IStatus status) {
+    protected String getLogFilePath() {
         // Do not change the check. Feature parsing values by jCommander library.
         if (!"null".equalsIgnoreCase(String.valueOf(BuggyConfigurationYML.getArtifactsUrl()))) {
             return BuggyConfigurationYML.getArtifactsUrl().endsWith("/") ?
                     BuggyConfigurationYML.getArtifactsUrl() :
                     BuggyConfigurationYML.getArtifactsUrl() + "/";
         } else {
-            String fileName = getLogFileName(method);
-            SiftingTestLogger.setTestStatus(fileName, status);
-            File file = SiftingTestLogger.getSiftingLogFile(fileName);
+            File file = SiftingTestLogger.getSiftingLogFile();
             if (file != null) {
                 return "file://" + file.getAbsolutePath();
             } else {
-                return "Log file not found: " + fileName;
+                return "Log file not found";
             }
         }
     }

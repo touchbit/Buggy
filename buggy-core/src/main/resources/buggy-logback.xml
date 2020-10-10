@@ -1,41 +1,12 @@
 <configuration debug="false">
     <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+    <property name="LOG_PATH" value="${LOG_PATH:-logs}"/>
 
-    <property name="logging.file.path" value="${LOG_PATH:-logs}"/>
-    <property name="test.log.pattern" value="%d{HH:mm:ss.SSS} - %m%n"/>
-    <property name="base.log.pattern" value="%d{HH:mm:ss.SSS} %-5level - %m%n"/>
-
-    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="org.touchbit.buggy.core.logback.layout.ConsoleLoggerColorLayout"/>
-        </encoder>
-    </appender>
-    <appender name="Framework" class="ch.qos.logback.core.FileAppender">
-        <file>${logging.file.path}/Framework.log</file>
-        <append>false</append>
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="org.touchbit.buggy.core.logback.layout.FrameworkLoggerLayout"/>
-        </encoder>
-    </appender>
-    <appender name="Sifting" class="ch.qos.logback.classic.sift.SiftingAppender">
-        <discriminator>
-            <key>sifting.test.log.file.path</key>
-            <defaultValue>default-sifting.log</defaultValue>
-        </discriminator>
-        <sift>
-            <appender class="org.touchbit.buggy.core.logback.appender.DecomposeTestLogsFileAppender">
-                <file>${logging.file.path}/${sifting.test.log.file.path}</file>
-                <append>false</append>
-                <layout class="org.touchbit.buggy.core.logback.layout.ShiftingLoggerLayout"/>
-            </appender>
-        </sift>
-    </appender>
-    <appender name="TestSupervisor" class="ch.qos.logback.core.FileAppender">
-        <file>${logging.file.path}/TestSupervisor.log</file>
-        <append>false</append>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>${base.log.pattern}</Pattern>
-        </encoder>
+    <appender name="Console"        class="org.touchbit.buggy.core.logback.appender.ConsoleColorAppender"/>
+    <appender name="Framework"      class="org.touchbit.buggy.core.logback.appender.FrameworkFileAppender"/>
+    <appender name="TestSupervisor" class="org.touchbit.buggy.core.logback.appender.TestSupervisorFileAppender"/>
+    <appender name="Sifting"        class="org.touchbit.buggy.core.logback.appender.SiftingAppender">
+        <sift><appender class="org.touchbit.buggy.core.logback.appender.SiftingFileAppender"/></sift>
     </appender>
 
     <root level="INFO">

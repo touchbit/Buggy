@@ -15,7 +15,7 @@ import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.logback.ConfLogger;
 import org.touchbit.buggy.core.logback.FrameworkLogger;
-import org.touchbit.buggy.core.logback.appender.DecomposeTestLogsFileAppender;
+import org.touchbit.buggy.core.logback.appender.SiftingFileAppender;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.testng.BuggyListener;
 import org.touchbit.buggy.core.utils.JUtils;
@@ -93,7 +93,7 @@ public class BuggyRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // TODO exit_1 if test methods names not unique
+        ConfLogger.blockDelimiter();
         Map<Suite, Set<Class<?>>> testClassesBySuitesMap = getTestClassesBySuitesMap(filteredTestClasses);
         List<XmlSuite> xmlSuites = getXmlSuites(testClassesBySuitesMap);
         TestNG testNG = getTestNG();
@@ -106,7 +106,7 @@ public class BuggyRunner implements CommandLineRunner {
             }
             testNG.setXmlSuites(xmlSuites);
             testNG.run();
-            DecomposeTestLogsFileAppender.decomposeTestLogs();
+            SiftingFileAppender.decomposeTestLogs();
             if (BuggyConfiguration.getExitStatus() != null) {
                 exit(BuggyConfiguration.getExitStatus());
             }
@@ -114,7 +114,7 @@ public class BuggyRunner implements CommandLineRunner {
         } catch (Exception e) {
             exit(1, "TestNG safely died.", e);
         } finally {
-            DecomposeTestLogsFileAppender.decomposeTestLogs();
+            SiftingFileAppender.decomposeTestLogs();
         }
     }
 

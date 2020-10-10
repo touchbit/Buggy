@@ -15,7 +15,7 @@ import java.util.Date;
  * Created by Oleg Shaburov on 30.09.2020
  * shaburov.o.a@gmail.com
  */
-public class ShiftingLoggerLayout extends LayoutBase<ILoggingEvent> {
+public class ShiftingLoggerLayout<E extends ILoggingEvent> extends LayoutBase<E> {
 
     private static final CachingDateFormatter TIME_FORMATTER = new CachingDateFormatter("HH:mm:ss.SSS");
     private static final CachingDateFormatter DATE_FORMATTER = new CachingDateFormatter("dd.MM.YYYY");
@@ -47,7 +47,7 @@ public class ShiftingLoggerLayout extends LayoutBase<ILoggingEvent> {
      * at org.springframework.util.Assert.notNull(Assert.java:201)
      */
     @Override
-    public String doLayout(final ILoggingEvent event) {
+    public String doLayout(final E event) {
         final long timestamp = event.getTimeStamp();
         final String message = event.getFormattedMessage();
         final IThrowableProxy tProxy = event.getThrowableProxy();

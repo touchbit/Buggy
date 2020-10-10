@@ -1,33 +1,37 @@
 package org.touchbit.buggy.core.logback;
 
-import org.slf4j.MDC;
-import org.touchbit.buggy.core.logback.appender.DecomposeTestLogsFileAppender;
-import org.touchbit.buggy.core.model.IStatus;
+import org.testng.IInvokedMethod;
+import org.testng.ITestNGMethod;
+import org.touchbit.buggy.core.logback.appender.SiftingFileAppender;
+import org.touchbit.buggy.core.model.ResultStatus;
 
 import java.io.File;
 
 public class SiftingTestLogger extends BaseLogbackWrapper {
 
-    public static final String SIFTING_LOG_FILE_PATH = "sifting.test.log.file.path";
-    public static final String SIFTING_LOG_DIR = "tests";
-
     public SiftingTestLogger() {
         super(SIFTING_LOGGER_NAME);
     }
 
-    public static void setTestLogFileName(String logFileName) {
-        setTestLogFile(new File(SIFTING_LOG_DIR, logFileName));
+    public static void setTestLogFileName(IInvokedMethod method) {
+        if (method != null) {
+            setTestLogFileName(method.getTestMethod());
+        }
     }
 
-    public static void setTestLogFile(File file) {
-        MDC.put(SIFTING_LOG_FILE_PATH, file.getPath());
+    public static void setTestLogFileName(ITestNGMethod iTestNGMethod) {
+        if (iTestNGMethod != null) {
+            String name = iTestNGMethod.getConstructorOrMethod().getMethod().getName();
+            SiftingFileAppender.setTestLogFileName(name);
+        }
     }
 
-    public static File getSiftingLogFile(String fileName) {
-        return DecomposeTestLogsFileAppender.getFile(fileName);
+    public static File getSiftingLogFile() {
+        return SiftingFileAppender.getTestLogFile();
     }
 
-    public static void setTestStatus(String fileName, IStatus status) {
-        DecomposeTestLogsFileAppender.setTestStatus(fileName, status);
+    public static void setTestResultStatus(ResultStatus status) {
+        SiftingFileAppender.setTestResultStatus(status);
     }
+
 }
