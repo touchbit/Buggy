@@ -24,7 +24,7 @@ public class SiftingFileAppender<E extends ILoggingEvent> extends BaseBuggyFileA
     public SiftingFileAppender() {
         super.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
         super.setLayout(new ShiftingLoggerLayout<>());
-        super.append = true;
+        super.append = false;
     }
 
     public static synchronized void setTestLogFileName(String logFileName) {

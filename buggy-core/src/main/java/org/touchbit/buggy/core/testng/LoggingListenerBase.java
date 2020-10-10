@@ -63,7 +63,7 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
         String methodName = TestNGHelper.getMethodName(method);
         Throwable throwable = testResult.getThrowable();
         if (hasDetails(method) && hasSuite(method) && method.isTestMethod()) {
-            Details details = getDetails(method);
+            Buggy buggy = getDetails(method);
             Suite suite = getSuite(method);
             String component = JUtils.getGoal(Suite::component, suite).getName().trim();
             String service = JUtils.getGoal(Suite::service, suite).getName().trim();
@@ -71,11 +71,11 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
             //noinspection ConstantConditions
             String purpose = suite.purpose().trim();
             //noinspection ConstantConditions
-            Status status = details.status();
-            Type[] types = details.types();
-            String[] ids = details.caseIDs();
-            String[] issues = details.issues();
-            String[] bugs = details.bugs();
+            Status status = buggy.status();
+            Type[] types = buggy.types();
+            String[] ids = buggy.caseIDs();
+            String[] issues = buggy.issues();
+            String[] bugs = buggy.bugs();
             String indent = " ";
 
             String dotPlaceholder = ConfLogger.getDotPlaceholder(methodName, resultStatus);

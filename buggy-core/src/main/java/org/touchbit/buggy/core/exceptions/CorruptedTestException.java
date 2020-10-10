@@ -16,7 +16,7 @@
 
 package org.touchbit.buggy.core.exceptions;
 
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 
 /**
  * Created by Oleg Shaburov on 18.05.2018
@@ -26,8 +26,8 @@ public class CorruptedTestException extends BaseBuggyTestException {
 
     private static final String MSG = "The autotest is corrupted and must be repaired.";
 
-    public CorruptedTestException(Details details) {
-        super(getMsg(MSG, details));
+    public CorruptedTestException(Buggy buggy) {
+        super(getMsg(MSG, buggy));
     }
 
     public CorruptedTestException() {

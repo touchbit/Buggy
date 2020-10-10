@@ -18,7 +18,7 @@ package org.touchbit.buggy.core.config;
 
 import org.testng.annotations.Test;
 import org.touchbit.buggy.core.BaseBuggyTest;
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.Suite;
 
 /**
@@ -29,7 +29,7 @@ import org.touchbit.buggy.core.model.Suite;
 public class TestClassWithSuite extends BaseBuggyTest {
 
     @Test(description = "test_20181021171954")
-    @Details
+    @Buggy
     public void test_20181021171954() {
         step("Example step test_20181021171954");
     }

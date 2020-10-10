@@ -21,7 +21,7 @@ import org.testng.IExecutionListener;
 import org.touchbit.buggy.core.logback.ConsoleLogger;
 import org.touchbit.buggy.core.logback.FrameworkLogger;
 import org.touchbit.buggy.core.logback.SiftingTestLogger;
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 
 import java.util.Arrays;
 import java.util.StringJoiner;
@@ -50,8 +50,8 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         }
     }
 
-    protected boolean isIssuesPresent(Details details) {
-        for (String s : details.issues()) {
+    protected boolean isIssuesPresent(Buggy buggy) {
+        for (String s : buggy.issues()) {
             if (!s.isEmpty()) {
                 return true;
             }
@@ -59,20 +59,20 @@ public abstract class BaseBuggyExecutionListener implements BuggyListener, IExec
         return false;
     }
 
-    protected String getIssues(Details details) {
-        String[] issues = details.issues();
+    protected String getIssues(Buggy buggy) {
+        String[] issues = buggy.issues();
         if (issues.length == 0) {
             return "";
         }
-        return Arrays.toString(details.issues());
+        return Arrays.toString(buggy.issues());
     }
 
-    protected String buildDetailsMessage(Details details, Object... appends) {
+    protected String buildDetailsMessage(Buggy buggy, Object... appends) {
         StringJoiner stringJoiner = new StringJoiner(" ");
         for (Object o : appends) {
             stringJoiner.add(String.valueOf(o));
         }
-        String ref = isIssuesPresent(details) ? "" + getIssues(details).trim() : "";
+        String ref = isIssuesPresent(buggy) ? "" + getIssues(buggy).trim() : "";
         String appendsResult = stringJoiner.toString().trim();
         if (ref.length() != 0) {
             return ref + (appendsResult.length() > 0 ? " " + appendsResult.trim() : "");

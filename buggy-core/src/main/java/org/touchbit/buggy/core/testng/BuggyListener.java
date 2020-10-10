@@ -2,7 +2,7 @@ package org.touchbit.buggy.core.testng;
 
 import org.jetbrains.annotations.Nullable;
 import org.testng.*;
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.ResultStatus;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
@@ -48,7 +48,7 @@ public interface BuggyListener extends ITestNGListener {
         if (!hasDetails(method)) {
             return isITestResultSuccess(method);
         }
-        Status status = getDetailsValue(Details::status, method);
+        Status status = getDetailsValue(Buggy::status, method);
         return status.equals(NONE) && isITestResultSuccess(method);
     }
 
@@ -57,7 +57,7 @@ public interface BuggyListener extends ITestNGListener {
         if (!hasDetails(method)) {
             return isITestResultFailure(method);
         }
-        Status status = getDetailsValue(Details::status, method);
+        Status status = getDetailsValue(Buggy::status, method);
         return status.equals(NONE) && isITestResultFailure(method);
     }
 
@@ -66,7 +66,7 @@ public interface BuggyListener extends ITestNGListener {
         if (!hasDetails(method)) {
             return false;
         }
-        Status status = getDetailsValue(Details::status, method);
+        Status status = getDetailsValue(Buggy::status, method);
         return (status.equals(EXP_FIX) || status.equals(BLOCKED) || status.equals(CORRUPTED)) &&
                 isITestResultSuccess(method);
     }
@@ -76,7 +76,7 @@ public interface BuggyListener extends ITestNGListener {
         if (!hasDetails(method)) {
             return false;
         }
-        Status status = getDetailsValue(Details::status, method);
+        Status status = getDetailsValue(Buggy::status, method);
         return status.equals(EXP_IMPL) && isITestResultSuccess(method);
     }
 
@@ -85,7 +85,7 @@ public interface BuggyListener extends ITestNGListener {
         if (!hasDetails(method)) {
             return false;
         }
-        Status status = getDetailsValue(Details::status, method);
+        Status status = getDetailsValue(Buggy::status, method);
         return status.equals(EXP_IMPL) && isITestResultFailure(method);
     }
 
@@ -94,7 +94,7 @@ public interface BuggyListener extends ITestNGListener {
         if (!hasDetails(method)) {
             return false;
         }
-        Status status = getDetailsValue(Details::status, method);
+        Status status = getDetailsValue(Buggy::status, method);
         return status.equals(EXP_FIX) && isITestResultFailure(method);
     }
 
@@ -103,7 +103,7 @@ public interface BuggyListener extends ITestNGListener {
         if (!hasDetails(method)) {
             return false;
         }
-        Status status = getDetailsValue(Details::status, method);
+        Status status = getDetailsValue(Buggy::status, method);
         return status.equals(CORRUPTED) && isITestResultFailure(method);
     }
 
@@ -112,7 +112,7 @@ public interface BuggyListener extends ITestNGListener {
         if (!hasDetails(method)) {
             return false;
         }
-        Status status = getDetailsValue(Details::status, method);
+        Status status = getDetailsValue(Buggy::status, method);
         return status.equals(BLOCKED) && isITestResultFailure(method);
     }
 
@@ -181,15 +181,15 @@ public interface BuggyListener extends ITestNGListener {
         return iTestResult == ITestResult.SKIP;
     }
 
-    default <T> T getDetailsValue(Function<Details, T> function, IInvokedMethod method) {
+    default <T> T getDetailsValue(Function<Buggy, T> function, IInvokedMethod method) {
         throwNPE(method);
-        Details details = getDetails(method);
-        return getDetailsValue(function, details);
+        Buggy buggy = getDetails(method);
+        return getDetailsValue(function, buggy);
     }
 
-    default <T> T getDetailsValue(Function<Details, T> function, Details details) {
-        throwNPE(details);
-        return function.apply(details);
+    default <T> T getDetailsValue(Function<Buggy, T> function, Buggy buggy) {
+        throwNPE(buggy);
+        return function.apply(buggy);
     }
 
     default int getITestResultStatus(ITestResult iTestResult) {
@@ -242,13 +242,13 @@ public interface BuggyListener extends ITestNGListener {
 
     default boolean hasDetails(Method method) {
         if (method != null) {
-            return method.isAnnotationPresent(Details.class);
+            return method.isAnnotationPresent(Buggy.class);
         }
         return false;
     }
 
     @Nullable
-    default Details getDetails(IInvokedMethod method) {
+    default Buggy getDetails(IInvokedMethod method) {
         if (hasDetails(method)) {
             return getDetails(method.getTestMethod());
         }
@@ -256,7 +256,7 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     @Nullable
-    default Details getDetails(ITestNGMethod method) {
+    default Buggy getDetails(ITestNGMethod method) {
         if (hasDetails(method)) {
             return getDetails(method.getConstructorOrMethod().getMethod());
         }
@@ -264,9 +264,9 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     @Nullable
-    default Details getDetails(Method method) {
+    default Buggy getDetails(Method method) {
         if (hasDetails(method)) {
-            return method.getAnnotation(Details.class);
+            return method.getAnnotation(Buggy.class);
         }
         return null;
     }

@@ -6,7 +6,7 @@ import org.touchbit.buggy.core.exceptions.BlockedTestException;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.exceptions.CorruptedTestException;
 import org.touchbit.buggy.core.exceptions.ExpectedImplementationException;
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.testrail.BaseTestRailConfig;
 import org.touchbit.buggy.testrail.StatusMapper;
@@ -27,65 +27,65 @@ public abstract class DefaultTestRailListener extends BaseTestRailListener<Statu
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult result) {
-        Details details = getDetails(method);
-        String throwableMsg = processResultThrowable(details, result);
-        if (method.isTestMethod() && details != null && result.getMethod().getInvocationCount() > 0) {
+        Buggy buggy = getDetails(method);
+        String throwableMsg = processResultThrowable(buggy, result);
+        if (method.isTestMethod() && buggy != null && result.getMethod().getInvocationCount() > 0) {
             int rStatus = result.getStatus();
             if (rStatus == ITestResult.SUCCESS) {
-                processSuccessTest(details, result, throwableMsg);
+                processSuccessTest(buggy, result, throwableMsg);
             } else {
-                processErrorTest(details, result, throwableMsg);
+                processErrorTest(buggy, result, throwableMsg);
             }
         }
     }
 
-    protected void processErrorTest(Details details, ITestResult result, String throwableMsg) {
-        switch (details.status()) {
+    protected void processErrorTest(Buggy buggy, ITestResult result, String throwableMsg) {
+        switch (buggy.status()) {
             case SKIP:
             case FAILED:
             case EXP_FIX:
             case BLOCKED:
             case EXP_IMPL:
             case CORRUPTED:
-                addResult(result, details, details.status(), throwableMsg);
+                addResult(result, buggy, buggy.status(), throwableMsg);
                 break;
             default:
-                addResult(result, details, FAILED, throwableMsg);
+                addResult(result, buggy, FAILED, throwableMsg);
         }
     }
 
-    protected String processResultThrowable(Details details, ITestResult result) {
+    protected String processResultThrowable(Buggy buggy, ITestResult result) {
         if (result.getStatus() != ITestResult.SUCCESS) {
-            if (BLOCKED.equals(details.status())) {
+            if (BLOCKED.equals(buggy.status())) {
                 result.setThrowable(new BlockedTestException());
             }
-            if (EXP_IMPL.equals(details.status())) {
+            if (EXP_IMPL.equals(buggy.status())) {
                 result.setThrowable(new ExpectedImplementationException());
             }
-            if (CORRUPTED.equals(details.status())) {
-                result.setThrowable(new CorruptedTestException(details));
+            if (CORRUPTED.equals(buggy.status())) {
+                result.setThrowable(new CorruptedTestException(buggy));
             }
         }
         Throwable throwable = result.getThrowable();
         return throwable == null ? "" : " " + throwable.getMessage();
     }
 
-    protected void processSuccessTest(Details details, ITestResult result, String throwableMsg) {
-        switch (details.status()) {
+    protected void processSuccessTest(Buggy buggy, ITestResult result, String throwableMsg) {
+        switch (buggy.status()) {
             case EXP_FIX:
             case BLOCKED:
-                addResult(result, details, FIXED,
+                addResult(result, buggy, FIXED,
                         "The error has been fixed. You need to edit the status for the test." + throwableMsg);
                 break;
             case EXP_IMPL:
-                addResult(result, details, IMPLEMENTED,
+                addResult(result, buggy, IMPLEMENTED,
                         "The test passed successfully. You need to edit the status for the test." + throwableMsg);
                 break;
             case CORRUPTED:
-                addResult(result, details, CORRUPTED, new CorruptedTestException(details).getMessage());
+                addResult(result, buggy, CORRUPTED, new CorruptedTestException(buggy).getMessage());
                 break;
             default:
-                addResult(result, details, SUCCESS, "The test passed successfully." + throwableMsg);
+                addResult(result, buggy, SUCCESS, "The test passed successfully." + throwableMsg);
         }
     }
 

@@ -4,7 +4,7 @@ import org.testng.annotations.Test;
 import org.touchbit.buggy.core.BaseBuggyTest;
 import org.touchbit.buggy.core.exceptions.AssertionException;
 import org.touchbit.buggy.core.goal.interfaze.API;
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
 
@@ -12,7 +12,7 @@ import org.touchbit.buggy.core.model.Suite;
 public class ExampleTests2 extends BaseBuggyTest {
 
     @Test(description = "Ожидается успешное создание пользователя, если firstName=<пустая строка>")
-    @Details(status = Status.EXP_FIX, bugs = "JIRA-123")
+    @Buggy(status = Status.EXP_FIX, bugs = "JIRA-123")
     public void test_2() {
         throw new AssertionException("The following 4 assertions failed:\n" +
                 "     1) [Living Guests] expected:<[7]> but was:<[6]>\n" +
@@ -21,8 +21,8 @@ public class ExampleTests2 extends BaseBuggyTest {
                 "     4) [Professor] expected:<'[well kempt]'> but was:<'[bloodied and dishevelled]'>");
     }
 
-    @Test(description = "")
-    @Details(status = Status.EXP_IMPL, bugs = "JIRA-321")
+    @Test()
+    @Buggy("Ожидается успешное создание пользователя, если middleName=<пустая строка>")
     public void test_1() {
 
     }

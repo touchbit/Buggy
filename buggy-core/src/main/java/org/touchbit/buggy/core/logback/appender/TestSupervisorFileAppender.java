@@ -13,7 +13,7 @@ public class TestSupervisorFileAppender<E extends ILoggingEvent> extends BaseBug
         super.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
         super.setLayout(new TestSupervisorLoggerLayout<>());
         super.setFile(new File(LOG_DIR, "TestSupervisor.log").getPath());
-        super.append = true;
+        super.append = false;
     }
 
 }

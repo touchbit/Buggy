@@ -16,6 +16,8 @@
 
 package org.touchbit.buggy.core.model;
 
+import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,12 +34,22 @@ import static org.touchbit.buggy.core.model.Status.NONE;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Details {
+public @interface Buggy {
+
+    @AliasFor("testCase")
+    String value() default "";
+
+    @AliasFor("value")
+    String testCase() default "";
 
     /**
      * Test-case identifiers
      */
+    @AliasFor("IDs")
     String[] caseIDs() default {""};
+
+    @AliasFor("caseIDs")
+    String[] IDs() default {""};
 
     /**
      * Test status (see: {@link Status})

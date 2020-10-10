@@ -13,7 +13,7 @@ public class FrameworkFileAppender<E extends ILoggingEvent> extends BaseBuggyFil
         super.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
         super.setLayout(new FrameworkLoggerLayout<>());
         super.setFile(new File(LOG_DIR, "Framework" + LOG_EXT).getPath());
-        super.append = true;
+        super.append = false;
     }
 
 }

@@ -6,7 +6,7 @@ import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
 import org.touchbit.buggy.core.logback.ConfLogger;
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.Status;
 
 import java.util.Date;
@@ -49,8 +49,8 @@ public class TestStatisticListener implements BuggyListener, IExecutionListener,
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         if (method.isTestMethod()) {
-            Details details = getDetails(method);
-            if (details == null) {
+            Buggy buggy = getDetails(method);
+            if (buggy == null) {
                 notDetailedTests.incrementAndGet(); // TODO remove after --check realisation
             }
             totalCountOfTests.incrementAndGet();
@@ -66,8 +66,8 @@ public class TestStatisticListener implements BuggyListener, IExecutionListener,
             if (testNgTestStatus == FAILURE || testNgTestStatus == SUCCESS_PERCENTAGE_FAILURE) {
                 unsuccess.incrementAndGet();
             }
-            if (details != null) {
-                Status status = details.status();
+            if (buggy != null) {
+                Status status = buggy.status();
                 if (testNgTestStatus == SUCCESS) {
                     switch (status) {
                         case BLOCKED:

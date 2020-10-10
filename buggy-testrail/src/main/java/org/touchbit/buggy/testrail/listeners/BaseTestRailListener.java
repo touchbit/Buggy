@@ -4,7 +4,7 @@ import org.testng.IExecutionListener;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
 import org.touchbit.buggy.core.config.BuggyConfigurationYML;
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.testng.BaseBuggyExecutionListener;
 import org.touchbit.buggy.testrail.BaseTestRailConfig;
 import org.touchbit.buggy.testrail.RunsResultsStorage;
@@ -87,7 +87,7 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
         }
     }
 
-    protected void addResult(ITestResult result, Details details, S status, String comment) {
+    protected void addResult(ITestResult result, Buggy buggy, S status, String comment) {
         String msg = comment + addAttachments(result);
         String strRunID = "0"; // TODO
 //        String strRunID = String.valueOf(result.getAttribute(RUN_ID.toString()));
@@ -96,10 +96,10 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
         }
         try {
             Long runID = Long.parseLong(strRunID);
-            for (String caseId : details.caseIDs()) {
+            for (String caseId : buggy.caseIDs()) {
                 if (statusMapper.getId(status) > 0) {
                     StringJoiner defects = new StringJoiner(", ");
-                    for (String bug : details.bugs()) {
+                    for (String bug : buggy.bugs()) {
                         defects.add(bug);
                     }
                     TRResult trResult = new TRResult()
@@ -120,7 +120,7 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
 
     protected String addAttachments(ITestResult testResult) {
         Method method = testResult.getMethod().getConstructorOrMethod().getMethod();
-        Details trCase = method.getAnnotation(Details.class);
+        Buggy trCase = method.getAnnotation(Buggy.class);
 
         String caseIds = trCase != null ? Arrays.toString(trCase.caseIDs()) + "_" : "";
         String prefix = caseIds + method.getName();

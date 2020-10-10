@@ -15,7 +15,7 @@ import org.touchbit.buggy.core.goal.component.Component;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.helpful.UnitTestLogger;
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.model.Type;
@@ -131,26 +131,41 @@ public abstract class BaseUnitTest {
     }
 
     @SuppressWarnings("unused")
-    protected static Details getDetails() {
+    protected static Buggy getDetails() {
         return getDetails(SUCCESS, MODULE);
     }
 
-    protected static Details getDetails(Type type) {
+    protected static Buggy getDetails(Type type) {
         return getDetails(SUCCESS, type);
     }
 
-    protected static Details getDetails(Status status, String... issue) {
+    protected static Buggy getDetails(Status status, String... issue) {
         return getDetails(status, SYSTEM, issue);
     }
 
-    protected static Details getDetails(Status status, Type type, String... issue) {
+    protected static Buggy getDetails(Status status, Type type, String... issue) {
         return getDetails(new String[] {"0"}, status, new Type[]{type}, issue);
     }
 
-    protected static Details getDetails(String[] ids, Status status, Type[] type, String... issue) {
-        return new Details() {
+    protected static Buggy getDetails(String[] ids, Status status, Type[] type, String... issue) {
+        return new Buggy() {
+            @Override
+            public String value() {
+                return null;
+            }
+
+            @Override
+            public String testCase() {
+                return null;
+            }
+
             @Override
             public String[] caseIDs() {
+                return ids;
+            }
+
+            @Override
+            public String[] IDs() {
                 return ids;
             }
 
@@ -176,7 +191,7 @@ public abstract class BaseUnitTest {
 
             @Override
             public Class<? extends Annotation> annotationType() {
-                return Details.class;
+                return Buggy.class;
             }
         };
     }
@@ -282,7 +297,7 @@ public abstract class BaseUnitTest {
         public ITestNGMethod method;
         public Status status;
         public String msg;
-        public Details details;
+        public Buggy buggy;
         public File sourceFile;
         public File targetFile;
 
@@ -290,17 +305,17 @@ public abstract class BaseUnitTest {
             this(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER);
         }
 
-        public UnitTestBuggyExecutionListener(Details details) {
-            this(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER, details);
+        public UnitTestBuggyExecutionListener(Buggy buggy) {
+            this(TEST_LOGGER, TEST_LOGGER, TEST_LOGGER, buggy);
         }
 
         public UnitTestBuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger) {
             this(testLogger, frameworkLogger, consoleLogger, null);
         }
 
-        public UnitTestBuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger, Details details) {
+        public UnitTestBuggyExecutionListener(Logger testLogger, Logger frameworkLogger, Logger consoleLogger, Buggy buggy) {
             super(testLogger, frameworkLogger, consoleLogger);
-            this.details = details;
+            this.buggy = buggy;
         }
 
     }
