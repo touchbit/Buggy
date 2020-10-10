@@ -1,4 +1,4 @@
-package org.touchbit.buggy.spring.boot.starter.example;
+package org.touchbit.buggy.spring.boot.starter.example.tests;
 
 import org.testng.annotations.Test;
 import org.touchbit.buggy.core.BaseBuggyTest;

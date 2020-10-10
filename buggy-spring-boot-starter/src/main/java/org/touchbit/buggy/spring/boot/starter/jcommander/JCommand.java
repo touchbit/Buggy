@@ -1,26 +1,15 @@
 package org.touchbit.buggy.spring.boot.starter.jcommander;
 
 import com.beust.jcommander.Parameter;
+import org.touchbit.buggy.core.config.ConfigurationYML;
+import org.touchbit.buggy.core.logback.FrameworkLogger;
 import org.touchbit.buggy.core.utils.JUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-/**
- * An interface for finding all inherited {@link com.beust.jcommander.JCommander} configuration classes.
- * Search is performed using spring-boot annotation @ComponentScan.
- * <p>
- * All fields and setter-methods marked with {@link Parameter} annotation must be static.
- * <p>
- * Your config classes should be in the "buggy" package since ComponentScan
- * is limited to filter (basePackages = "**.buggy") to speed up the search for all inheritors.
- * For example: org.example.foo.bar.buggy.MyConfiguration.class (implements IBuggyConfig).
- * <p>
- * Created by Oleg Shaburov on 01.10.2020
- * shaburov.o.a@gmail.com
- */
-public interface JCommand {
+public interface JCommand extends ConfigurationYML {
 
     /**
      * Convert configuration parameters and values to map where:
@@ -46,15 +35,18 @@ public interface JCommand {
             Parameter parameter = field.getAnnotation(Parameter.class);
             if (parameter != null && !parameter.hidden()) {
                 String[] names = parameter.names();
+                String parameters = Arrays.toString(names);
                 try {
                     if (parameter.password()) {
-                        map.put(Arrays.toString(names), "*****");
+                        map.put(parameters, "*****");
                     } else {
                         field.setAccessible(true);
-                        map.put(Arrays.toString(names), field.get(this));
+                        map.put(parameters, field.get(this));
                     }
                 } catch (Exception e) {
-//                    ConfigurationLogger.errPrint(e.getMessage()); TODO
+                    map.put(parameters, "<ERROR>");
+                    new FrameworkLogger().error("Error getting value from field " +
+                            field.getDeclaringClass().getSimpleName() + "#" + field.getName(), e);
                 } finally {
                     field.setAccessible(false);
                 }
@@ -91,7 +83,12 @@ public interface JCommand {
                 method.getValue().setAccessible(true);
                 map.put(method.getKey().toString(), method.getValue().invoke(this));
             } catch (Exception e) {
-//                ConfigurationLogger.errPrint(e.getMessage()); TODO
+                map.put(method.getKey().toString(), "<ERROR>");
+                Method m = method.getValue();
+                StringJoiner sj = new StringJoiner(", ", "(", ")");
+                Arrays.stream(m.getParameterTypes()).forEach(p -> sj.add(p.getSimpleName()));
+                new FrameworkLogger().error("Error getting value from method " +
+                        m.getDeclaringClass().getSimpleName() + "#" + m.getName() + sj.toString(), e);
             } finally {
                 method.getValue().setAccessible(false);
             }

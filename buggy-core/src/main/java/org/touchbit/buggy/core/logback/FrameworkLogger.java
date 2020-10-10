@@ -4,8 +4,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 
 import java.io.File;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FrameworkLogger extends BaseLogbackWrapper {

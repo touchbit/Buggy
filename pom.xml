@@ -20,6 +20,7 @@
         <module>buggy-feign</module>
         <module>buggy-okhttp</module>
         <module>buggy-testrail</module>
+        <module>buggy-testng-listeners</module>
     </modules>
 
     <licenses>
@@ -174,6 +175,12 @@
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-testrail</artifactId>
+                <version>0.3.7</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.touchbit.buggy</groupId>
+                <artifactId>buggy-testng-listeners</artifactId>
                 <version>0.3.7</version>
                 <scope>compile</scope>
             </dependency>
@@ -341,20 +348,12 @@
                                             <Version>${project.version}</Version>
                                         </manifestEntries>
                                     </transformer>
-                                    <transformer implementation="org.atteo.classindex.ClassIndexTransformer"/>
                                 </transformers>
                                 <shadedClassifierName>executable</shadedClassifierName>
                                 <createDependencyReducedPom>true</createDependencyReducedPom>
                             </configuration>
                         </execution>
                     </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.atteo.classindex</groupId>
-                            <artifactId>classindex-transformer</artifactId>
-                            <version>3.7</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -18,7 +18,6 @@ package org.touchbit.buggy.core.tests.testng;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.buggy.core.config.BuggyConfig;
 import org.touchbit.buggy.core.model.Notifier;
 import org.touchbit.buggy.core.testng.BaseTelegramNotifier;
 import org.touchbit.buggy.core.tests.BaseUnitTest;

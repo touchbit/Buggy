@@ -8,7 +8,6 @@ import org.testng.ITestResult;
 import org.touchbit.buggy.core.logback.ConfLogger;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Status;
-import org.touchbit.buggy.core.utils.TestNGHelper;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;

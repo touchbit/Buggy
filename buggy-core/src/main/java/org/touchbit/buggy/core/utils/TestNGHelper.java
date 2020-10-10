@@ -1,8 +1,6 @@
 package org.touchbit.buggy.core.utils;
 
-import org.jetbrains.annotations.Nullable;
 import org.testng.IInvokedMethod;
-import org.testng.ITestClass;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 

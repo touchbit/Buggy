@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebAppli
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.touchbit.buggy.core.config.BuggyConfig;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
 import org.touchbit.buggy.core.goal.Goal;
 import org.touchbit.buggy.core.goal.component.AllComponents;
 import org.touchbit.buggy.core.goal.component.Component;
@@ -40,7 +40,7 @@ import static org.touchbit.buggy.spring.boot.starter.conf.Qualifiers.*;
 @Configuration()
 @ConditionalOnNotWebApplication
 @EnableConfigurationProperties(ApplicationProperties.class)
-public class BuggyConfiguration implements IConfiguration {
+public class BuggyRunnerConfiguration implements IConfiguration {
 
     private final ApplicationProperties properties;
     private final Set<BuggyListener> allBuggyListeners;
@@ -55,7 +55,7 @@ public class BuggyConfiguration implements IConfiguration {
     private final Set<Interface> allInterfaces;
     private final Set<Interface> availableInterfaces;
 
-    public BuggyConfiguration(final boolean isLogbackConfigurationInitialized, final ApplicationProperties props) {
+    public BuggyRunnerConfiguration(final boolean isLogbackConfigurationInitialized, final ApplicationProperties props) {
         beforeConfiguration(isLogbackConfigurationInitialized);
         properties = props;
         allBuggyListeners = scanTestNGListeners();
@@ -63,11 +63,11 @@ public class BuggyConfiguration implements IConfiguration {
         allTestClasses = scanTestClassesWithSuiteAnnotation();
         filteredTestClasses = filterTestClassesByBuggyConfig(allTestClasses);
         allGoals = scanGoals();
-        allComponents = filterByGoalType(allGoals, BuggyConfig.getComponents(), Component.class, AllComponents.class);
+        allComponents = filterByGoalType(allGoals, BuggyConfigurationYML.getComponents(), Component.class, AllComponents.class);
         availableComponents = filterComponentsByTestClasses(allComponents, filteredTestClasses);
-        allServices = filterByGoalType(allGoals, BuggyConfig.getComponents(), Service.class, AllServices.class);
+        allServices = filterByGoalType(allGoals, BuggyConfigurationYML.getComponents(), Service.class, AllServices.class);
         availableServices = filterServiceByTestClasses(allServices, filteredTestClasses);
-        allInterfaces = filterByGoalType(allGoals, BuggyConfig.getComponents(), Interface.class, AllInterfaces.class);
+        allInterfaces = filterByGoalType(allGoals, BuggyConfigurationYML.getComponents(), Interface.class, AllInterfaces.class);
         availableInterfaces = filterInterfaceByTestClasses(allInterfaces, filteredTestClasses);
     }
 
@@ -104,13 +104,13 @@ public class BuggyConfiguration implements IConfiguration {
     }
 
     public Set<Class<?>> filterTestClassesByBuggyConfig(Set<Class<?>> testClassesWithSuiteAnnotation) {
-        List<Class<? extends Component>> components = BuggyConfig.getComponents().stream()
+        List<Class<? extends Component>> components = BuggyConfigurationYML.getComponents().stream()
                 .map(Component::getClass)
                 .collect(Collectors.toList());
-        List<Class<? extends Service>> services = BuggyConfig.getServices().stream()
+        List<Class<? extends Service>> services = BuggyConfigurationYML.getServices().stream()
                 .map(Service::getClass)
                 .collect(Collectors.toList());
-        List<Class<? extends Interface>> interfaces = BuggyConfig.getInterfaces().stream()
+        List<Class<? extends Interface>> interfaces = BuggyConfigurationYML.getInterfaces().stream()
                 .map(Interface::getClass)
                 .collect(Collectors.toList());
         return testClassesWithSuiteAnnotation.stream()

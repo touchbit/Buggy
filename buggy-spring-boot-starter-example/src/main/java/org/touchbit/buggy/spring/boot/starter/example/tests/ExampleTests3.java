@@ -1,7 +1,6 @@
-package org.touchbit.buggy.spring.boot.starter.example;
+package org.touchbit.buggy.spring.boot.starter.example.tests;
 
 import org.testng.annotations.Test;
-import org.touchbit.buggy.core.exceptions.CorruptedTestException;
 import org.touchbit.buggy.core.goal.interfaze.API;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Suite;

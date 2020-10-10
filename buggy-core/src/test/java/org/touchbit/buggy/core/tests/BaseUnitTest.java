@@ -1,6 +1,5 @@
 package org.touchbit.buggy.core.tests;
 
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.function.Executable;
 import org.slf4j.Logger;
 import org.testng.IInvokedMethod;
@@ -23,7 +22,6 @@ import org.touchbit.buggy.core.model.Type;
 import org.touchbit.buggy.core.testng.BuggyExecutionListener;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

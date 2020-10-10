@@ -1,12 +1,8 @@
 package org.touchbit.buggy.core.utils;
 
-import org.touchbit.buggy.core.config.BuggyConfigYML;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.goal.Goal;
 import org.touchbit.buggy.core.model.Suite;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,18 +24,8 @@ import java.util.stream.Collectors;
  */
 public class JUtils {
 
-    public static final String BUGGY_CONFIG_YML = "buggy-config.yml";
-
     private JUtils() {
         throw new IllegalStateException("Utility class. Prohibit instantiation.");
-    }
-
-    public static void initBuggyConfigurationYml() {
-        Representer representer = new Representer();
-        representer.getPropertyUtils().setSkipMissingProperties(true);
-        Yaml yaml = new Yaml(new Constructor(BuggyConfigYML.class), representer);
-        InputStream inputStream = JUtils.getCurrentThreadClassLoader().getResourceAsStream(BUGGY_CONFIG_YML);
-        yaml.load(inputStream);
     }
 
     public static <T extends Goal> T getGoal(Function<Suite, Class<T>> function, Suite s) {
@@ -57,11 +43,14 @@ public class JUtils {
         return Arrays.stream(tClasses).collect(Collectors.toList());
     }
 
-    public static < U extends Exception> Object newInstance(String cName, BiFunction<String, Exception, U> s) throws U {
+    @SuppressWarnings("unchecked")
+    public static <A, U extends Exception> A newInstance(String cName,
+                                                         Class<A> exp,
+                                                         BiFunction<String, Exception, U> s) throws U {
         try {
-            Class<?> aClass = getCurrentThreadClassLoader().loadClass(cName);
+            Class<A> aClass = (Class<A>) getCurrentThreadClassLoader().loadClass(cName);
             return newInstance(aClass, s);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             throw s.apply("Unable to load class " + cName, e);
         }
     }
@@ -90,6 +79,10 @@ public class JUtils {
     public static boolean isJetBrainsIdeConsoleRun() {
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> arguments = runtimeMxBean.getInputArguments();
+        String xpcServiceName = System.getenv("XPC_SERVICE_NAME");
+        if (xpcServiceName != null && xpcServiceName.contains("com.jetbrains.intellij")) {
+            return true;
+        }
         return arguments.stream()
                 .anyMatch(v -> v.startsWith("-javaagent") &&
                         (v.contains("JetBrains") || v.contains("IDEA") || v.contains("idea")));

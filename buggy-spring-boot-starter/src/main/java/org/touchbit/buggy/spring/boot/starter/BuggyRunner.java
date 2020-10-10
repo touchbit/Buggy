@@ -8,7 +8,7 @@ import org.testng.TestNG;
 import org.testng.xml.XmlClass;
 import org.testng.xml.XmlSuite;
 import org.testng.xml.XmlTest;
-import org.touchbit.buggy.core.config.BuggyConfig;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
 import org.touchbit.buggy.core.goal.Goal;
 import org.touchbit.buggy.core.goal.component.Component;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
@@ -19,7 +19,7 @@ import org.touchbit.buggy.core.logback.appender.DecomposeTestLogsFileAppender;
 import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.core.testng.BuggyListener;
 import org.touchbit.buggy.core.utils.JUtils;
-import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyJCommand;
+import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyConfiguration;
 
 import java.io.File;
 import java.util.*;
@@ -98,7 +98,7 @@ public class BuggyRunner implements CommandLineRunner {
         List<XmlSuite> xmlSuites = getXmlSuites(testClassesBySuitesMap);
         TestNG testNG = getTestNG();
         try {
-            testNG.setParallel(BuggyConfig.getParallelMode().getTestNGMode());
+            testNG.setParallel(BuggyConfigurationYML.getParallelMode().getTestNGMode());
             testNG.setSuiteThreadPoolSize(xmlSuites.isEmpty() ? 1 : xmlSuites.size());
             testNG.setUseDefaultListeners(false);
             for (BuggyListener enabledBuggyListener : enabledBuggyListeners) {
@@ -107,8 +107,8 @@ public class BuggyRunner implements CommandLineRunner {
             testNG.setXmlSuites(xmlSuites);
             testNG.run();
             DecomposeTestLogsFileAppender.decomposeTestLogs();
-            if (BuggyJCommand.getExitStatus() != null) {
-                exit(BuggyJCommand.getExitStatus());
+            if (BuggyConfiguration.getExitStatus() != null) {
+                exit(BuggyConfiguration.getExitStatus());
             }
             exit(testNG.getStatus());
         } catch (Exception e) {
@@ -139,8 +139,8 @@ public class BuggyRunner implements CommandLineRunner {
         List<XmlSuite> suites = new ArrayList<>();
         for (Map.Entry<Suite, Set<Class<?>>> entry : buggySuitesTests.entrySet()) {
             XmlSuite xmlSuite = new XmlSuite();
-            xmlSuite.setParallel(BuggyConfig.getParallelMode().getTestNGMode());
-            xmlSuite.setThreadCount(BuggyConfig.getThreads());
+            xmlSuite.setParallel(BuggyConfigurationYML.getParallelMode().getTestNGMode());
+            xmlSuite.setThreadCount(BuggyConfigurationYML.getThreads());
             Suite buggySuite = entry.getKey();
             try {
                 Component cGoal = JUtils.getGoal(Suite::component, buggySuite);

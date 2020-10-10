@@ -17,7 +17,7 @@
 package org.touchbit.buggy.core.testng;
 
 import org.slf4j.Logger;
-import org.testng.*;
+import org.testng.IExecutionListener;
 import org.touchbit.buggy.core.logback.ConsoleLogger;
 import org.touchbit.buggy.core.logback.FrameworkLogger;
 import org.touchbit.buggy.core.logback.SiftingTestLogger;

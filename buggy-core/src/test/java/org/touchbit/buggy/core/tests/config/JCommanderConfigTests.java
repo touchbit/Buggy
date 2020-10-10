@@ -18,7 +18,7 @@ package org.touchbit.buggy.core.tests.config;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.touchbit.buggy.core.config.BuggyConfig;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
 import org.touchbit.buggy.core.config.TestInterface;
 import org.touchbit.buggy.core.config.TestService;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
@@ -82,13 +82,13 @@ class JCommanderConfigTests extends BaseUnitTest {
     @Test
     @DisplayName("Check PrimaryConfig.setThreads(10)")
     void unitTest_20180919194007() {
-        Integer threads = BuggyConfig.getThreads();
+        Integer threads = BuggyConfigurationYML.getThreads();
         try {
             assertThat(threads, is(50));
-            BuggyConfig.setThreads(10);
-            assertThat(BuggyConfig.getThreads(), is(10));
+            BuggyConfigurationYML.setThreads(10);
+            assertThat(BuggyConfigurationYML.getThreads(), is(10));
         } finally {
-            BuggyConfig.setThreads(threads);
+            BuggyConfigurationYML.setThreads(threads);
         }
     }
 //
@@ -108,30 +108,30 @@ class JCommanderConfigTests extends BaseUnitTest {
     @Test
     @DisplayName("Check PrimaryConfig.setServices(List<Service> services)")
     void unitTest_20180919194549() {
-        List<Service> services = BuggyConfig.getServices();
+        List<Service> services = BuggyConfigurationYML.getServices();
         try {
             List<Service> newServices = new ArrayList<Service>() {{
                 add(new TestService());
             }};
-            BuggyConfig.setServices(newServices);
-            assertThat(BuggyConfig.getServices(), is(newServices));
+            BuggyConfigurationYML.setServices(newServices);
+            assertThat(BuggyConfigurationYML.getServices(), is(newServices));
         } finally {
-            BuggyConfig.setServices(services);
+            BuggyConfigurationYML.setServices(services);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setInterfaces(List<Interface> interfaces)")
     void unitTest_20180919195248() {
-        List<Interface> interfaces = BuggyConfig.getInterfaces();
+        List<Interface> interfaces = BuggyConfigurationYML.getInterfaces();
         try {
             List<Interface> newInterfaces = new ArrayList<Interface>() {{
                 add(new TestInterface());
             }};
-            BuggyConfig.setInterfaces(newInterfaces);
-            assertThat(BuggyConfig.getInterfaces(), is(newInterfaces));
+            BuggyConfigurationYML.setInterfaces(newInterfaces);
+            assertThat(BuggyConfigurationYML.getInterfaces(), is(newInterfaces));
         } finally {
-            BuggyConfig.setInterfaces(interfaces);
+            BuggyConfigurationYML.setInterfaces(interfaces);
         }
     }
 
@@ -164,61 +164,61 @@ class JCommanderConfigTests extends BaseUnitTest {
     @Test
     @DisplayName("Check PrimaryConfig.setArtifactsUrl(String buildsUrl)")
     void unitTest_20180919201516() {
-        String buildLogUrl = BuggyConfig.getArtifactsUrl();
+        String buildLogUrl = BuggyConfigurationYML.getArtifactsUrl();
         try {
             assertThat(String.valueOf(buildLogUrl), is("null"));
-            BuggyConfig.setArtifactsUrl("BuildUrl");
-            assertThat(BuggyConfig.getArtifactsUrl(), is("BuildUrl"));
+            BuggyConfigurationYML.setArtifactsUrl("BuildUrl");
+            assertThat(BuggyConfigurationYML.getArtifactsUrl(), is("BuildUrl"));
         } finally {
-            BuggyConfig.setArtifactsUrl(buildLogUrl);
+            BuggyConfigurationYML.setArtifactsUrl(buildLogUrl);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setPrintSuite(Boolean printSuite)")
     void unitTest_20180919201621() {
-        boolean printSuite = BuggyConfig.isPrintSuite();
+        boolean printSuite = BuggyConfigurationYML.isPrintSuite();
         try {
             assertThat(printSuite, is(false));
-            BuggyConfig.setPrintSuite(true);
-            assertThat(BuggyConfig.isPrintSuite(), is(true));
+            BuggyConfigurationYML.setPrintSuite(true);
+            assertThat(BuggyConfigurationYML.isPrintSuite(), is(true));
         } finally {
-            BuggyConfig.setPrintSuite(printSuite);
+            BuggyConfigurationYML.setPrintSuite(printSuite);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setPrintCause(Boolean printCause)")
     void unitTest_20180919201754() {
-        boolean printCause = BuggyConfig.isPrintCause();
+        boolean printCause = BuggyConfigurationYML.isPrintCause();
         try {
             assertThat(printCause, is(false));
-            BuggyConfig.setPrintCause(true);
-            assertThat(BuggyConfig.isPrintCause(), is(true));
+            BuggyConfigurationYML.setPrintCause(true);
+            assertThat(BuggyConfigurationYML.isPrintCause(), is(true));
         } finally {
-            BuggyConfig.setPrintCause(printCause);
+            BuggyConfigurationYML.setPrintCause(printCause);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setPrintLogFile(Boolean printLog)")
     void unitTest_20180919201844() {
-        boolean printLogFile = BuggyConfig.isPrintLog();
+        boolean printLogFile = BuggyConfigurationYML.isPrintLog();
         try {
             assertThat(printLogFile, is(false));
-            BuggyConfig.setPrintLog(true);
-            assertThat(BuggyConfig.isPrintLog(), is(true));
+            BuggyConfigurationYML.setPrintLog(true);
+            assertThat(BuggyConfigurationYML.isPrintLog(), is(true));
         } finally {
-            BuggyConfig.setPrintLog(printLogFile);
+            BuggyConfigurationYML.setPrintLog(printLogFile);
         }
     }
 
     @Test
     @DisplayName("Check PrimaryConfig.setVersion(Boolean version)")
     void unitTest_20180919201933() {
-        assertThat(BuggyConfig.isVersion(), is(false));
-        BuggyConfig.setVersion(true);
-        assertThat(BuggyConfig.isVersion(), is(false));
+        assertThat(BuggyConfigurationYML.isVersion(), is(false));
+        BuggyConfigurationYML.setVersion(true);
+        assertThat(BuggyConfigurationYML.isVersion(), is(false));
     }
 //
 //    @Test

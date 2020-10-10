@@ -16,13 +16,8 @@
 
 package org.touchbit.buggy.core.testng;
 
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.testng.IExecutionListener;
-import org.touchbit.buggy.core.config.BuggyConfig;
 import org.touchbit.buggy.core.model.Notifier;
-import org.touchbit.buggy.core.utils.StringUtils;
-
-import java.util.StringJoiner;
 
 /**
  * Created by Oleg Shaburov on 06.09.2018

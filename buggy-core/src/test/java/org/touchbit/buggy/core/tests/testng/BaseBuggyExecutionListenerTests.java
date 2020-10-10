@@ -1,14 +1,7 @@
 package org.touchbit.buggy.core.tests.testng;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.testng.ITestNGMethod;
-import org.touchbit.buggy.core.config.BuggyConfig;
 import org.touchbit.buggy.core.testng.BaseBuggyExecutionListener;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 /**
  * Created by Oleg Shaburov on 14.10.2018

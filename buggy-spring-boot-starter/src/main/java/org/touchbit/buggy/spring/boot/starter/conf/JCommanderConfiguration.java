@@ -10,11 +10,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.touchbit.buggy.core.config.BuggyConfig;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
 import org.touchbit.buggy.core.logback.ConfLogger;
 import org.touchbit.buggy.core.utils.JUtils;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
-import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyJCommand;
+import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyConfiguration;
 import org.touchbit.buggy.spring.boot.starter.jcommander.JCommand;
 
 import javax.annotation.PostConstruct;
@@ -50,7 +50,7 @@ public class JCommanderConfiguration implements IConfiguration {
         beforeConfiguration();
         this.JCommands.addAll(scanBuggyConfig());
         scanJCConfigurations().stream()
-                .filter(i -> !(i instanceof BuggyJCommand))
+                .filter(i -> !(i instanceof BuggyConfiguration))
                 .forEach(this.JCommands::add);
         this.jCommander = buildJCommander();
         parseArguments();
@@ -70,12 +70,12 @@ public class JCommanderConfiguration implements IConfiguration {
 
     @PostConstruct
     public void postConstruct() {
-        if (BuggyConfig.isHelp()) {
+        if (BuggyConfigurationYML.isHelp()) {
             ConfLogger.stepDelimiter();
             jCommander.usage();
             BuggyRunner.exit(0);
         }
-        if (BuggyConfig.isVersion()) {
+        if (BuggyConfigurationYML.isVersion()) {
             ConfLogger.stepDelimiter();
             ConfLogger.centerBold("Version info");
             JUtils.getBuggyManifest().forEach(ConfLogger::dotPlaceholder);
@@ -84,11 +84,11 @@ public class JCommanderConfiguration implements IConfiguration {
         printConfigurationsParams(buggyConfigurations);
     }
 
-    private Set<BuggyJCommand> scanBuggyConfig() {
+    private Set<BuggyConfiguration> scanBuggyConfig() {
         final boolean useDefaultFilters = false;
         final String basePackage = "org.touchbit.buggy.spring.boot.starter.jcommander";
-        final Set<BeanDefinition> defs = scanBeanDefinitions(useDefaultFilters, basePackage, BuggyJCommand.class);
-        return getBeanDefinitionInstances(defs, BuggyJCommand.class);
+        final Set<BeanDefinition> defs = scanBeanDefinitions(useDefaultFilters, basePackage, BuggyConfiguration.class);
+        return getBeanDefinitionInstances(defs, BuggyConfiguration.class);
     }
 
     public Set<JCommand> scanJCConfigurations() {
@@ -138,7 +138,7 @@ public class JCommanderConfiguration implements IConfiguration {
 
     @Bean("isBuggyConfigured")
     public boolean isBuggyConfigured() {
-        return buggyConfigurations.containsKey(BuggyConfig.class);
+        return buggyConfigurations.containsKey(BuggyConfigurationYML.class);
     }
 
     @Bean()

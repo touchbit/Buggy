@@ -19,26 +19,9 @@ package org.touchbit.buggy.core.testng;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.testng.*;
-import org.touchbit.buggy.core.config.BuggyConfig;
-import org.touchbit.buggy.core.exceptions.CorruptedTestException;
-import org.touchbit.buggy.core.logback.SiftingTestLogger;
-import org.touchbit.buggy.core.model.Details;
-import org.touchbit.buggy.core.model.Status;
-import org.touchbit.buggy.core.model.Suite;
-import org.touchbit.buggy.core.model.Type;
-import org.touchbit.buggy.core.utils.IOHelper;
-import org.touchbit.buggy.core.utils.JUtils;
-import org.touchbit.buggy.core.utils.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.*;
-
-import static org.testng.ITestResult.SKIP;
-import static org.testng.ITestResult.SUCCESS;
-import static org.testng.ITestResult.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Listener for processing executable tests.

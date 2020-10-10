@@ -1,6 +1,5 @@
 package org.touchbit.buggy.core.logback;
 
-import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.utils.ANSI;
 
 import static java.util.Objects.isNull;

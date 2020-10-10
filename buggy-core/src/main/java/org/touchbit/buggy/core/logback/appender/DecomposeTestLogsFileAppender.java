@@ -1,17 +1,16 @@
 package org.touchbit.buggy.core.logback.appender;
 
 import ch.qos.logback.core.FileAppender;
-
-import java.io.File;
-import java.util.*;
-
 import org.touchbit.buggy.core.model.IStatus;
 import org.touchbit.buggy.core.model.ResultStatus;
-import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.utils.IOHelper;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.touchbit.buggy.core.logback.BaseLogbackWrapper.LOG_PATH;
-import static org.touchbit.buggy.core.model.Status.*;
+import static org.touchbit.buggy.core.model.Status.NONE;
 
 public class DecomposeTestLogsFileAppender<E> extends FileAppender<E> {
 

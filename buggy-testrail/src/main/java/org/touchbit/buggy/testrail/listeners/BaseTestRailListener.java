@@ -3,7 +3,7 @@ package org.touchbit.buggy.testrail.listeners;
 import org.testng.IExecutionListener;
 import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
-import org.touchbit.buggy.core.config.BuggyConfig;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.testng.BaseBuggyExecutionListener;
 import org.touchbit.buggy.testrail.BaseTestRailConfig;
@@ -128,7 +128,7 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
     }
 
     protected String attachLogfile(String prefix) {
-        String logfile = BuggyConfig.getArtifactsUrl() + "/tests/" + prefix + ".log";
+        String logfile = BuggyConfigurationYML.getArtifactsUrl() + "/tests/" + prefix + ".log";
         return attachFile(logfile);
     }
 
@@ -148,7 +148,7 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
     protected String attachFile(String filename) {
         File sourceFile = new File(filename);
         return "[" + sourceFile.getName() + "](" +
-                BuggyConfig.getArtifactsUrl() + "/tests/" + sourceFile.getName() + ")\n";
+                BuggyConfigurationYML.getArtifactsUrl() + "/tests/" + sourceFile.getName() + ")\n";
     }
 
     protected List<Long> getTestRailCasesByRunId(Long rId) {

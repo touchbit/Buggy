@@ -18,13 +18,12 @@ package org.touchbit.buggy.spring.boot.starter.jcommander.converters;
 
 import com.beust.jcommander.IStringConverter;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.cglib.beans.BeanGenerator;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.goal.Goal;
+import org.touchbit.buggy.core.utils.JUtils;
 
-import java.lang.reflect.Constructor;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -52,17 +51,11 @@ public final class GoalConverter<T extends Goal> implements IStringConverter<T> 
         throw new BuggyConfigurationException("No " + tClass.getSimpleName() + " found with name " + s);
     }
 
-    private  <T> Set<T> getBeanDefinitionInstances(Set<BeanDefinition> definitions, Class<T> tClass) {
-        Set<T> result = new LinkedHashSet<>();
+    private  <A> Set<A> getBeanDefinitionInstances(Set<BeanDefinition> definitions, Class<A> tClass) {
+        Set<A> result = new LinkedHashSet<>();
         for (BeanDefinition bd : definitions) {
-            try {
-                Class<?> c = BeanGenerator.class.getClassLoader().loadClass(bd.getBeanClassName());
-                Constructor<?> con = c.getConstructor();
-                T instance = (T) con.newInstance();
-                result.add(instance);
-            } catch (Exception e) {
-                throw new BuggyConfigurationException("Can not create a new instance of " + tClass.getSimpleName());
-            }
+            A instance = JUtils.newInstance(bd.getBeanClassName(), tClass, BuggyConfigurationException::new);
+            result.add(instance);
         }
         return result;
     }

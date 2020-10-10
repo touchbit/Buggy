@@ -16,40 +16,36 @@
 
 package org.touchbit.buggy.core.testng;
 
-import org.testng.*;
-import org.touchbit.buggy.core.config.BuggyConfig;
-import org.touchbit.buggy.core.exceptions.CorruptedTestException;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
+import org.testng.ITestNGMethod;
+import org.testng.ITestResult;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
 import org.touchbit.buggy.core.logback.ConfLogger;
 import org.touchbit.buggy.core.logback.ConsoleLogger;
 import org.touchbit.buggy.core.logback.FrameworkLogger;
 import org.touchbit.buggy.core.logback.SiftingTestLogger;
 import org.touchbit.buggy.core.model.*;
 import org.touchbit.buggy.core.utils.JUtils;
-import org.touchbit.buggy.core.utils.StringUtils;
 import org.touchbit.buggy.core.utils.TestNGHelper;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
 
-import static org.testng.ITestResult.*;
-import static org.touchbit.buggy.core.utils.ANSI.*;
+import static org.touchbit.buggy.core.utils.ANSI.RED;
 
 /**
  * Listener for processing executable tests.
  * <p>
  * Created by Shaburov Oleg on 31.07.2017.
  */
-public class LoggingListener implements BuggyListener, IInvokedMethodListener {
+public abstract class LoggingListenerBase implements BuggyListener, IInvokedMethodListener {
 
     private static final FrameworkLogger FRAMEWORK = new FrameworkLogger();
     private static final ConsoleLogger CONSOLE = new ConsoleLogger();
     private static final SiftingTestLogger TEST = new SiftingTestLogger();
-
-    @Override
-    public boolean isEnable() {
-        return true;
-    }
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
@@ -59,9 +55,9 @@ public class LoggingListener implements BuggyListener, IInvokedMethodListener {
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         TEST.info("Date: {}", new Date());
-        Boolean printLog = BuggyConfig.isPrintLog();
-        Boolean printSuite = BuggyConfig.isPrintSuite();
-        Boolean printCause = BuggyConfig.isPrintCause();
+        Boolean printLog = BuggyConfigurationYML.isPrintLog();
+        Boolean printSuite = BuggyConfigurationYML.isPrintSuite();
+        Boolean printCause = BuggyConfigurationYML.isPrintCause();
         String methodName = TestNGHelper.getMethodName(method);
         Throwable throwable = testResult.getThrowable();
         if (hasDetails(method) && hasSuite(method) && method.isTestMethod()) {
@@ -103,20 +99,20 @@ public class LoggingListener implements BuggyListener, IInvokedMethodListener {
                 indent += indent;
             }
             if (printCause && bugs.length > 0) {
-                if (BuggyConfig.getTaskTrackerIssueUrl() != null && !BuggyConfig.getTaskTrackerIssueUrl().isEmpty()) {
+                if (BuggyConfigurationYML.getIssuesUrl() != null && !BuggyConfigurationYML.getIssuesUrl().isEmpty()) {
                     for (String bug : bugs) {
 //                        message.append("\n  └").append(BOLD.wrap(RED.wrap(" ❗ ")))
-                        message.append("\n  Bug:   ").append(BuggyConfig.getTaskTrackerIssueUrl()).append(bug);
+                        message.append("\n  Bug:   ").append(BuggyConfigurationYML.getIssuesUrl()).append(bug);
                     }
                 } else {
                     message.append(" ").append(Arrays.toString(bugs));
                 }
             }
             if (true) {
-                if (BuggyConfig.getTaskTrackerIssueUrl() != null && !BuggyConfig.getTaskTrackerIssueUrl().isEmpty()) {
+                if (BuggyConfigurationYML.getIssuesUrl() != null && !BuggyConfigurationYML.getIssuesUrl().isEmpty()) {
                     for (String bug : bugs) {
 //                        message.append("\n  └").append(BOLD.wrap(GREEN.wrap(" ✓ ")))
-                        message.append("\n  Issue: ").append(BuggyConfig.getTaskTrackerIssueUrl()).append(bug);
+                        message.append("\n  Issue: ").append(BuggyConfigurationYML.getIssuesUrl()).append(bug);
                     }
                 } else {
                     message.append(" ").append(Arrays.toString(bugs));
@@ -262,10 +258,10 @@ public class LoggingListener implements BuggyListener, IInvokedMethodListener {
 
     protected String getLogFilePath(ITestNGMethod method, IStatus status) {
         // Do not change the check. Feature parsing values by jCommander library.
-        if (!"null".equalsIgnoreCase(String.valueOf(BuggyConfig.getArtifactsUrl()))) {
-            return BuggyConfig.getArtifactsUrl().endsWith("/") ?
-                    BuggyConfig.getArtifactsUrl() :
-                    BuggyConfig.getArtifactsUrl() + "/";
+        if (!"null".equalsIgnoreCase(String.valueOf(BuggyConfigurationYML.getArtifactsUrl()))) {
+            return BuggyConfigurationYML.getArtifactsUrl().endsWith("/") ?
+                    BuggyConfigurationYML.getArtifactsUrl() :
+                    BuggyConfigurationYML.getArtifactsUrl() + "/";
         } else {
             String fileName = getLogFileName(method);
             SiftingTestLogger.setTestStatus(fileName, status);

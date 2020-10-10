@@ -25,7 +25,7 @@ import static org.touchbit.buggy.core.model.Type.ALL;
  * shaburov.o.a@gmail.com
  */
 @SuppressWarnings("unused")
-public final class BuggyConfig {
+public final class BuggyConfigurationYML implements ConfigurationYML {
 
     private static Boolean help = false;
     private static Boolean force = false;
@@ -42,10 +42,10 @@ public final class BuggyConfig {
     private static List<Interface> interfaces = JUtils.getListWith(AllInterfaces::new);
     private static List<Type> types = JUtils.getListWith(ALL);
     private static String programName = "Buggy";
-    private static String taskTrackerIssueUrl = "";
+    private static String issuesUrl = "";
 
     public static void setPrintLogFileOnlyFail(Boolean printLogIfFail) {
-        BuggyConfig.printLogOnlyFail = printLogIfFail;
+        BuggyConfigurationYML.printLogOnlyFail = printLogIfFail;
     }
 
     public static Boolean isPrintLogFileOnlyFail() {
@@ -53,11 +53,11 @@ public final class BuggyConfig {
     }
 
     public static Boolean isHelp() {
-        return BuggyConfig.help;
+        return BuggyConfigurationYML.help;
     }
 
     public static void setHelp(Boolean help) {
-        BuggyConfig.help = help;
+        BuggyConfigurationYML.help = help;
     }
 
     public static Boolean isForce() {
@@ -65,7 +65,7 @@ public final class BuggyConfig {
     }
 
     public static void setForce(Boolean force) {
-        BuggyConfig.force = force;
+        BuggyConfigurationYML.force = force;
     }
 
     public static Boolean isPrintSuite() {
@@ -73,7 +73,7 @@ public final class BuggyConfig {
     }
 
     public static void setPrintSuite(Boolean printSuite) {
-        BuggyConfig.printSuite = printSuite;
+        BuggyConfigurationYML.printSuite = printSuite;
     }
 
     public static Boolean isPrintCause() {
@@ -81,7 +81,7 @@ public final class BuggyConfig {
     }
 
     public static void setPrintCause(Boolean printCause) {
-        BuggyConfig.printCause = printCause;
+        BuggyConfigurationYML.printCause = printCause;
     }
 
     public static Boolean isPrintLog() {
@@ -89,11 +89,11 @@ public final class BuggyConfig {
     }
 
     public static void setPrintLog(Boolean printLog) {
-        BuggyConfig.printLog = printLog;
+        BuggyConfigurationYML.printLog = printLog;
     }
 
     public static void setPrintLogOnlyFail(Boolean printLogOnlyFail) {
-        BuggyConfig.printLogOnlyFail = printLogOnlyFail;
+        BuggyConfigurationYML.printLogOnlyFail = printLogOnlyFail;
     }
 
     public static Boolean isVersion() {
@@ -101,7 +101,7 @@ public final class BuggyConfig {
     }
 
     public static void setVersion(Boolean version) {
-        BuggyConfig.version = version;
+        BuggyConfigurationYML.version = version;
     }
 
     public static Integer getThreads() {
@@ -109,7 +109,7 @@ public final class BuggyConfig {
     }
 
     public static void setThreads(Integer threads) {
-        BuggyConfig.threads = threads;
+        BuggyConfigurationYML.threads = threads;
     }
 
     public static String getArtifactsUrl() {
@@ -117,7 +117,7 @@ public final class BuggyConfig {
     }
 
     public static void setArtifactsUrl(String artifactsUrl) {
-        BuggyConfig.artifactsUrl = artifactsUrl;
+        BuggyConfigurationYML.artifactsUrl = artifactsUrl;
     }
 
     public static List<Type> getTypes() {
@@ -126,7 +126,7 @@ public final class BuggyConfig {
 
     public static void setTypes(List<Type> types) {
         if (types != null) {
-            BuggyConfig.types = types;
+            BuggyConfigurationYML.types = types;
         }
     }
 
@@ -142,7 +142,7 @@ public final class BuggyConfig {
 
     public static void setServices(List<Service> services) {
         if (services != null) {
-            BuggyConfig.services = services;
+            BuggyConfigurationYML.services = services;
         }
     }
 
@@ -155,10 +155,10 @@ public final class BuggyConfig {
 
     @SafeVarargs
     public static <S extends Service> void setServices(Class<S>... services) {
-        BuggyConfig.services = new ArrayList<>();
+        BuggyConfigurationYML.services = new ArrayList<>();
         for (Class<? extends Service> service : services) {
             Service instance = JUtils.newInstance(service, BuggyConfigurationException::new);
-            BuggyConfig.services.add(instance);
+            BuggyConfigurationYML.services.add(instance);
         }
     }
 
@@ -168,7 +168,7 @@ public final class BuggyConfig {
 
     public static void setInterfaces(List<Interface> interfaces) {
         if (interfaces != null) {
-            BuggyConfig.interfaces = interfaces;
+            BuggyConfigurationYML.interfaces = interfaces;
         }
     }
 
@@ -181,10 +181,10 @@ public final class BuggyConfig {
 
     @SafeVarargs
     public static <I extends Interface> void setInterfaces(Class<I>... interfaces) {
-        BuggyConfig.interfaces = new ArrayList<>();
+        BuggyConfigurationYML.interfaces = new ArrayList<>();
         for (Class<? extends Interface> anInterface : interfaces) {
             Interface instance = JUtils.newInstance(anInterface, BuggyConfigurationException::new);
-            BuggyConfig.interfaces.add(instance);
+            BuggyConfigurationYML.interfaces.add(instance);
         }
     }
 
@@ -194,7 +194,7 @@ public final class BuggyConfig {
 
     public static void setComponents(List<Component> components) {
         if (components != null) {
-            BuggyConfig.components = components;
+            BuggyConfigurationYML.components = components;
         }
     }
 
@@ -207,10 +207,10 @@ public final class BuggyConfig {
 
     @SafeVarargs
     public static <C extends Component> void setComponents(Class<C>... components) {
-        BuggyConfig.components = new ArrayList<>();
+        BuggyConfigurationYML.components = new ArrayList<>();
         for (Class<? extends Component> component : components) {
             Component instance = JUtils.newInstance(component, BuggyConfigurationException::new);
-            BuggyConfig.components.add(instance);
+            BuggyConfigurationYML.components.add(instance);
         }
     }
 
@@ -219,22 +219,23 @@ public final class BuggyConfig {
     }
 
     public static void setParallelMode(ParallelMode parallelMode) {
-        BuggyConfig.parallelMode = parallelMode;
+        BuggyConfigurationYML.parallelMode = parallelMode;
     }
 
     public static String getProgramName() {
-        return BuggyConfig.programName;
+        return BuggyConfigurationYML.programName;
     }
 
     public static void setProgramName(String programName) {
-        BuggyConfig.programName = programName;
+        BuggyConfigurationYML.programName = programName;
     }
 
-    public static String getTaskTrackerIssueUrl() {
-        return taskTrackerIssueUrl;
+    public static String getIssuesUrl() {
+        return issuesUrl;
     }
 
-    public static void setTaskTrackerIssueUrl(String taskTrackerIssueUrl) {
-        BuggyConfig.taskTrackerIssueUrl = taskTrackerIssueUrl;
+    public static void setIssuesUrl(String issuesUrl) {
+        BuggyConfigurationYML.issuesUrl = issuesUrl;
     }
+
 }

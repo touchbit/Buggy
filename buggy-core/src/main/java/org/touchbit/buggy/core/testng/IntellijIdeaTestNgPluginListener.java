@@ -17,9 +17,9 @@
 package org.touchbit.buggy.core.testng;
 
 import org.testng.IInvokedMethod;
-import org.testng.ITestNGListener;
 import org.testng.ITestResult;
-import org.touchbit.buggy.core.logback.SiftingTestLogger;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
+import org.touchbit.buggy.core.config.ConfigurationYML;
 import org.touchbit.buggy.core.utils.JUtils;
 
 /**
@@ -28,11 +28,11 @@ import org.touchbit.buggy.core.utils.JUtils;
  * Created by Oleg Shaburov on 15.05.2018
  * shaburov.o.a@gmail.com
  */
-public final class IntellijIdeaTestNgPluginListener extends LoggingListener {
+public final class IntellijIdeaTestNgPluginListener extends LoggingListenerBase {
 
     public IntellijIdeaTestNgPluginListener() {
         if (JUtils.isJetBrainsIdeTestNGPluginRun()) {
-            JUtils.initBuggyConfigurationYml();
+            ConfigurationYML.initConfigurationYml(BuggyConfigurationYML.class);
         }
     }
 

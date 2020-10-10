@@ -1,19 +1,21 @@
-programName: Buggy
+programName: 'Buggy example'
 help: false
 force: true
 printSuite: true
 printCause: true
 printLog: true
-printLogOnlyFail: false
+printLogOnlyFail: true
 threads: 50
 artifactsUrl: null
 parallelMode: 'METHODS'
 components:
-  - 'org.touchbit.buggy.core.goal.component.AllComponents'
+  - !!org.touchbit.buggy.core.goal.component.AllComponents {}
 services:
-  - 'org.touchbit.buggy.core.goal.service.AllServices'
+  - !!org.touchbit.buggy.core.goal.service.AllServices {}
 interfaces:
-  - 'org.touchbit.buggy.core.goal.interfaze.AllInterfaces'
+  - !!org.touchbit.buggy.core.goal.interfaze.AllInterfaces {}
 types:
   - ALL
-taskTrackerIssueUrl: 'https://example.jira.com/issues/'
+issuesUrl: 'https://example.jira.com/issues/'
+exampleHost: foo
+examplePass: bar

@@ -1,8 +1,7 @@
-package org.touchbit.buggy.spring.boot.starter.example;
+package org.touchbit.buggy.spring.boot.starter.example.tests;
 
 import org.testng.annotations.Test;
 import org.touchbit.buggy.core.BaseBuggyTest;
-import org.touchbit.buggy.core.config.BuggyConfig;
 import org.touchbit.buggy.core.goal.interfaze.API;
 import org.touchbit.buggy.core.model.Details;
 import org.touchbit.buggy.core.model.Suite;
