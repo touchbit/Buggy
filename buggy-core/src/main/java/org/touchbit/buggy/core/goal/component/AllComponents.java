@@ -22,14 +22,6 @@ package org.touchbit.buggy.core.goal.component;
  */
 public final class AllComponents extends Component {
 
-    public AllComponents() {
-
-    }
-
-    public AllComponents(Object o) {
-
-    }
-
     @Override
     public String getName() {
         return "ALL";
