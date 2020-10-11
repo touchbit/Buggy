@@ -7,13 +7,16 @@ import org.touchbit.buggy.core.goal.interfaze.API;
 import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
+import org.touchbit.buggy.core.model.Type;
+
+import static org.touchbit.buggy.core.model.Type.SYSTEM;
 
 @Suite(interfaze = API.class)
 public class ExampleTests2 extends BaseBuggyTest {
 
     @Test(description = "Ожидается успешное создание пользователя, если firstName=<пустая строка>")
     @Buggy(status = Status.EXP_FIX, bugs = "JIRA-123")
-    public void test_2() {
+    public void test_2_1() {
         throw new AssertionException("The following 4 assertions failed:\n" +
                 "     1) [Living Guests] expected:<[7]> but was:<[6]>\n" +
                 "     2) [Library] expected:<'[clean]'> but was:<'[messy]'>\n" +
@@ -23,7 +26,19 @@ public class ExampleTests2 extends BaseBuggyTest {
 
     @Test()
     @Buggy("Ожидается успешное создание пользователя, если middleName=<пустая строка>")
-    public void test_1() {
+    public void test_2_2() {
+
+    }
+
+    @Test(enabled = false)
+    @Buggy("Ожидается успешное создание пользователя, если email=<пустая строка>")
+    public void test_2_3() {
+
+    }
+
+    @Test()
+    @Buggy(value = "Ожидается успешное создание пользователя, если email=<пустая строка>", types = SYSTEM)
+    public void test_2_4() {
 
     }
 

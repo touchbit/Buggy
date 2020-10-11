@@ -32,7 +32,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.touchbit.buggy.core.model.Status.SUCCESS;
 import static org.touchbit.buggy.core.model.Type.MODULE;
 import static org.touchbit.buggy.core.model.Type.SYSTEM;
 
@@ -128,15 +127,6 @@ public abstract class BaseUnitTest {
         when(iTestResult.getStatus()).thenReturn(status);
         when(iTestResult.getMethod()).thenReturn(iTestNGMethod);
         return iTestResult;
-    }
-
-    @SuppressWarnings("unused")
-    protected static Buggy getDetails() {
-        return getDetails(SUCCESS, MODULE);
-    }
-
-    protected static Buggy getDetails(Type type) {
-        return getDetails(SUCCESS, type);
     }
 
     protected static Buggy getDetails(Status status, String... issue) {

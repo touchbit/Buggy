@@ -5,16 +5,15 @@ import org.touchbit.buggy.core.goal.interfaze.API;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyConfiguration;
 
+import static org.touchbit.buggy.core.model.Type.REGRESSION;
+
 public class ExampleBuggyRunner extends BuggyRunner {
 
     public static void main(String[] args) {
         BuggyConfiguration.setForce(true);
-        BuggyConfiguration.setPrintLog(true);
-        BuggyConfiguration.setPrintSuite(true);
-        BuggyConfiguration.setPrintCause(true);
         BuggyConfiguration.setInterfaces(API.class);
-        BuggyConfiguration.setPrintLogOnlyFail(true);
-        BuggyConfiguration.setTaskTrackerIssueUrl("https://jira.com/issues/");
+        BuggyConfiguration.setTypes(REGRESSION);
+        BuggyConfiguration.setIssuesUrl("https://jira.com/issues/");
         SpringApplication.run(ExampleBuggyRunner.class, args);
     }
 

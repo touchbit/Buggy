@@ -2,12 +2,13 @@ package org.touchbit.buggy.core.testng;
 
 import org.jetbrains.annotations.Nullable;
 import org.testng.*;
-import org.touchbit.buggy.core.model.Buggy;
-import org.touchbit.buggy.core.model.ResultStatus;
-import org.touchbit.buggy.core.model.Status;
-import org.touchbit.buggy.core.model.Suite;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
+import org.touchbit.buggy.core.logback.SiftingTestLogger;
+import org.touchbit.buggy.core.model.*;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.function.Function;
 
 import static org.touchbit.buggy.core.model.Status.*;
@@ -21,31 +22,70 @@ public interface BuggyListener extends ITestNGListener {
     boolean isEnable();
 
     default boolean isRun(IInvokedMethod method) {
-        throwNPE(method);
+        assertNotNull(method);
         return isRun(method.getTestMethod());
     }
 
     default boolean isRun(ITestNGMethod method) {
-        throwNPE(method);
+        assertNotNull(method);
         return method.getInvocationCount() > 0;
     }
 
     default boolean isSkip(IInvokedMethod method) {
-        throwNPE(method);
+        assertNotNull(method);
         if (isRun(method)) {
             return false;
         }
         return isSkip(method.getTestResult());
     }
 
+    default boolean isSkip(ITestNGMethod method) {
+        assertNotNull(method);
+        return !isRun(method);
+    }
+
     default boolean isSkip(ITestResult result) {
-        throwNPE(result);
+        assertNotNull(result);
         return isITestResultSkip(result);
     }
 
+    default boolean isSkipByTestStatus(ITestNGMethod method) {
+        assertNotNull(method);
+        Buggy buggy = getBuggyAnnotation(method);
+        if (buggy != null && !buggy.status().equals(Status.NONE) && !BuggyConfigurationYML.isForceRun()) {
+            return true;
+        }
+        return false;
+    }
+
+    default boolean isSkipByType(IInvokedMethod method) {
+        assertNotNull(method);
+        return isSkipByType(method.getTestMethod());
+    }
+
+    default boolean isSkipByType(ITestNGMethod method) {
+        assertNotNull(method);
+        Buggy buggyAnnotation = getBuggyAnnotation(method);
+        if (buggyAnnotation == null) {
+            return false;
+        }
+        List<Type> types = BuggyConfigurationYML.getTypes();
+        if (types.contains(Type.ALL)) {
+            return false;
+        }
+        boolean contains = false;
+        for (Type type : buggyAnnotation.types()) {
+            if (types.contains(type)) {
+                contains = true;
+                break;
+            }
+        }
+        return !contains;
+    }
+
     default boolean isSuccess(IInvokedMethod method) {
-        throwNPE(method);
-        if (!hasDetails(method)) {
+        assertNotNull(method);
+        if (!hasBuggyAnnotation(method)) {
             return isITestResultSuccess(method);
         }
         Status status = getDetailsValue(Buggy::status, method);
@@ -53,8 +93,8 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     default boolean isNewError(IInvokedMethod method) {
-        throwNPE(method);
-        if (!hasDetails(method)) {
+        assertNotNull(method);
+        if (!hasBuggyAnnotation(method)) {
             return isITestResultFailure(method);
         }
         Status status = getDetailsValue(Buggy::status, method);
@@ -62,8 +102,8 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     default boolean isFixed(IInvokedMethod method) {
-        throwNPE(method);
-        if (!hasDetails(method)) {
+        assertNotNull(method);
+        if (!hasBuggyAnnotation(method)) {
             return false;
         }
         Status status = getDetailsValue(Buggy::status, method);
@@ -72,8 +112,8 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     default boolean isImplemented(IInvokedMethod method) {
-        throwNPE(method);
-        if (!hasDetails(method)) {
+        assertNotNull(method);
+        if (!hasBuggyAnnotation(method)) {
             return false;
         }
         Status status = getDetailsValue(Buggy::status, method);
@@ -81,8 +121,8 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     default boolean isExpectedImplementation(IInvokedMethod method) {
-        throwNPE(method);
-        if (!hasDetails(method)) {
+        assertNotNull(method);
+        if (!hasBuggyAnnotation(method)) {
             return false;
         }
         Status status = getDetailsValue(Buggy::status, method);
@@ -90,8 +130,8 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     default boolean isExpectedFix(IInvokedMethod method) {
-        throwNPE(method);
-        if (!hasDetails(method)) {
+        assertNotNull(method);
+        if (!hasBuggyAnnotation(method)) {
             return false;
         }
         Status status = getDetailsValue(Buggy::status, method);
@@ -99,8 +139,8 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     default boolean isCorrupted(IInvokedMethod method) {
-        throwNPE(method);
-        if (!hasDetails(method)) {
+        assertNotNull(method);
+        if (!hasBuggyAnnotation(method)) {
             return false;
         }
         Status status = getDetailsValue(Buggy::status, method);
@@ -108,8 +148,8 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     default boolean isBlocked(IInvokedMethod method) {
-        throwNPE(method);
-        if (!hasDetails(method)) {
+        assertNotNull(method);
+        if (!hasBuggyAnnotation(method)) {
             return false;
         }
         Status status = getDetailsValue(Buggy::status, method);
@@ -148,52 +188,52 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     default boolean isITestResultSuccess(IInvokedMethod method) {
-        throwNPE(method);
+        assertNotNull(method);
         return isITestResultSuccess(method.getTestResult());
     }
 
     default boolean isITestResultSuccess(ITestResult testResult) {
-        throwNPE(testResult);
+        assertNotNull(testResult);
         int status = testResult.getStatus();
         return status == ITestResult.SUCCESS;
     }
 
     default boolean isITestResultFailure(IInvokedMethod method) {
-        throwNPE(method);
+        assertNotNull(method);
         return isITestResultFailure(method.getTestResult());
     }
 
 
     default boolean isITestResultFailure(ITestResult result) {
-        throwNPE(result);
+        assertNotNull(result);
         int iTestResult = getITestResultStatus(result);
         return iTestResult == ITestResult.FAILURE || iTestResult == ITestResult.SUCCESS_PERCENTAGE_FAILURE;
     }
 
     default boolean isITestResultSkip(IInvokedMethod method) {
-        throwNPE(method);
+        assertNotNull(method);
         return isITestResultSkip(method.getTestResult());
     }
 
     default boolean isITestResultSkip(ITestResult result) {
-        throwNPE(result);
+        assertNotNull(result);
         int iTestResult = getITestResultStatus(result);
         return iTestResult == ITestResult.SKIP;
     }
 
     default <T> T getDetailsValue(Function<Buggy, T> function, IInvokedMethod method) {
-        throwNPE(method);
-        Buggy buggy = getDetails(method);
+        assertNotNull(method);
+        Buggy buggy = getBuggyAnnotation(method);
         return getDetailsValue(function, buggy);
     }
 
     default <T> T getDetailsValue(Function<Buggy, T> function, Buggy buggy) {
-        throwNPE(buggy);
+        assertNotNull(buggy);
         return function.apply(buggy);
     }
 
     default int getITestResultStatus(ITestResult iTestResult) {
-        throwNPE(iTestResult);
+        assertNotNull(iTestResult);
         return iTestResult.getStatus();
     }
 
@@ -226,21 +266,21 @@ public interface BuggyListener extends ITestNGListener {
         return "";
     }
 
-    default boolean hasDetails(IInvokedMethod method) {
+    default boolean hasBuggyAnnotation(IInvokedMethod method) {
         if (method != null) {
-            return hasDetails(method.getTestMethod());
+            return hasBuggyAnnotation(method.getTestMethod());
         }
         return false;
     }
 
-    default boolean hasDetails(ITestNGMethod method) {
+    default boolean hasBuggyAnnotation(ITestNGMethod method) {
         if (method != null) {
-            return hasDetails(method.getConstructorOrMethod().getMethod());
+            return hasBuggyAnnotation(method.getConstructorOrMethod().getMethod());
         }
         return false;
     }
 
-    default boolean hasDetails(Method method) {
+    default boolean hasBuggyAnnotation(Method method) {
         if (method != null) {
             return method.isAnnotationPresent(Buggy.class);
         }
@@ -248,91 +288,116 @@ public interface BuggyListener extends ITestNGListener {
     }
 
     @Nullable
-    default Buggy getDetails(IInvokedMethod method) {
-        if (hasDetails(method)) {
-            return getDetails(method.getTestMethod());
+    default Buggy getBuggyAnnotation(IInvokedMethod method) {
+        if (hasBuggyAnnotation(method)) {
+            return getBuggyAnnotation(method.getTestMethod());
         }
         return null;
     }
 
     @Nullable
-    default Buggy getDetails(ITestNGMethod method) {
-        if (hasDetails(method)) {
-            return getDetails(method.getConstructorOrMethod().getMethod());
+    default Buggy getBuggyAnnotation(ITestNGMethod method) {
+        if (hasBuggyAnnotation(method)) {
+            return getBuggyAnnotation(method.getConstructorOrMethod().getMethod());
         }
         return null;
     }
 
     @Nullable
-    default Buggy getDetails(Method method) {
-        if (hasDetails(method)) {
+    default Buggy getBuggyAnnotation(Method method) {
+        if (hasBuggyAnnotation(method)) {
             return method.getAnnotation(Buggy.class);
         }
         return null;
     }
 
-    default boolean hasSuite(IInvokedMethod method) {
+    default boolean hasSuiteAnnotation(IInvokedMethod method) {
         if (method != null) {
-            return hasSuite(method.getTestMethod());
+            return hasSuiteAnnotation(method.getTestMethod());
         }
         return false;
     }
 
-    default boolean hasSuite(ITestClass iTestClass) {
+    default boolean hasSuiteAnnotation(ITestClass iTestClass) {
         if (iTestClass != null) {
-            return hasSuite(iTestClass.getRealClass());
+            return hasSuiteAnnotation(iTestClass.getRealClass());
         }
         return false;
     }
 
-    default boolean hasSuite(ITestNGMethod method) {
+    default boolean hasSuiteAnnotation(ITestNGMethod method) {
         if (method != null) {
-            return hasSuite(method.getRealClass());
+            return hasSuiteAnnotation(method.getRealClass());
         }
         return false;
     }
 
-    default boolean hasSuite(Class<?> realClass) {
+    default boolean hasSuiteAnnotation(Class<?> realClass) {
         return realClass.isAnnotationPresent(Suite.class);
     }
 
     @Nullable
-    default Suite getSuite(IInvokedMethod method) {
-        if (hasSuite(method)) {
-            return getSuite(method.getTestMethod());
+    default Suite getSuiteAnnotation(IInvokedMethod method) {
+        if (hasSuiteAnnotation(method)) {
+            return getSuiteAnnotation(method.getTestMethod());
         }
         return null;
     }
 
     @Nullable
-    default Suite getSuite(ITestClass iTestClass) {
-        if (hasSuite(iTestClass)) {
-            return getSuite(iTestClass.getRealClass());
+    default Suite getSuiteAnnotation(ITestClass iTestClass) {
+        if (hasSuiteAnnotation(iTestClass)) {
+            return getSuiteAnnotation(iTestClass.getRealClass());
         }
         return null;
     }
 
     @Nullable
-    default Suite getSuite(ITestNGMethod method) {
-        if (hasSuite(method)) {
-            return getSuite(method.getRealClass());
+    default Suite getSuiteAnnotation(ITestNGMethod method) {
+        if (hasSuiteAnnotation(method)) {
+            return getSuiteAnnotation(method.getRealClass());
         }
         return null;
     }
 
     @Nullable
-    default Suite getSuite(Class<?> realClass) {
-        if (hasSuite(realClass)) {
+    default Suite getSuiteAnnotation(Class<?> realClass) {
+        if (hasSuiteAnnotation(realClass)) {
             return realClass.getAnnotation(Suite.class);
         }
         return null;
     }
 
-    default void throwNPE(Object o) {
+    default void assertNotNull(Object o) {
         if (o == null) {
             throw new NullPointerException();
         }
     }
 
+    default String getMethodName(IInvokedMethod method) {
+        assertNotNull(method);
+        return method.getTestMethod().getMethodName();
+    }
+
+    default Method getRealMethod(ITestResult result) {
+        assertNotNull(result);
+        return getRealMethod(result.getMethod());
+    }
+
+    default Method getRealMethod(IInvokedMethod method) {
+        assertNotNull(method);
+        return getRealMethod(method.getTestMethod());
+    }
+
+    default Method getRealMethod(ITestNGMethod method) {
+        assertNotNull(method);
+        return method.getConstructorOrMethod().getMethod();
+    }
+
+
+    default String getClassSimpleName(IInvokedMethod method) {
+        assertNotNull(method);
+        return method.getTestMethod().getRealClass().getSimpleName();
+    }
 
 }

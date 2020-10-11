@@ -15,7 +15,7 @@ import org.touchbit.buggy.core.logback.ConfLogger;
 import org.touchbit.buggy.core.utils.JUtils;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyConfiguration;
-import org.touchbit.buggy.spring.boot.starter.jcommander.JCommand;
+import org.touchbit.buggy.core.config.JCommand;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
@@ -70,12 +70,12 @@ public class JCommanderConfiguration implements IConfiguration {
 
     @PostConstruct
     public void postConstruct() {
-        if (BuggyConfigurationYML.isHelp()) {
+        if (BuggyConfiguration.isHelp()) {
             ConfLogger.stepDelimiter();
             jCommander.usage();
             BuggyRunner.exit(0);
         }
-        if (BuggyConfigurationYML.isVersion()) {
+        if (BuggyConfiguration.isVersion()) {
             ConfLogger.stepDelimiter();
             ConfLogger.centerBold("Version info");
             JUtils.getBuggyManifest().forEach(ConfLogger::dotPlaceholder);

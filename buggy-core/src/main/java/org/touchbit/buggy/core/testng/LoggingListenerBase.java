@@ -16,36 +16,72 @@
 
 package org.touchbit.buggy.core.testng;
 
-import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener;
-import org.testng.ITestNGMethod;
-import org.testng.ITestResult;
+import org.testng.*;
 import org.touchbit.buggy.core.config.BuggyConfigurationYML;
+import org.touchbit.buggy.core.config.OutputRule;
 import org.touchbit.buggy.core.logback.ConfLogger;
-import org.touchbit.buggy.core.logback.ConsoleLogger;
-import org.touchbit.buggy.core.logback.FrameworkLogger;
 import org.touchbit.buggy.core.logback.SiftingTestLogger;
 import org.touchbit.buggy.core.model.*;
+import org.touchbit.buggy.core.utils.ANSI;
 import org.touchbit.buggy.core.utils.JUtils;
-import org.touchbit.buggy.core.utils.TestNGHelper;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 
-import static org.touchbit.buggy.core.utils.ANSI.RED;
+import static org.touchbit.buggy.core.model.ResultStatus.SKIP;
+import static org.touchbit.buggy.core.model.ResultStatus.SUCCESS;
+import static org.touchbit.buggy.core.utils.ANSI.*;
 
 /**
  * Listener for processing executable tests.
  * <p>
  * Created by Shaburov Oleg on 31.07.2017.
  */
-public abstract class LoggingListenerBase implements BuggyListener, IInvokedMethodListener {
+public abstract class LoggingListenerBase implements BuggyListener, IInvokedMethodListener, ISuiteListener {
 
-    private static final FrameworkLogger FRAMEWORK = new FrameworkLogger();
-    private static final ConsoleLogger CONSOLE = new ConsoleLogger();
     private static final SiftingTestLogger TEST = new SiftingTestLogger();
+
+    private static final Set<ITestNGMethod> DISABLED_METHODS = new HashSet<>();
+
+    @Override
+    public void onStart(ISuite suite) {
+        suite.getAllMethods().forEach(this::skippedTestsByType);
+        suite.getAllMethods().forEach(this::skippedByTestStatus);
+        suite.getAllMethods().forEach(this::skippedByTestAnnotation);
+    }
+
+    private void skippedTestsByType(ITestNGMethod method) {
+        if (isSkipByType(method) && !DISABLED_METHODS.contains(method)) {
+            DISABLED_METHODS.add(method);
+            String placeholder = ConfLogger.getDotPlaceholder(method.getMethodName(), SKIP);
+            String msg = YELLOW.wrap(placeholder);
+            Buggy buggy = getBuggyAnnotation(method);
+            msg += " by test types: " + Arrays.toString(Objects.requireNonNull(buggy).types());
+            ConfLogger.info(msg);
+        }
+    }
+
+    public void skippedByTestStatus(ITestNGMethod method) {
+        if (isSkipByTestStatus(method) && !DISABLED_METHODS.contains(method)) {
+            DISABLED_METHODS.add(method);
+            String placeholder = ConfLogger.getDotPlaceholder(method.getMethodName(), SKIP);
+            String msg = YELLOW.wrap(placeholder);
+            Buggy buggy = getBuggyAnnotation(method);
+            msg += " by status: " + Objects.requireNonNull(buggy).status();
+            ConfLogger.info(msg);
+        }
+    }
+
+    public void skippedByTestAnnotation(ITestNGMethod method) {
+        assertNotNull(method);
+        if (!method.getEnabled()) {
+            String placeholder = ConfLogger.getDotPlaceholder(method.getMethodName(), SKIP);
+            String msg = YELLOW.wrap(placeholder);
+            msg += " by @Test annotation.";
+            ConfLogger.info(msg);
+        }
+    }
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
@@ -54,17 +90,14 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-        TEST.info("Date: {}", new Date());
         ResultStatus resultStatus = getResultStatus(method);
         SiftingTestLogger.setTestResultStatus(resultStatus);
-        Boolean printLog = BuggyConfigurationYML.isPrintLog();
-        Boolean printSuite = BuggyConfigurationYML.isPrintSuite();
-        Boolean printCause = BuggyConfigurationYML.isPrintCause();
-        String methodName = TestNGHelper.getMethodName(method);
+        String methodName = getMethodName(method);
+        TEST.info("Date: {}", new Date());
         Throwable throwable = testResult.getThrowable();
-        if (hasDetails(method) && hasSuite(method) && method.isTestMethod()) {
-            Buggy buggy = getDetails(method);
-            Suite suite = getSuite(method);
+        if (hasBuggyAnnotation(method) && hasSuiteAnnotation(method) && method.isTestMethod()) {
+            Buggy buggy = getBuggyAnnotation(method);
+            Suite suite = getSuiteAnnotation(method);
             String component = JUtils.getGoal(Suite::component, suite).getName().trim();
             String service = JUtils.getGoal(Suite::service, suite).getName().trim();
             String interfaze = JUtils.getGoal(Suite::interfaze, suite).getName().trim();
@@ -77,11 +110,18 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
             String[] issues = buggy.issues();
             String[] bugs = buggy.bugs();
             String indent = " ";
-
-            String dotPlaceholder = ConfLogger.getDotPlaceholder(methodName, resultStatus);
+            String dotPlaceholder = ConfLogger.getDotPlaceholder(methodName, resultStatus, getANSI(resultStatus));
+            if (BuggyConfigurationYML.getOutputRule().equals(OutputRule.OFF)) {
+                ConfLogger.info(dotPlaceholder);
+                return;
+            }
+            if (BuggyConfigurationYML.getOutputRule().equals(OutputRule.UNSUCCESSFUL) && resultStatus == SUCCESS) {
+                ConfLogger.info(dotPlaceholder);
+                return;
+            }
             StringBuilder message = new StringBuilder();
             message.append(dotPlaceholder);
-            if (printSuite) {
+            if (BuggyConfigurationYML.getTestSuiteInfo()) {
                 message.append(" [")
                         .append(component).append(" ")
                         .append(service).append(" ")
@@ -91,16 +131,16 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
                 }
                 message.append("]");
             }
-            if (hasDescription(method)) {
+            if (BuggyConfigurationYML.getTestCaseTitle() && hasDescription(method)) {
 //                message.append("\n").append(" § ").append(description);
                 message.append("\n  Case:  ").append(getDescription(method));
                 indent += indent;
             }
-            if (printLog) {
+            if (BuggyConfigurationYML.getTestLogFilePath()) {
                 message.append("\n  Log:   ").append(getLogFilePath());
                 indent += indent;
             }
-            if (printCause && bugs.length > 0) {
+            if (BuggyConfigurationYML.getTestBugsInfo() && bugs.length > 0) {
                 if (BuggyConfigurationYML.getIssuesUrl() != null && !BuggyConfigurationYML.getIssuesUrl().isEmpty()) {
                     for (String bug : bugs) {
 //                        message.append("\n  └").append(BOLD.wrap(RED.wrap(" ❗ ")))
@@ -110,7 +150,7 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
                     message.append(" ").append(Arrays.toString(bugs));
                 }
             }
-            if (true) {
+            if (BuggyConfigurationYML.getTestIssuesInfo()) {
                 if (BuggyConfigurationYML.getIssuesUrl() != null && !BuggyConfigurationYML.getIssuesUrl().isEmpty()) {
                     for (String bug : bugs) {
 //                        message.append("\n  └").append(BOLD.wrap(GREEN.wrap(" ✓ ")))
@@ -121,7 +161,7 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
                 }
             }
 
-            if (printCause && throwable != null) {
+            if (BuggyConfigurationYML.getTestErrorInfo() && throwable != null) {
 //                message.append("\n  └ ").append(BOLD.wrap(RED.wrap("↯ ")))
                 message.append("\n  ")
                         .append(RED.wrap(throwable.getClass().getSimpleName()))
@@ -129,133 +169,29 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
                         .append(throwable.getMessage());
             }
             ConfLogger.info(message.append("\n").toString());
-//            processTestMethodResult(method, testResult, details);
-        } else {
-//            processConfigurationMethodResult(method, testResult);
         }
     }
-//
-//    public void resultLog(ITestNGMethod method, Status status, String details) {
-//        String methodName = method.getMethodName();
-//        Suite suite = TestNGHelper.getSuite(method);
-//        String statusName = status.name();
-//        StringJoiner resultMsg = new StringJoiner(" ");
-//        if (BuggyConfig.isPrintSuite()) {
-//            StringJoiner sj = new StringJoiner(" ", " [", "]");
-//            sj.add(JUtils.getGoal(Suite::component, suite).getName().trim());
-//            sj.add(JUtils.getGoal(Suite::service, suite).getName().trim());
-//            sj.add(JUtils.getGoal(Suite::interfaze, suite).getName().trim());
-//            sj.add(suite.purpose().trim());
-//            resultMsg.add(sj.toString().trim());
-//        }
-//        TEST.info("{} - {} {}", methodName, statusName, method.getDescription());
-//        String detailsString = details.trim();
-//        if ((BuggyConfig.isPrintCause() || method.getInvocationCount() < 1) && !detailsString.isEmpty()) {
-//            resultMsg.add(detailsString);
-//        }
-//        String logPathString = getLogFilePath(method, status).trim();
-//        if (BuggyConfig.isPrintLog() && method.getInvocationCount() > 0 && !logPathString.isEmpty() &&
-//                (!BuggyConfig.isPrintLogFileOnlyFail() || status != Status.SUCCESS)) {
-//            resultMsg.add("\n  └");
-//            resultMsg.add(logPathString);
-//        }
-//        printASCIIStatus(status, StringUtils.dotFiller(methodName, 47, statusName) +
-//                (resultMsg.length() > 0 ? " " + resultMsg.toString().trim() : ""));
-//    }
-//
-//    public void processTestMethodResult(IInvokedMethod m, ITestResult testResult, Details details) {
-//        ITestNGMethod method = m.getTestMethod();
-//        switch (testResult.getStatus()) {
-//            case SUCCESS:
-//                switch (details.status()) {
-//                    case BLOCKED:
-//                    case EXP_FIX:
-//                        resultLog(method, Status.FIXED, buildDetailsMessage(details));
-//                        break;
-//                    case EXP_IMPL:
-//                        resultLog(method, Status.IMPLEMENTED, buildDetailsMessage(details));
-//                        break;
-//                    case CORRUPTED:
-//                        resultLog(method, Status.CORRUPTED, buildDetailsMessage(details));
-//                        testResult.setThrowable(new CorruptedTestException());
-//                        break;
-//                    default:
-//                        resultLog(method, Status.SUCCESS, buildDetailsMessage(details));
-//                }
-//                break;
-//            case SUCCESS_PERCENTAGE_FAILURE:
-//            case FAILURE:
-//                switch (details.status()) {
-//                    case CORRUPTED:
-//                        resultLog(method, Status.CORRUPTED, buildDetailsMessage(details));
-//                        testResult.setThrowable(new CorruptedTestException());
-//                        break;
-//                    case EXP_FIX:
-//                        resultLog(method, Status.EXP_FIX, buildDetailsMessage(details));
-//                        break;
-//                    case EXP_IMPL:
-//                        resultLog(method, Status.EXP_IMPL, buildDetailsMessage(details));
-//                        break;
-//                    case BLOCKED:
-//                        resultLog(method, Status.BLOCKED, buildDetailsMessage(details));
-//                        break;
-//                    default:
-//                        resultLog(method, Status.FAILED, buildDetailsMessage(details));
-//                }
-//                break;
-//            case SKIP:
-//                resultLog(method, Status.SKIP, buildDetailsMessage(details));
-//                break;
-//            default:
-//                FRAMEWORK.error("Received unprocessed status: {}", testResult.getStatus());
-////                Buggy.incrementBuggyErrors();
-//        }
-//    }
-//
-//    public void processConfigurationMethodResult(IInvokedMethod method, ITestResult testResult) {
-//        String methodName = TestNGHelper.getMethodName(method);
-//        String description = getDescription(method);
-//        switch (testResult.getStatus()) {
-//            case SUCCESS:
-//                TEST.info("Invoke configuration method [{}] completed successfully", methodName);
-//                break;
-//            case SKIP:
-//                TEST.warn("Invoke configuration method [{}] skipped. " +
-//                        "List of dependent tests that were missed: {}", methodName, description);
-//                break;
-//            case SUCCESS_PERCENTAGE_FAILURE:
-//            case FAILURE:
-//                TEST.error("Invoke configuration method [{}] completed with error \n{}",
-//                        methodName, testResult.getThrowable().getMessage());
-//                break;
-//            default:
-////                Buggy.incrementBuggyErrors();
-//                FRAMEWORK.error("Received unresolved status of configuration method [{}]. Status: {}",
-//                        methodName, testResult.getStatus());
-//        }
-//    }
-//
-//
-//    protected void printASCIIStatus(Status status, String msg) {
-//        switch (status) {
-//            case FAILED:
-//            case CORRUPTED:
-//                consoleLog.error(msg);
-//                break;
-//            case EXP_IMPL:
-//            case EXP_FIX:
-//            case BLOCKED:
-//            case SKIP:
-//                consoleLog.warn(msg);
-//                break;
-//            case IMPLEMENTED:
-//            case FIXED:
-//                consoleLog.debug(msg);
-//                break;
-//            default:
-//                consoleLog.info(msg);
-//        }
-//    }
+
+    protected ANSI getANSI(ResultStatus status) {
+        assertNotNull(status);
+        switch (status) {
+            case SUCCESS:
+                return NONE;
+            case FIXED:
+            case IMPLEMENTED:
+                return GREEN;
+            case FAILED:
+            case CORRUPTED:
+                return RED;
+            case SKIP:
+                return YELLOW;
+            case BLOCKED:
+            case EXP_FIX:
+            case EXP_IMPL:
+            default:
+                return PURPLE;
+        }
+    }
 
     protected String getLogFilePath() {
         // Do not change the check. Feature parsing values by jCommander library.
@@ -271,15 +207,6 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
                 return "Log file not found";
             }
         }
-    }
-
-    protected String getLogFileName(IInvokedMethod method) {
-        return getLogFileName(method.getTestMethod());
-    }
-
-    protected String getLogFileName(ITestNGMethod iTestNGMethod) {
-        Method method = iTestNGMethod.getConstructorOrMethod().getMethod();
-        return method.getName() + ".log";
     }
 
 }

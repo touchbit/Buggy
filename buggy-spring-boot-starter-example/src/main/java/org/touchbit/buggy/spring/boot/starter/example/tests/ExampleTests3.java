@@ -15,13 +15,13 @@ public class ExampleTests3 {
 
     @Test
     @Buggy(status = CORRUPTED)
-    public void test_3() throws Exception {
+    public void test_3_1() throws Exception {
         throw new ProtocolException("Received HTTP_PROXY_AUTH (407) code while not using proxy");
     }
 
     @Test
     @Buggy(status = Status.BLOCKED, bugs = "JIRA-321")
-    public void test_1() {
+    public void test_3_2() {
 
     }
 

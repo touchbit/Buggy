@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.testng.ITestResult.*;
 import static org.touchbit.buggy.core.utils.ANSI.*;
 
-public class TestStatisticListener implements BuggyListener, IExecutionListener, IInvokedMethodListener {
+public abstract class TestStatisticListenerBase implements BuggyListener, IExecutionListener, IInvokedMethodListener {
 
     protected static AtomicInteger totalCountOfTests = new AtomicInteger(0);
     protected static AtomicInteger totalCountOfTestsRun = new AtomicInteger(0);
@@ -25,8 +25,8 @@ public class TestStatisticListener implements BuggyListener, IExecutionListener,
     protected static AtomicInteger notDetailedTests = new AtomicInteger(0);
 
     protected static AtomicInteger newErrors = new AtomicInteger(0);
-    protected static AtomicInteger waitingToFixDefect = new AtomicInteger(0);
-    protected static AtomicInteger waitingForImplementation = new AtomicInteger(0);
+    protected static AtomicInteger expFix = new AtomicInteger(0);
+    protected static AtomicInteger expImpl = new AtomicInteger(0);
     protected static AtomicInteger blockedTests = new AtomicInteger(0);
     protected static AtomicInteger corruptedTests = new AtomicInteger(0);
     protected static AtomicInteger fixedCases = new AtomicInteger(0);
@@ -49,7 +49,7 @@ public class TestStatisticListener implements BuggyListener, IExecutionListener,
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
         if (method.isTestMethod()) {
-            Buggy buggy = getDetails(method);
+            Buggy buggy = getBuggyAnnotation(method);
             if (buggy == null) {
                 notDetailedTests.incrementAndGet(); // TODO remove after --check realisation
             }
@@ -93,10 +93,10 @@ public class TestStatisticListener implements BuggyListener, IExecutionListener,
                             blockedTests.incrementAndGet();
                             break;
                         case EXP_FIX:
-                            waitingToFixDefect.incrementAndGet();
+                            expFix.incrementAndGet();
                             break;
                         case EXP_IMPL:
-                            waitingForImplementation.incrementAndGet();
+                            expImpl.incrementAndGet();
                             break;
                         case NONE:
                         default:
@@ -112,26 +112,25 @@ public class TestStatisticListener implements BuggyListener, IExecutionListener,
         ConfLogger.centerBold("Summary");
         ConfLogger.dotPlaceholder("Total count of tests", totalCountOfTests);
         ConfLogger.dotPlaceholder("Total count of tests run", totalCountOfTestsRun);
-        ConfLogger.dotPlaceholder("Unsuccessful tests", unsuccess, PURPLE, unsuccess.get() != 0);
+        ConfLogger.dotPlaceholder("Unsuccessful tests", unsuccess, PURPLE, isNotZero(unsuccess));
         ConfLogger.dotPlaceholder("Successful tests", successfulTests);
         ConfLogger.dotPlaceholder("Skipped tests", skippedTests);
         ConfLogger.dotPlaceholder("Without @Details", notDetailedTests);
         ConfLogger.center("Details");
-        ConfLogger.dotPlaceholder("New Errors", newErrors, RED, newErrors.get() != 0);
-        ConfLogger.dotPlaceholder("Corrupted tests", corruptedTests, RED, corruptedTests.get() != 0);
-        ConfLogger.dotPlaceholder("Blocked tests", blockedTests);
-        ConfLogger.dotPlaceholder("Waiting to fix a defect", waitingToFixDefect);
-        ConfLogger.dotPlaceholder("Waiting for implementation", waitingForImplementation);
-        ConfLogger.dotPlaceholder("Fixed (did not work before)", fixedCases, GREEN, fixedCases.get() != 0);
-        ConfLogger.dotPlaceholder("Implemented cases", implemented, GREEN, implemented.get() != 0);
+        ConfLogger.dotPlaceholder("New Errors", newErrors, RED, isNotZero(newErrors));
+        ConfLogger.dotPlaceholder("Corrupted tests", corruptedTests, RED, isNotZero(corruptedTests));
+        ConfLogger.dotPlaceholder("Blocked tests", blockedTests, PURPLE, isNotZero(blockedTests));
+        ConfLogger.dotPlaceholder("Waiting to fix a defect", expFix, PURPLE, isNotZero(expFix));
+        ConfLogger.dotPlaceholder("Waiting for implementation", expImpl, PURPLE, isNotZero(expImpl));
+        ConfLogger.dotPlaceholder("Fixed (did not work before)", fixedCases, GREEN, isNotZero(fixedCases));
+        ConfLogger.dotPlaceholder("Implemented cases", implemented, GREEN, isNotZero(implemented));
         ConfLogger.stepDelimiter();
         String time = DurationFormatUtils.formatDuration(finishTime - startTime, "HH:mm:ss,SSS");
         ConfLogger.dotPlaceholder("Execution time", time);
     }
 
-    @Override
-    public boolean isEnable() {
-        return true;
+    protected boolean isNotZero(AtomicInteger integer) {
+        return integer.get() != 0;
     }
 
 }

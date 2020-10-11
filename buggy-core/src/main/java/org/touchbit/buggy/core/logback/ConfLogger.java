@@ -36,8 +36,14 @@ public class ConfLogger {
     public static void dotPlaceholder(Object prefix, Object postfix, ANSI ansi, boolean isWrapCondition) {
         String msg = getDotPlaceholder(prefix, postfix);
         if (isWrapCondition) {
-            msg = ansi.wrap(msg);
+            dotPlaceholder(prefix, postfix, ansi);
+        } else {
+            info(msg);
         }
+    }
+
+    public static void dotPlaceholder(Object prefix, Object postfix, ANSI ansi) {
+        String msg = getDotPlaceholder(prefix, postfix, ansi);
         info(msg);
     }
 
@@ -47,6 +53,11 @@ public class ConfLogger {
 
     public static String getDotPlaceholder(Object prefix, Object postfix) {
         return filler(prefix, DOT, postfix);
+    }
+
+    public static String getDotPlaceholder(Object prefix, Object postfix, ANSI ansi) {
+        String filler = filler(prefix, DOT, postfix);
+        return ansi.wrap(filler);
     }
 
     public static void underscorePlaceholder(Object prefix, Object postfix) {

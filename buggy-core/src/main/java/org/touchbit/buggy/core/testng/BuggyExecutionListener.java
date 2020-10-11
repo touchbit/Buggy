@@ -19,9 +19,15 @@ package org.touchbit.buggy.core.testng;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.testng.*;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
+import org.touchbit.buggy.core.model.Buggy;
+import org.touchbit.buggy.core.model.Type;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * Listener for processing executable tests.
@@ -29,7 +35,7 @@ import java.util.List;
  * Created by Shaburov Oleg on 31.07.2017.
  */
 @SuppressWarnings({"unused", "UnusedReturnValue", "squid:S2629"})
-public class BuggyExecutionListener extends BaseBuggyExecutionListener
+public abstract class BuggyExecutionListener extends BaseBuggyExecutionListener
         implements IExecutionListener, IInvokedMethodListener, ISuiteListener, ITestListener, IClassListener {
 
     private static final ThreadLocal<List<String>> STEPS = new ThreadLocal<>();
@@ -134,32 +140,31 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
 //        }
 //    }
 //
-//    @Override
-//    public void onStart(ISuite suite) {
-//        disableTestsByType(suite);
-//        if (!BuggyConfig.isForce()) {
-//            disableTestsByStatus(suite);
-//        }
-//    }
+    @Override
+    public void onStart(ISuite suite) {
+        disableTestsByType(suite);
+        if (!BuggyConfigurationYML.isForceRun()) {
+            disableTestsByStatus(suite);
+        }
+    }
 //
-//    @Override
-//    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-//        STEPS.set(new ArrayList<>());
-//        String methodName = getMethodName(method);
-//        SiftingTestLogger.setTestLogFileName(getInvokedMethodLogFileName(method));
-//        if (method.isTestMethod()) {
-//            testLog.info("Test method is running:\n{} - {}", methodName, getDescription(method));
-//        } else {
-//            testLog.info("Configuration method is running:\n{} - {}.", methodName, getDescription(method));
-//        }
-//        if (testLog.isDebugEnabled()) {
-//            StringJoiner sj = new StringJoiner("\n", "\n", "\n");
-//            for (Annotation annotation : getRealMethod(method).getAnnotations()) {
-//                sj.add(annotation.annotationType().getTypeName());
-//            }
-//            testLog.debug("Declared method annotations:{}", sj);
-//        }
-//    }
+    @Override
+    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
+        STEPS.set(new ArrayList<>());
+        String methodName = getMethodName(method);
+        if (method.isTestMethod()) {
+            testLog.info("Test method is running:\n{} - {}", methodName, getDescription(method));
+        } else {
+            testLog.info("Configuration method is running:\n{} - {}.", methodName, getDescription(method));
+        }
+        if (testLog.isDebugEnabled()) {
+            StringJoiner sj = new StringJoiner("\n", "\n", "\n");
+            for (Annotation annotation : getRealMethod(method).getAnnotations()) {
+                sj.add(annotation.annotationType().getTypeName());
+            }
+            testLog.debug("Declared method annotations:{}", sj);
+        }
+    }
 //
 //    @Override
 //    public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
@@ -260,46 +265,46 @@ public class BuggyExecutionListener extends BaseBuggyExecutionListener
 //        }
 //    }
 //
-//    public void disableTestsByStatus(ISuite suite) {
-//        suite.getAllMethods().forEach(method -> {
-//            Details details = getDetails(method);
-//            if (details != null) {
-//                if (method.getInvocationCount() > 0) {
-//                    switch (details.status()) {
-//                        case EXP_FIX:
-//                        case EXP_IMPL:
-//                        case BLOCKED:
-//                        case CORRUPTED:
-//                            method.setInvocationCount(0);
-//                            resultLog(method, details.status(), buildDetailsMessage(details, "forced test run disabled"));
-//                            break;
-//                        default:
-//                            // do nothing
-//                    }
-//                }
-//            } else {
-////                Buggy.incrementBuggyWarns();
-//                frameworkLog.warn("The test method {} does not contain the @Details annotation",
-//                        method.getMethodName());
-//            }
-//        });
-//    }
-//
-//    public void disableTestsByType(final ISuite suite) {
-//        final List<ITestNGMethod> methods = suite.getAllMethods();
-//        methods.forEach(method -> {
-//            Details details = getDetails(method);
-//            List<Type> configType = BuggyConfig.getTypes();
-//            if (details != null) {
-//                List<Type> methodTypes = new ArrayList<>(Arrays.asList(details.types()));
-//                boolean matched = methodTypes.stream().anyMatch(configType::contains);
-//                if (!configType.contains(Type.ALL) && !matched) {
-//                    method.setInvocationCount(0);
-//                    resultLog(method, Status.SKIP, buildDetailsMessage(details, details.types(), "test types"));
-//                }
-//            }
-//        });
-//    }
+    public void disableTestsByStatus(ISuite suite) {
+        suite.getAllMethods().forEach(method -> {
+            Buggy details = getBuggyAnnotation(method);
+            if (details != null) {
+                if (method.getInvocationCount() > 0) {
+                    switch (details.status()) {
+                        case EXP_FIX:
+                        case EXP_IMPL:
+                        case BLOCKED:
+                        case CORRUPTED:
+                            System.out.println(" >>>> disableTestsByStatus : " + method.getMethodName() + ": " + details.status());
+                            method.setInvocationCount(0);
+                            break;
+                        default:
+                            // do nothing
+                    }
+                }
+            } else {
+//                Buggy.incrementBuggyWarns();
+                frameworkLog.warn("The test method {} does not contain the @Details annotation",
+                        method.getMethodName());
+            }
+        });
+    }
+
+    public void disableTestsByType(final ISuite suite) {
+        final List<ITestNGMethod> methods = suite.getAllMethods();
+        methods.forEach(method -> {
+            Buggy details = getBuggyAnnotation(method);
+            List<Type> configType = BuggyConfigurationYML.getTypes();
+            if (details != null) {
+                List<Type> methodTypes = new ArrayList<>(Arrays.asList(details.types()));
+                boolean matched = methodTypes.stream().anyMatch(configType::contains);
+                if (!configType.contains(Type.ALL) && !matched) {
+                    System.out.println(" >>>> disableTestsByStatus : " + method.getMethodName() + ": " + methodTypes);
+                    method.setInvocationCount(0);
+                }
+            }
+        });
+    }
 //
 //    public void resultLog(ITestNGMethod method, Status status, String details) {
 //        String methodName = method.getMethodName();

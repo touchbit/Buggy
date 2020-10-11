@@ -19,7 +19,7 @@ package org.touchbit.buggy.spring.boot.starter.jcommander.converters;
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.ParameterException;
 
-import static org.touchbit.buggy.spring.boot.starter.jcommander.BParameters.*;
+import static org.touchbit.buggy.spring.boot.starter.jcommander.CommandNames.*;
 
 /**
  * Created by Oleg Shaburov on 08.09.2018

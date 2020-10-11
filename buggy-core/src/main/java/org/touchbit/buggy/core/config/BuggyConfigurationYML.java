@@ -27,30 +27,24 @@ import static org.touchbit.buggy.core.model.Type.ALL;
 @SuppressWarnings("unused")
 public final class BuggyConfigurationYML implements ConfigurationYML {
 
+    private static String programName = "Buggy";
     private static Boolean help = false;
-    private static Boolean force = false;
-    private static Boolean printSuite = false;
-    private static Boolean printCause = false;
-    private static Boolean printLog = false;
-    private static Boolean printLogOnlyFail = false;
-    private static Boolean version = false;
+    private static Boolean forceRun = false;
     private static Integer threads = 50;
-    private static String artifactsUrl;
     private static ParallelMode parallelMode = METHODS;
+    private static String artifactsUrl;
     private static List<Component> components = JUtils.getListWith(AllComponents::new);
     private static List<Service> services = JUtils.getListWith(AllServices::new);
     private static List<Interface> interfaces = JUtils.getListWith(AllInterfaces::new);
     private static List<Type> types = JUtils.getListWith(ALL);
-    private static String programName = "Buggy";
     private static String issuesUrl = "";
-
-    public static void setPrintLogFileOnlyFail(Boolean printLogIfFail) {
-        BuggyConfigurationYML.printLogOnlyFail = printLogIfFail;
-    }
-
-    public static Boolean isPrintLogFileOnlyFail() {
-        return printLogOnlyFail;
-    }
+    private static Boolean testCaseTitle = true;
+    private static Boolean testSuiteInfo = false;
+    private static Boolean testLogFilePath = true;
+    private static Boolean testIssuesInfo = false;
+    private static Boolean testBugsInfo = true;
+    private static Boolean testErrorInfo = true;
+    private static OutputRule outputRule = OutputRule.UNSUCCESSFUL;
 
     public static Boolean isHelp() {
         return BuggyConfigurationYML.help;
@@ -60,48 +54,12 @@ public final class BuggyConfigurationYML implements ConfigurationYML {
         BuggyConfigurationYML.help = help;
     }
 
-    public static Boolean isForce() {
-        return force;
+    public static Boolean isForceRun() {
+        return forceRun;
     }
 
-    public static void setForce(Boolean force) {
-        BuggyConfigurationYML.force = force;
-    }
-
-    public static Boolean isPrintSuite() {
-        return printSuite;
-    }
-
-    public static void setPrintSuite(Boolean printSuite) {
-        BuggyConfigurationYML.printSuite = printSuite;
-    }
-
-    public static Boolean isPrintCause() {
-        return printCause;
-    }
-
-    public static void setPrintCause(Boolean printCause) {
-        BuggyConfigurationYML.printCause = printCause;
-    }
-
-    public static Boolean isPrintLog() {
-        return printLog;
-    }
-
-    public static void setPrintLog(Boolean printLog) {
-        BuggyConfigurationYML.printLog = printLog;
-    }
-
-    public static void setPrintLogOnlyFail(Boolean printLogOnlyFail) {
-        BuggyConfigurationYML.printLogOnlyFail = printLogOnlyFail;
-    }
-
-    public static Boolean isVersion() {
-        return version;
-    }
-
-    public static void setVersion(Boolean version) {
-        BuggyConfigurationYML.version = version;
+    public static void setForceRun(Boolean forceRun) {
+        BuggyConfigurationYML.forceRun = forceRun;
     }
 
     public static Integer getThreads() {
@@ -236,6 +194,70 @@ public final class BuggyConfigurationYML implements ConfigurationYML {
 
     public static void setIssuesUrl(String issuesUrl) {
         BuggyConfigurationYML.issuesUrl = issuesUrl;
+    }
+
+    public static Boolean getHelp() {
+        return help;
+    }
+
+    public static Boolean getForceRun() {
+        return forceRun;
+    }
+
+    public static Boolean getTestCaseTitle() {
+        return testCaseTitle;
+    }
+
+    public static void setTestCaseTitle(Boolean testCaseTitle) {
+        BuggyConfigurationYML.testCaseTitle = testCaseTitle;
+    }
+
+    public static Boolean getTestSuiteInfo() {
+        return testSuiteInfo;
+    }
+
+    public static void setTestSuiteInfo(Boolean testSuiteInfo) {
+        BuggyConfigurationYML.testSuiteInfo = testSuiteInfo;
+    }
+
+    public static Boolean getTestLogFilePath() {
+        return testLogFilePath;
+    }
+
+    public static void setTestLogFilePath(Boolean testLogFilePath) {
+        BuggyConfigurationYML.testLogFilePath = testLogFilePath;
+    }
+
+    public static Boolean getTestIssuesInfo() {
+        return testIssuesInfo;
+    }
+
+    public static void setTestIssuesInfo(Boolean testIssuesInfo) {
+        BuggyConfigurationYML.testIssuesInfo = testIssuesInfo;
+    }
+
+    public static Boolean getTestBugsInfo() {
+        return testBugsInfo;
+    }
+
+    public static void setTestBugsInfo(Boolean testBugsInfo) {
+        BuggyConfigurationYML.testBugsInfo = testBugsInfo;
+    }
+
+    public static Boolean getTestErrorInfo() {
+        return testErrorInfo;
+    }
+
+    public static void setTestErrorInfo(Boolean testErrorInfo) {
+        BuggyConfigurationYML.testErrorInfo = testErrorInfo;
+    }
+
+    public static OutputRule getOutputRule() {
+        return outputRule;
+    }
+
+    public static void setOutputRule(OutputRule outputRule) {
+        BuggyConfigurationYML.outputRule = outputRule;
     }
 
 }

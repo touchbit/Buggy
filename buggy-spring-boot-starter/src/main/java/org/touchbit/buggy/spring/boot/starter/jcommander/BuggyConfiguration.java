@@ -2,6 +2,8 @@ package org.touchbit.buggy.spring.boot.starter.jcommander;
 
 import com.beust.jcommander.Parameter;
 import org.touchbit.buggy.core.config.BuggyConfigurationYML;
+import org.touchbit.buggy.core.config.JCommand;
+import org.touchbit.buggy.core.config.OutputRule;
 import org.touchbit.buggy.core.goal.component.Component;
 import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.Service;
@@ -15,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.touchbit.buggy.spring.boot.starter.jcommander.BParameters.*;
+import static org.touchbit.buggy.spring.boot.starter.jcommander.CommandNames.*;
 
 /**
  * Configuration class for customizing Buggy.
@@ -26,8 +28,8 @@ import static org.touchbit.buggy.spring.boot.starter.jcommander.BParameters.*;
 @SuppressWarnings("unused")
 public final class BuggyConfiguration implements JCommand {
 
-    private static Boolean version;
-    private static Integer exitStatus;
+    private static Boolean version = false;
+    private static Integer exitStatus = null;
 
     public static Boolean getVersion() {
         return version;
@@ -37,7 +39,7 @@ public final class BuggyConfiguration implements JCommand {
         return exitStatus;
     }
 
-    @Parameter(names = {V, VERSION}, description = "Print program version")
+    @Parameter(names = {VERSION}, description = "Print program version")
     public static void setVersion(Boolean version) {
         BuggyConfiguration.version = version;
     }
@@ -56,27 +58,7 @@ public final class BuggyConfiguration implements JCommand {
 
     @Parameter(names = {F, FORCE}, description = "Running all tests, including those that fall.")
     public static void setForce(Boolean force) {
-        BuggyConfigurationYML.setForce(force);
-    }
-
-    @Parameter(names = {TEST_SUITE_INFO}, description = "Display information on the Suite in the console log.")
-    public static void setPrintSuite(Boolean printSuite) {
-        BuggyConfigurationYML.setPrintSuite(printSuite);
-    }
-
-    @Parameter(names = {PRINT_CAUSE}, description = "Print the cause of a fail or skip test in the console log.")
-    public static void setPrintCause(Boolean printCause) {
-        BuggyConfigurationYML.setPrintCause(printCause);
-    }
-
-    @Parameter(names = {TEST_LOG_FILE_PATH}, description = "Print the test log file path in the console log")
-    public static void setPrintLog(Boolean printLog) {
-        BuggyConfigurationYML.setPrintLog(printLog);
-    }
-
-    @Parameter(names = {PRINT_LOG_IF_FAIL}, description = "Print the failed test log file path in the console log")
-    public static void setPrintLogOnlyFail(Boolean printLogOnlyFail) {
-        BuggyConfigurationYML.setPrintLogOnlyFail(printLogOnlyFail);
+        BuggyConfigurationYML.setForceRun(force);
     }
 
     @Parameter(names = {THREADS}, description = "The number of threads to run the test methods.")
@@ -157,7 +139,7 @@ public final class BuggyConfiguration implements JCommand {
     }
 
     @Parameter(names = {"--issues-url"}, description = "Task tracker issues URL.")
-    public static void setTaskTrackerIssueUrl(String taskTrackerIssueUrl) {
+    public static void setIssuesUrl(String taskTrackerIssueUrl) {
         BuggyConfigurationYML.setIssuesUrl(taskTrackerIssueUrl);
     }
 
@@ -165,28 +147,75 @@ public final class BuggyConfiguration implements JCommand {
         return BuggyConfigurationYML.isHelp();
     }
 
-    public static Boolean isPrintLogFileOnlyFail() {
-        return BuggyConfigurationYML.isPrintLog();
+    @Parameter(names = {TEST_CASE_TITLE}, description = "Print the title of the test case to the console log.")
+    public static void setTestCaseTitle(Boolean testCaseTitle) {
+        BuggyConfigurationYML.setTestCaseTitle(testCaseTitle);
     }
 
-    public static Boolean isForce() {
-        return BuggyConfigurationYML.isForce();
+    @Parameter(names = {TEST_SUITE_INFO}, description = "Print the suite information in the console log.")
+    public static void setTestSuiteInfo(Boolean testSuiteInfo) {
+        BuggyConfigurationYML.setTestSuiteInfo(testSuiteInfo);
     }
 
-    public static Boolean isPrintSuite() {
-        return BuggyConfigurationYML.isPrintSuite();
+    @Parameter(names = {TEST_LOG_FILE_PATH}, description = "Print the test log file path in the console log.")
+    public static void setTestLogFilePath(Boolean testLogFilePath) {
+        BuggyConfigurationYML.setTestLogFilePath(testLogFilePath);
     }
 
-    public static Boolean isPrintCause() {
-        return BuggyConfigurationYML.isPrintCause();
+    @Parameter(names = {TEST_ISSUES_INFO}, description = "Print URLs of related issues.")
+    public static void setTestIssuesInfo(Boolean testIssuesInfo) {
+        BuggyConfigurationYML.setTestIssuesInfo(testIssuesInfo);
     }
 
-    public static Boolean isPrintLog() {
-        return BuggyConfigurationYML.isPrintLog();
+    @Parameter(names = {TEST_BUGS_INFO}, description = "Print URLs of related bugs.")
+    public static void setTestBugsInfo(Boolean testBugsInfo) {
+        BuggyConfigurationYML.setTestBugsInfo(testBugsInfo);
+    }
+
+    @Parameter(names = {TEST_ERROR_INFO}, description = "Print the cause of a fail test in the console log.")
+    public static void setTestErrorInfo(Boolean testErrorInfo) {
+        BuggyConfigurationYML.setTestErrorInfo(testErrorInfo);
+    }
+
+    @Parameter(names = {OUTPUT_RULE}, description = "Print the cause of a fail test in the console log.")
+    public static void setOutputRule(OutputRule outputRule) {
+        BuggyConfigurationYML.setOutputRule(outputRule);
+    }
+
+    public static Boolean getTestCaseTitle() {
+        return BuggyConfigurationYML.getTestCaseTitle();
+    }
+
+    public static Boolean getTestSuiteInfo() {
+        return BuggyConfigurationYML.getTestSuiteInfo();
+    }
+
+    public static Boolean getTestLogFilePath() {
+        return BuggyConfigurationYML.getTestLogFilePath();
+    }
+
+    public static Boolean getTestIssuesInfo() {
+        return BuggyConfigurationYML.getTestIssuesInfo();
+    }
+
+    public static Boolean getTestBugsInfo() {
+        return BuggyConfigurationYML.getTestBugsInfo();
+    }
+
+    public static Boolean getTestErrorInfo() {
+        return BuggyConfigurationYML.getTestErrorInfo();
+    }
+
+    public static OutputRule getOutputRule() {
+        return BuggyConfigurationYML.getOutputRule();
     }
 
     public static Boolean isVersion() {
-        return BuggyConfigurationYML.isVersion();
+        return version;
+    }
+
+    public static Boolean isForce() {
+        return BuggyConfigurationYML.isForceRun();
     }
 
     public static Integer getThreads() {
@@ -228,8 +257,9 @@ public final class BuggyConfiguration implements JCommand {
     @Override
     public Map<String, Object> sort(Map<String, Object> map) {
         String[] sort = new String[]
-                {THREADS, PARALLEL_MODE, F, TEST_LOG_FILE_PATH, PRINT_CAUSE, TEST_SUITE_INFO,
-                        C, S, I, T, LOGS_PATH, ARTIFACTS_URL, EXIT_STATUS};
+                {THREADS, PARALLEL_MODE, F, TEST_CASE_TITLE, TEST_LOG_FILE_PATH, TEST_SUITE_INFO, TEST_LOG_FILE_PATH,
+                        TEST_ISSUES_INFO, TEST_BUGS_INFO, TEST_ERROR_INFO, OUTPUT_RULE, C, S, I, T,
+                        LOGS_PATH, ARTIFACTS_URL, EXIT_STATUS};
         Map<String, Object> sorted = new LinkedHashMap<>();
         for (String s : sort) {
             for (Map.Entry<String, Object> entry : map.entrySet()) {

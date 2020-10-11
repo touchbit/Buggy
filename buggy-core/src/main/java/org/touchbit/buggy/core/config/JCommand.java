@@ -1,7 +1,6 @@
-package org.touchbit.buggy.spring.boot.starter.jcommander;
+package org.touchbit.buggy.core.config;
 
 import com.beust.jcommander.Parameter;
-import org.touchbit.buggy.core.config.ConfigurationYML;
 import org.touchbit.buggy.core.logback.FrameworkLogger;
 import org.touchbit.buggy.core.utils.JUtils;
 

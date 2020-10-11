@@ -27,7 +27,7 @@ public abstract class DefaultTestRailListener extends BaseTestRailListener<Statu
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult result) {
-        Buggy buggy = getDetails(method);
+        Buggy buggy = getBuggyAnnotation(method);
         String throwableMsg = processResultThrowable(buggy, result);
         if (method.isTestMethod() && buggy != null && result.getMethod().getInvocationCount() > 0) {
             int rStatus = result.getStatus();

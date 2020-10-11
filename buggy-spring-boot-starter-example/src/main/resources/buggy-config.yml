@@ -1,13 +1,9 @@
 programName: 'Buggy example'
 help: false
-force: true
-printSuite: true
-printCause: true
-printLog: true
-printLogOnlyFail: true
+forceRun: true
 threads: 50
-artifactsUrl: null
 parallelMode: 'METHODS'
+artifactsUrl: null
 components:
   - !!org.touchbit.buggy.core.goal.component.AllComponents {}
 services:
@@ -17,5 +13,10 @@ interfaces:
 types:
   - ALL
 issuesUrl: 'https://example.jira.com/issues/'
-exampleHost: foo
-examplePass: bar
+testCaseTitle: true
+testSuiteInfo: false
+testLogFilePath: true
+testIssuesInfo: false
+testBugsInfo: true
+testErrorInfo: true
+outputRule: UNSUCCESSFUL

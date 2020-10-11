@@ -6,7 +6,7 @@ public class LoggingListener extends LoggingListenerBase {
 
     @Override
     public boolean isEnable() {
-        return true;
+        return !ListenerConfiguration.isDisableLoggingListener();
     }
 
 }

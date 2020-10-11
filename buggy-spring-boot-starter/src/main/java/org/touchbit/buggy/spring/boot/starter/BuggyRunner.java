@@ -94,10 +94,10 @@ public class BuggyRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         ConfLogger.blockDelimiter();
-        Map<Suite, Set<Class<?>>> testClassesBySuitesMap = getTestClassesBySuitesMap(filteredTestClasses);
-        List<XmlSuite> xmlSuites = getXmlSuites(testClassesBySuitesMap);
-        TestNG testNG = getTestNG();
         try {
+            Map<Suite, Set<Class<?>>> testClassesBySuitesMap = getTestClassesBySuitesMap(filteredTestClasses);
+            List<XmlSuite> xmlSuites = getXmlSuites(testClassesBySuitesMap);
+            TestNG testNG = getTestNG();
             testNG.setParallel(BuggyConfigurationYML.getParallelMode().getTestNGMode());
             testNG.setSuiteThreadPoolSize(xmlSuites.isEmpty() ? 1 : xmlSuites.size());
             testNG.setUseDefaultListeners(false);

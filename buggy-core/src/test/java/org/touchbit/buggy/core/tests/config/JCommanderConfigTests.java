@@ -173,53 +173,53 @@ class JCommanderConfigTests extends BaseUnitTest {
             BuggyConfigurationYML.setArtifactsUrl(buildLogUrl);
         }
     }
-
-    @Test
-    @DisplayName("Check PrimaryConfig.setPrintSuite(Boolean printSuite)")
-    void unitTest_20180919201621() {
-        boolean printSuite = BuggyConfigurationYML.isPrintSuite();
-        try {
-            assertThat(printSuite, is(false));
-            BuggyConfigurationYML.setPrintSuite(true);
-            assertThat(BuggyConfigurationYML.isPrintSuite(), is(true));
-        } finally {
-            BuggyConfigurationYML.setPrintSuite(printSuite);
-        }
-    }
-
-    @Test
-    @DisplayName("Check PrimaryConfig.setPrintCause(Boolean printCause)")
-    void unitTest_20180919201754() {
-        boolean printCause = BuggyConfigurationYML.isPrintCause();
-        try {
-            assertThat(printCause, is(false));
-            BuggyConfigurationYML.setPrintCause(true);
-            assertThat(BuggyConfigurationYML.isPrintCause(), is(true));
-        } finally {
-            BuggyConfigurationYML.setPrintCause(printCause);
-        }
-    }
-
-    @Test
-    @DisplayName("Check PrimaryConfig.setPrintLogFile(Boolean printLog)")
-    void unitTest_20180919201844() {
-        boolean printLogFile = BuggyConfigurationYML.isPrintLog();
-        try {
-            assertThat(printLogFile, is(false));
-            BuggyConfigurationYML.setPrintLog(true);
-            assertThat(BuggyConfigurationYML.isPrintLog(), is(true));
-        } finally {
-            BuggyConfigurationYML.setPrintLog(printLogFile);
-        }
-    }
-
-    @Test
-    @DisplayName("Check PrimaryConfig.setVersion(Boolean version)")
-    void unitTest_20180919201933() {
-        assertThat(BuggyConfigurationYML.isVersion(), is(false));
-        BuggyConfigurationYML.setVersion(true);
-        assertThat(BuggyConfigurationYML.isVersion(), is(false));
-    }
+//
+//    @Test
+//    @DisplayName("Check PrimaryConfig.setPrintSuite(Boolean printSuite)")
+//    void unitTest_20180919201621() {
+//        boolean printSuite = BuggyConfigurationYML.isPrintSuite();
+//        try {
+//            assertThat(printSuite, is(false));
+//            BuggyConfigurationYML.setPrintSuite(true);
+//            assertThat(BuggyConfigurationYML.isPrintSuite(), is(true));
+//        } finally {
+//            BuggyConfigurationYML.setPrintSuite(printSuite);
+//        }
+//    }
+//
+//    @Test
+//    @DisplayName("Check PrimaryConfig.setPrintCause(Boolean printCause)")
+//    void unitTest_20180919201754() {
+//        boolean printCause = BuggyConfigurationYML.isPrintCause();
+//        try {
+//            assertThat(printCause, is(false));
+//            BuggyConfigurationYML.setPrintCause(true);
+//            assertThat(BuggyConfigurationYML.isPrintCause(), is(true));
+//        } finally {
+//            BuggyConfigurationYML.setPrintCause(printCause);
+//        }
+//    }
+//
+//    @Test
+//    @DisplayName("Check PrimaryConfig.setPrintLogFile(Boolean printLog)")
+//    void unitTest_20180919201844() {
+//        boolean printLogFile = BuggyConfigurationYML.isPrintLog();
+//        try {
+//            assertThat(printLogFile, is(false));
+//            BuggyConfigurationYML.setPrintLog(true);
+//            assertThat(BuggyConfigurationYML.isPrintLog(), is(true));
+//        } finally {
+//            BuggyConfigurationYML.setPrintLog(printLogFile);
+//        }
+//    }
+//
+//    @Test
+//    @DisplayName("Check PrimaryConfig.setVersion(Boolean version)")
+//    void unitTest_20180919201933() {
+//        assertThat(BuggyConfigurationYML.isVersion(), is(false));
+//        BuggyConfigurationYML.setVersion(true);
+//        assertThat(BuggyConfigurationYML.isVersion(), is(false));
+//    }
 //
 //    @Test
 //    @DisplayName("GIVEN PrimaryConfig WHEN setCheck() THEN isCheck()")

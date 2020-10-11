@@ -1,4 +1,4 @@
-package org.touchbit.buggy.spring.boot.starter.jcommander;
+package org.touchbit.buggy.core.config;
 
 public enum OutputRule {
 

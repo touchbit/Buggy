@@ -41,7 +41,7 @@ public final class GoalConverter<T extends Goal> implements IStringConverter<T> 
 
     @Override
     public T convert(String s) {
-        Set<BeanDefinition> beanDefinitionInstances = scanBeanDefinitions(false, "**.buggy", tClass);
+        Set<BeanDefinition> beanDefinitionInstances = scanBeanDefinitions(tClass);
         Set<T> goalClasses = getBeanDefinitionInstances(beanDefinitionInstances, tClass);
         for (T goal : goalClasses) {
             if (goal.getClass().getSimpleName().equalsIgnoreCase(s)) {
@@ -60,12 +60,12 @@ public final class GoalConverter<T extends Goal> implements IStringConverter<T> 
         return result;
     }
 
-    private Set<BeanDefinition> scanBeanDefinitions(boolean useDefaultFilters, String basePackage, Class<?> c) {
+    private Set<BeanDefinition> scanBeanDefinitions(Class<?> c) {
         ClassPathScanningCandidateComponentProvider scanner =
-                new ClassPathScanningCandidateComponentProvider(useDefaultFilters);
+                new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AssignableTypeFilter(c));
         try {
-            return scanner.findCandidateComponents(basePackage);
+            return scanner.findCandidateComponents("**.buggy");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

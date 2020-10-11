@@ -13,9 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static org.touchbit.buggy.core.utils.TestNGHelper.getClassSimpleName;
-import static org.touchbit.buggy.core.utils.TestNGHelper.getMethodName;
-
 /**
  * Created by Oleg Shaburov on 16.09.2018
  * shaburov.o.a@gmail.com
