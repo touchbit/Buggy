@@ -249,7 +249,16 @@ public interface BuggyListener extends ITestNGListener {
             return false;
         }
         String description = method.getDescription();
-        return description != null && !description.isEmpty();
+        if (description != null && !description.isEmpty()) {
+            return true;
+        }
+        if (hasBuggyAnnotation(method)) {
+            Buggy buggyAnnotation = getBuggyAnnotation(method);
+            //noinspection ConstantConditions
+            String testCase = buggyAnnotation.testCase();
+            return !testCase.isEmpty();
+        }
+        return false;
     }
 
     default String getDescription(IInvokedMethod method) {
@@ -261,7 +270,12 @@ public interface BuggyListener extends ITestNGListener {
 
     default String getDescription(ITestNGMethod method) {
         if (hasDescription(method)) {
-            return method.getDescription();
+            String description = method.getDescription();
+            if (description != null && !description.isEmpty()) {
+                return description;
+            }
+            //noinspection ConstantConditions
+            return getBuggyAnnotation(method).testCase();
         }
         return "";
     }

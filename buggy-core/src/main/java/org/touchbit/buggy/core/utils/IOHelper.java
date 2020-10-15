@@ -117,23 +117,4 @@ public class IOHelper {
         }
     }
 
-    /**
-     * Returns the file {@link File} from the resources.
-     *
-     * @param file - relative path to file
-     * @return {@link File}
-     */
-    public static Properties readPropertiesFileFromResource(final String file) {
-        try (InputStream inputStream = getResourceAsStream(file)) {
-            if ((inputStream == null)) {
-                throw new BuggyException("The following file can not be found in the project resources: " + file);
-            }
-            final Properties properties = new Properties();
-            properties.load(inputStream);
-            return properties;
-        } catch (IOException e) {
-            throw new BuggyException("Error reading file [" + file + "] from project resources", e);
-        }
-    }
-
 }

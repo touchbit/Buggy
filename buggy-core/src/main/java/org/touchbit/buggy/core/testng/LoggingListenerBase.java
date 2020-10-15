@@ -40,9 +40,9 @@ import static org.touchbit.buggy.core.utils.ANSI.*;
  */
 public abstract class LoggingListenerBase implements BuggyListener, IInvokedMethodListener, ISuiteListener {
 
-    private static final SiftingTestLogger TEST = new SiftingTestLogger();
+    protected static final SiftingTestLogger TEST = new SiftingTestLogger();
 
-    private static final Set<ITestNGMethod> DISABLED_METHODS = new HashSet<>();
+    protected static final Set<ITestNGMethod> DISABLED_METHODS = new HashSet<>();
 
     @Override
     public void onStart(ISuite suite) {
@@ -51,7 +51,7 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
         suite.getAllMethods().forEach(this::skippedByTestAnnotation);
     }
 
-    private void skippedTestsByType(ITestNGMethod method) {
+    protected void skippedTestsByType(ITestNGMethod method) {
         if (isSkipByType(method) && !DISABLED_METHODS.contains(method)) {
             DISABLED_METHODS.add(method);
             String placeholder = ConfLogger.getDotPlaceholder(method.getMethodName(), SKIP);
@@ -62,7 +62,7 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
         }
     }
 
-    public void skippedByTestStatus(ITestNGMethod method) {
+    protected void skippedByTestStatus(ITestNGMethod method) {
         if (isSkipByTestStatus(method) && !DISABLED_METHODS.contains(method)) {
             DISABLED_METHODS.add(method);
             String placeholder = ConfLogger.getDotPlaceholder(method.getMethodName(), SKIP);
@@ -73,7 +73,7 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
         }
     }
 
-    public void skippedByTestAnnotation(ITestNGMethod method) {
+    protected void skippedByTestAnnotation(ITestNGMethod method) {
         assertNotNull(method);
         if (!method.getEnabled()) {
             String placeholder = ConfLogger.getDotPlaceholder(method.getMethodName(), SKIP);
@@ -90,11 +90,14 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
 
     @Override
     public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
+        TEST.steps();
         ResultStatus resultStatus = getResultStatus(method);
         SiftingTestLogger.setTestResultStatus(resultStatus);
         String methodName = getMethodName(method);
-        TEST.info("Date: {}", new Date());
         Throwable throwable = testResult.getThrowable();
+        if (throwable != null) {
+            TEST.error("{}: {}", throwable.getClass().getSimpleName(), throwable.getMessage());
+        }
         if (hasBuggyAnnotation(method) && hasSuiteAnnotation(method) && method.isTestMethod()) {
             Buggy buggy = getBuggyAnnotation(method);
             Suite suite = getSuiteAnnotation(method);
@@ -170,6 +173,7 @@ public abstract class LoggingListenerBase implements BuggyListener, IInvokedMeth
             }
             ConfLogger.info(message.append("\n").toString());
         }
+        TEST.info("Date: {}", new Date());
     }
 
     protected ANSI getANSI(ResultStatus status) {

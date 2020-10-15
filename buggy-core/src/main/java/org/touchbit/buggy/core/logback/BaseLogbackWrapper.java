@@ -1,17 +1,28 @@
 package org.touchbit.buggy.core.logback;
 
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MarkerIgnoringBase;
+import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
 import org.touchbit.buggy.core.utils.JUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.List;
 
 public class BaseLogbackWrapper extends MarkerIgnoringBase {
+
+    static {
+        if (System.getProperty("logback.configurationFile") == null) {
+            System.setProperty("logback.configurationFile", "buggy-logback.xml");
+        }
+        startLoggerContext();
+    }
 
     protected static final String CONSOLE_LOGGER_NAME = "Console";
     protected static final String FRAMEWORK_LOGGER_NAME = "Framework";
@@ -35,6 +46,21 @@ public class BaseLogbackWrapper extends MarkerIgnoringBase {
         StatusPrinter.setPrintStream(printStream);
         StatusPrinter.printInCaseOfErrorsOrWarnings(getLoggerContext());
         return stream.toString();
+    }
+
+    protected static void startLoggerContext() {
+        LoggerContext loggerContext = getLoggerContext();
+        ContextInitializer ci = new ContextInitializer(loggerContext);
+        URL url = ci.findURLOfDefaultConfigurationFile(true);
+        if (loggerContext.isStarted()) {
+            return;
+        }
+        try {
+            loggerContext.reset();
+            ci.configureByResource(url);
+        } catch (JoranException e) {
+            throw new BuggyConfigurationException("Unable to initialize configuration: " + url);
+        }
     }
 
     public static List<ch.qos.logback.classic.Logger> getLoggerList() {

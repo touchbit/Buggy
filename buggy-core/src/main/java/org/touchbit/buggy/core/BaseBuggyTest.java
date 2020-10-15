@@ -32,13 +32,11 @@ import org.touchbit.buggy.core.testng.IntellijIdeaTestNgPluginListener;
 @Listeners(IntellijIdeaTestNgPluginListener.class)
 public abstract class BaseBuggyTest {
 
-    protected static Logger log;
+    protected static SiftingTestLogger log = new SiftingTestLogger();
 
-    protected BaseBuggyTest() {
-        this(new SiftingTestLogger());
-    }
+    protected BaseBuggyTest() { }
 
-    protected BaseBuggyTest(final Logger logger) {
+    protected <L extends SiftingTestLogger> BaseBuggyTest(final L logger) {
         setLog(logger);
     }
 
@@ -46,10 +44,10 @@ public abstract class BaseBuggyTest {
      * Method for the separation of steps in the test log.
      */
     protected static void step(@NotNull final String msg, @NotNull final Object... args) {
-        BuggyExecutionListener.step(log, msg, args);
+        log.step(msg, args);
     }
 
-    protected static void setLog(final Logger logger) {
+    protected static <L extends SiftingTestLogger> void setLog(final L logger) {
         if (logger != null) {
             log = logger;
         }

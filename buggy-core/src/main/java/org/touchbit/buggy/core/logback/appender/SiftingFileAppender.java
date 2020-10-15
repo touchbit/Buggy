@@ -12,7 +12,6 @@ import org.touchbit.buggy.core.utils.IOHelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.touchbit.buggy.core.logback.appender.SiftingAppender.SIFTING_LOG_FILE_PATH;

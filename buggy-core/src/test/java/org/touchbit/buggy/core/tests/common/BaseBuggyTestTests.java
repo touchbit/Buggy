@@ -72,17 +72,17 @@ class BaseBuggyTestTests extends BaseUnitTest {
 //    }
 
     private static class BuggyTest extends BaseBuggyTest {
-
-        BuggyTest() {
-        }
-
-        BuggyTest(final Logger logger) {
-            super(logger);
-        }
-
-        void setLogger(final Logger logger) {
-            BaseBuggyTest.setLog(logger);
-        }
+//
+//        BuggyTest() {
+//        }
+//
+//        BuggyTest(final Logger logger) {
+//            super(logger);
+//        }
+//
+//        void setLogger(final Logger logger) {
+//            BaseBuggyTest.setLog(logger);
+//        }
 
         protected void test() {
             step("test");

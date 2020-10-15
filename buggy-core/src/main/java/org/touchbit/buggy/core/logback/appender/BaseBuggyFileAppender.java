@@ -10,9 +10,6 @@ public abstract class BaseBuggyFileAppender<E> extends FileAppender<E> {
     public static final String LOG_PATH = "LOG_PATH";
 
     static {
-        if (System.getProperty("logback.configurationFile") == null) {
-            System.setProperty("logback.configurationFile", "buggy-logback.xml");
-        }
         if (JUtils.isJetBrainsIdeTestNGPluginRun()) {
             System.setProperty(LOG_PATH, "target/logs");
         } else if (JUtils.isJetBrainsIdeConsoleRun()) {

@@ -17,7 +17,8 @@
     <packaging>jar</packaging>
 
     <properties>
-        <sonar.projectKey>org.touchbit:buggy-spring-boot-starter-example</sonar.projectKey>
+        <jar.main.class>org.touchbit.buggy.spring.boot.starter.example.ExampleBuggyRunner</jar.main.class>
+        <jar.final.name>Buggy</jar.final.name>
     </properties>
 
     <dependencies>
@@ -29,4 +30,25 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.3.4.RELEASE</version>
+                <configuration>
+                    <fork>true</fork>
+                    <finalName>${jar.final.name}</finalName>
+                    <mainClass>${jar.main.class}</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -38,8 +38,6 @@ import java.util.StringJoiner;
 public abstract class BuggyExecutionListener extends BaseBuggyExecutionListener
         implements IExecutionListener, IInvokedMethodListener, ISuiteListener, ITestListener, IClassListener {
 
-    private static final ThreadLocal<List<String>> STEPS = new ThreadLocal<>();
-
     public BuggyExecutionListener() {
     }
 
@@ -47,31 +45,6 @@ public abstract class BuggyExecutionListener extends BaseBuggyExecutionListener
 //        testLog = testLogger;
 //        frameworkLog = frameworkLogger;
 //        consoleLog = consoleLogger;
-    }
-
-    /**
-     * Method for the separation of steps in the test log.
-     */
-    public static void step(@NotNull final Logger logger, @NotNull final String msg, @NotNull final Object... args) {
-        int stepNum = getSteps().size() + 1;
-        String msgBody = msg;
-        for (Object s : args) {
-            msgBody = msgBody.replaceFirst("\\{}", String.valueOf(s));
-        }
-        String stepInfo = "Step " + stepNum + ". " + msgBody;
-        logger.info(" ------------> {}", stepInfo);
-        getSteps().add(stepInfo);
-    }
-
-    public static List<String> getSteps() {
-        if (STEPS.get() == null) {
-            STEPS.set(new ArrayList<>());
-        }
-        return STEPS.get();
-    }
-
-    public static void setSteps(List<String> stepList) {
-        STEPS.set(stepList);
     }
 
     @Override
@@ -147,51 +120,6 @@ public abstract class BuggyExecutionListener extends BaseBuggyExecutionListener
             disableTestsByStatus(suite);
         }
     }
-//
-    @Override
-    public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
-        STEPS.set(new ArrayList<>());
-        String methodName = getMethodName(method);
-        if (method.isTestMethod()) {
-            testLog.info("Test method is running:\n{} - {}", methodName, getDescription(method));
-        } else {
-            testLog.info("Configuration method is running:\n{} - {}.", methodName, getDescription(method));
-        }
-        if (testLog.isDebugEnabled()) {
-            StringJoiner sj = new StringJoiner("\n", "\n", "\n");
-            for (Annotation annotation : getRealMethod(method).getAnnotations()) {
-                sj.add(annotation.annotationType().getTypeName());
-            }
-            testLog.debug("Declared method annotations:{}", sj);
-        }
-    }
-//
-//    @Override
-//    public void afterInvocation(IInvokedMethod method, ITestResult testResult) {
-//        Throwable throwable = testResult.getThrowable();
-//        String methodName = getMethodName(method);
-//        if (throwable != null) {
-//            List<String> stepList = getSteps();
-//            if (!stepList.isEmpty()) {
-//                int lastIndex = stepList.size() - 1;
-//                stepList.set(lastIndex, stepList.get(lastIndex) + " - ERROR");
-//                setSteps(stepList);
-//            }
-//            testLog.error("Execution of {} resulted in an error.", methodName, throwable);
-//        }
-//        if (method.isTestMethod()) {
-//            Details details = getDetails(method);
-//            if (details != null) {
-//                processTestMethodResult(method, testResult, details);
-//            } else {
-////                Buggy.incrementBuggyWarns();
-//                frameworkLog.warn("The test method {} does not contain the @Details annotation", methodName);
-//            }
-//        } else {
-//            processConfigurationMethodResult(method, testResult);
-//        }
-//
-//    }
 //
 //    public void processTestMethodResult(IInvokedMethod m, ITestResult testResult, Details details) {
 //        ITestNGMethod method = m.getTestMethod();

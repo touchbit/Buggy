@@ -28,22 +28,6 @@ class IOHelperTests extends BaseUnitTest {
 //        assertThat(properties.getProperty("--with_value"), is("value"));
 //    }
 
-    @Test
-    @DisplayName("Check readPropertiesFileFromResource(\"not_exist.properties\")")
-    void unitTest_20180915215744() {
-        Exception exception = null;
-        String fileName = "not_exist.properties";
-        try {
-            IOHelper.readPropertiesFileFromResource(fileName);
-        } catch (Exception e) {
-            exception = e;
-        }
-        assertThat("BuggyException", exception, is(notNullValue()));
-        assertThat(exception.getClass(), sameInstance(BuggyException.class));
-        assertThat(exception.getMessage(),
-                is("The following file can not be found in the project resources: " + fileName));
-    }
-
 //    @Test
 //    @DisplayName("Check getFileFromResource(exists)")
 //    void unitTest_20180915220703() {
