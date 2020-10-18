@@ -17,9 +17,10 @@
 package org.touchbit.buggy.spring.boot.starter.jcommander.converters;
 
 import com.beust.jcommander.IStringConverter;
+import com.beust.jcommander.converters.StringConverter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
-import org.touchbit.buggy.core.goal.Goal;
+import org.touchbit.buggy.core.model.Type;
 import org.touchbit.buggy.spring.boot.starter.util.BeanScanner;
 
 import java.util.Set;
@@ -28,24 +29,21 @@ import java.util.Set;
  * Created by Oleg Shaburov on 08.09.2018
  * shaburov.o.a@gmail.com
  */
-public final class GoalConverter<T extends Goal> implements IStringConverter<T> {
-
-    private final Class<T> tClass;
-
-    public GoalConverter(final Class<T> t) {
-        tClass = t;
-    }
+public final class TypeConverter implements IStringConverter<Type> {
 
     @Override
-    public T convert(String s) {
-        Set<BeanDefinition> beanDefinitionInstances = BeanScanner.scanBeanDefinitions(tClass);
-        Set<T> goalClasses = BeanScanner.getBeanDefinitionInstances(beanDefinitionInstances, tClass);
-        for (T goal : goalClasses) {
-            if (goal.getName().equalsIgnoreCase(s)) {
-                return goal;
+    public Type convert(String s) {
+        System.out.println(" >>>>>>>>>>>>>>>>>>> s >>> " + s);
+        Set<BeanDefinition> beanDefinitionInstances = BeanScanner.scanBeanDefinitions(Type.class);
+        Set<Type> types = BeanScanner.getBeanDefinitionInstances(beanDefinitionInstances, Type.class);
+        System.out.println(" >>>>> types >>> " + types);
+        for (Type type : types) {
+            if (type.name().equalsIgnoreCase(s)) {
+                System.out.println(" >>>>> type >>> " + type + " >> " + type.getClass());
+                return type;
             }
         }
-        throw new BuggyConfigurationException("No " + tClass.getSimpleName() + " found with name " + s);
+        throw new BuggyConfigurationException("No " + Type.class.getSimpleName() + " found with name " + s);
     }
 
 }

@@ -16,10 +16,10 @@
 
 package org.touchbit.buggy.spring.boot.starter.jcommander.converters;
 
-import com.beust.jcommander.IStringConverter;
+import com.beust.jcommander.converters.DefaultListConverter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.touchbit.buggy.core.exceptions.BuggyConfigurationException;
-import org.touchbit.buggy.core.goal.Goal;
+import org.touchbit.buggy.core.model.Type;
 import org.touchbit.buggy.spring.boot.starter.util.BeanScanner;
 
 import java.util.Set;
@@ -28,24 +28,11 @@ import java.util.Set;
  * Created by Oleg Shaburov on 08.09.2018
  * shaburov.o.a@gmail.com
  */
-public final class GoalConverter<T extends Goal> implements IStringConverter<T> {
+public final class TypeListConverter extends DefaultListConverter<Type> {
 
-    private final Class<T> tClass;
-
-    public GoalConverter(final Class<T> t) {
-        tClass = t;
-    }
-
-    @Override
-    public T convert(String s) {
-        Set<BeanDefinition> beanDefinitionInstances = BeanScanner.scanBeanDefinitions(tClass);
-        Set<T> goalClasses = BeanScanner.getBeanDefinitionInstances(beanDefinitionInstances, tClass);
-        for (T goal : goalClasses) {
-            if (goal.getName().equalsIgnoreCase(s)) {
-                return goal;
-            }
-        }
-        throw new BuggyConfigurationException("No " + tClass.getSimpleName() + " found with name " + s);
+    public TypeListConverter() {
+        super(new ArraySplitter(), new TypeConverter());
+        System.out.println(" >>>>>>>>>>>>>>>>>> " + this);
     }
 
 }

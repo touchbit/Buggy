@@ -69,18 +69,25 @@ public class BuggyRunner implements CommandLineRunner {
     }
 
     public static void exit(int status, String message, Exception e) {
-        if (message != null) {
+        if (message != null || e != null) {
             ConfLogger.blockDelimiter();
             String frameworkLogPath = "";
             if (status == 0) {
-                ConfLogger.info(message);
+                if (message != null) {
+                    ConfLogger.info(message);
+                }
             } else {
                 File file = FrameworkLogger.getLogFile();
                 if (file != null) {
                     frameworkLogPath = "\nFor more information see " + file.getName();
                 }
                 if (e != null) {
-                    message += "\n" + e.getClass().getSimpleName() + ": " + e.getMessage();
+                    String exMsg = e.getMessage();
+                    if (message != null) {
+                        message += "\n" + e.getClass().getSimpleName() + ": " + (exMsg == null ? "" : exMsg);
+                    } else {
+                        message = e.getClass().getSimpleName() + ": " + (exMsg == null ? "" : exMsg);
+                    }
                 }
                 ConfLogger.error(message + frameworkLogPath, e);
             }
@@ -93,10 +100,20 @@ public class BuggyRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        ConfLogger.blockDelimiter();
         try {
+            if (filteredTestClasses.isEmpty()) {
+                BuggyRunner.exit(1, "No test classes found for the current configuration");
+            }
             Map<Suite, Set<Class<?>>> testClassesBySuitesMap = getTestClassesBySuitesMap(filteredTestClasses);
             List<XmlSuite> xmlSuites = getXmlSuites(testClassesBySuitesMap);
+            if (xmlSuites.isEmpty()) {
+                exit(1, "No test suites found for the current configuration.");
+            } else {
+                ConfLogger.center("Suites");
+                for (XmlSuite xmlSuite : xmlSuites) {
+                    ConfLogger.info(xmlSuite.getName());
+                }
+            }
             TestNG testNG = getTestNG();
             testNG.setParallel(BuggyConfigurationYML.getParallelMode().getTestNGMode());
             testNG.setSuiteThreadPoolSize(xmlSuites.isEmpty() ? 1 : xmlSuites.size());
@@ -105,6 +122,7 @@ public class BuggyRunner implements CommandLineRunner {
                 testNG.addListener(enabledBuggyListener);
             }
             testNG.setXmlSuites(xmlSuites);
+            ConfLogger.blockDelimiter();
             testNG.run();
             SiftingFileAppender.decomposeTestLogs();
             if (BuggyConfiguration.getExitStatus() != null) {

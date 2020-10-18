@@ -11,12 +11,9 @@ import org.touchbit.buggy.core.model.ParallelMode;
 import org.touchbit.buggy.core.model.Type;
 import org.touchbit.buggy.core.utils.JUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.touchbit.buggy.core.model.ParallelMode.METHODS;
-import static org.touchbit.buggy.core.model.Type.ALL;
 
 /**
  * Configuration class for customizing Buggy.
@@ -33,10 +30,10 @@ public final class BuggyConfigurationYML implements ConfigurationYML {
     private static Integer threads = 50;
     private static ParallelMode parallelMode = METHODS;
     private static String artifactsUrl;
-    private static List<Component> components = JUtils.getListWith(AllComponents::new);
-    private static List<Service> services = JUtils.getListWith(AllServices::new);
-    private static List<Interface> interfaces = JUtils.getListWith(AllInterfaces::new);
-    private static List<Type> types = JUtils.getListWith(ALL);
+    private static List<Component> components = new ArrayList<Component>() {{ add(new AllComponents()); }};
+    private static List<Service> services = new ArrayList<Service>() {{ add(new AllServices()); }};
+    private static List<Interface> interfaces = new ArrayList<Interface>() {{ add(new AllInterfaces()); }};
+    private static Type[] types = new Type[] { Type.REGRESSION };
     private static String issuesUrl = "";
     private static Boolean testCaseTitle = true;
     private static Boolean testSuiteInfo = false;
@@ -78,19 +75,13 @@ public final class BuggyConfigurationYML implements ConfigurationYML {
         BuggyConfigurationYML.artifactsUrl = artifactsUrl;
     }
 
-    public static List<Type> getTypes() {
+    public static Type[] getTypes() {
         return types;
-    }
-
-    public static void setTypes(List<Type> types) {
-        if (types != null) {
-            BuggyConfigurationYML.types = types;
-        }
     }
 
     public static void setTypes(Type... types) {
         if (types != null) {
-            setTypes(Arrays.asList(types));
+            BuggyConfigurationYML.types = types;
         }
     }
 

@@ -34,10 +34,12 @@ public class ParameterValidator implements IParameterValidator {
 
     private void assertNotEmpty(String name, String value) {
         switch (name) {
+            case C:
+            case COMPONENTS:
             case S:
             case SERVICES:
             case I:
-            case INTERFACE:
+            case INTERFACES:
             case T:
             case TYPE:
                 if (value == null || value.isEmpty()) {

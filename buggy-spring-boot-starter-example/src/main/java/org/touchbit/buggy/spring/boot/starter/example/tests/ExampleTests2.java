@@ -7,29 +7,19 @@ import org.touchbit.buggy.core.goal.interfaze.API;
 import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.Status;
 import org.touchbit.buggy.core.model.Suite;
-import org.touchbit.buggy.core.model.Type;
+import org.touchbit.buggy.spring.boot.starter.example.goal.GitHub;
 
-import java.util.Map;
 import java.util.UUID;
 
 import static org.touchbit.buggy.core.model.Type.SYSTEM;
 
-@Suite(interfaze = API.class)
+@Suite(component = GitHub.class, interfaze = API.class)
 public class ExampleTests2 extends BaseBuggyTest {
 
     @Test
     @Buggy()
-    public void test1603008938585() throws Exception {
-        Map<String, String> env = System.getenv();
-        for (String envName : env.keySet()) {
-            System.out.format("%s=%s%n",
-                    envName,
-                    env.get(envName));
-        }
-        System.out.println(" >>>>>> " + System.getProperty("BUGGY_EXAMPLE"));
-        System.out.println(" >>>>>> " + System.getProperty("JAVA_BUGGY_EXAMPLE"));
-        System.out.println(" >>>>>> " + System.getenv("BUGGY_EXAMPLE"));
-        System.out.println(" >>>>>> " + System.getenv("JAVA_BUGGY_EXAMPLE"));
+    public void test1603008938585() {
+
     }
 
     @Test(description = "Ожидается успешное создание пользователя, если firstName=<пустая строка>")

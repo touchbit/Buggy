@@ -24,10 +24,8 @@ import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.Type;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Listener for processing executable tests.
@@ -222,7 +220,8 @@ public abstract class BuggyExecutionListener extends BaseBuggyExecutionListener
         final List<ITestNGMethod> methods = suite.getAllMethods();
         methods.forEach(method -> {
             Buggy details = getBuggyAnnotation(method);
-            List<Type> configType = BuggyConfigurationYML.getTypes();
+            Type[] types = BuggyConfigurationYML.getTypes();
+            Set<Type> configType = new HashSet<>(Arrays.asList(types));
             if (details != null) {
                 List<Type> methodTypes = new ArrayList<>(Arrays.asList(details.types()));
                 boolean matched = methodTypes.stream().anyMatch(configType::contains);

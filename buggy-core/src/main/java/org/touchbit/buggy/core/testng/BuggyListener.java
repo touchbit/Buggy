@@ -8,7 +8,10 @@ import org.touchbit.buggy.core.model.*;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import static org.touchbit.buggy.core.model.Status.*;
@@ -69,13 +72,17 @@ public interface BuggyListener extends ITestNGListener {
         if (buggyAnnotation == null) {
             return false;
         }
-        List<Type> types = BuggyConfigurationYML.getTypes();
-        if (types.contains(Type.ALL)) {
+        Type[] types = BuggyConfigurationYML.getTypes();
+        Set<Type> configTypes = new HashSet<>(Arrays.asList(types));
+        if (configTypes.contains(Type.ALL)) {
             return false;
+        }
+        for (Type type : types) {
+            System.out.println(" >>>>>>>>> " + type + " >> " + type.getClass());
         }
         boolean contains = false;
         for (Type type : buggyAnnotation.types()) {
-            if (types.contains(type)) {
+            if (configTypes.contains(type)) {
                 contains = true;
                 break;
             }

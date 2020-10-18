@@ -162,6 +162,12 @@
             </dependency>
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
+                <artifactId>buggy-spring-boot-starter</artifactId>
+                <version>0.3.7</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-feign</artifactId>
                 <version>0.3.7</version>
                 <scope>compile</scope>

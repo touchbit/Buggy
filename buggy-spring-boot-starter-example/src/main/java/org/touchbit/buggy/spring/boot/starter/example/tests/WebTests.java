@@ -8,7 +8,7 @@ import org.touchbit.buggy.core.model.Suite;
 import org.touchbit.buggy.spring.boot.starter.example.goal.Actions;
 import org.touchbit.buggy.spring.boot.starter.example.goal.GitHub;
 
-@Suite(component = GitHub.class, service = Actions.class, interfaze = WEB.class)
+@Suite(service = Actions.class, interfaze = WEB.class)
 public class WebTests extends BaseBuggyTest {
 
     @Test

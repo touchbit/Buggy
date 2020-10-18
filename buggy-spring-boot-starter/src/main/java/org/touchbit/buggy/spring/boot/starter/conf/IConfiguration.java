@@ -61,10 +61,10 @@ public interface IConfiguration {
         Set<Class<?>> result = new LinkedHashSet<>();
         for (BeanDefinition bd : definitions) {
             try {
-                Class<?> testClass = BeanGenerator.class.getClassLoader().loadClass(bd.getBeanClassName());
-                int mods = testClass.getModifiers();
+                Class<?> annotatedClass = BeanGenerator.class.getClassLoader().loadClass(bd.getBeanClassName());
+                int mods = annotatedClass.getModifiers();
                 if (isPublic(mods) && !isAbstract(mods) && !isInterface(mods)) {
-                    result.add(testClass);
+                    result.add(annotatedClass);
                 }
             } catch (ClassNotFoundException e) {
                 BuggyRunner.exit("Could not load class for annotation type: " + tClass.getSimpleName(), e);

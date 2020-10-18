@@ -8,7 +8,7 @@ public enum ParallelMode {
     METHODS(XmlSuite.ParallelMode.METHODS),
     CLASSES(XmlSuite.ParallelMode.CLASSES),
     INSTANCES(XmlSuite.ParallelMode.INSTANCES),
-    NONE(XmlSuite.ParallelMode.NONE),
+    OFF(XmlSuite.ParallelMode.NONE),
     ;
 
     private final XmlSuite.ParallelMode testNGMode;

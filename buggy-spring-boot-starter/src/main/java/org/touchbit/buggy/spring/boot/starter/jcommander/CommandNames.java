@@ -29,13 +29,13 @@ public class CommandNames {
     public static final String QUESTION_MARK      = "-?";
     public static final String HELP               = "--help";
     public static final String C                  = "-c";
-    public static final String COMPONENTS         = "--component";
+    public static final String COMPONENTS         = "--components";
     public static final String S                  = "-s";
-    public static final String SERVICES           = "--service";
+    public static final String SERVICES           = "--services";
     public static final String I                  = "-i";
-    public static final String INTERFACE          = "--interface";
+    public static final String INTERFACES         = "--interfaces";
     public static final String T                  = "-t";
-    public static final String TYPE               = "--type";
+    public static final String TYPE               = "--types";
     public static final String PARALLEL_MODE      = "--parallel-mode";
     public static final String LOGS_PATH          = "--logs-path";
     public static final String THREADS            = "--threads";

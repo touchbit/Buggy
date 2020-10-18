@@ -56,19 +56,24 @@ public class BuggyRunnerConfiguration implements IConfiguration {
     private final Set<Interface> availableInterfaces;
 
     public BuggyRunnerConfiguration(final boolean isLogbackConfigurationInitialized, final ApplicationProperties props) {
-        beforeConfiguration(isLogbackConfigurationInitialized);
-        properties = props;
-        allBuggyListeners = scanTestNGListeners();
-        enabledBuggyListeners = allBuggyListeners.stream().filter(BuggyListener::isEnable).collect(Collectors.toSet());
-        allTestClasses = scanTestClassesWithSuiteAnnotation();
-        filteredTestClasses = filterTestClassesByBuggyConfig(allTestClasses);
-        allGoals = scanGoals();
-        allComponents = filterByGoalType(allGoals, BuggyConfigurationYML.getComponents(), Component.class, AllComponents.class);
-        availableComponents = filterComponentsByTestClasses(allComponents, filteredTestClasses);
-        allServices = filterByGoalType(allGoals, BuggyConfigurationYML.getComponents(), Service.class, AllServices.class);
-        availableServices = filterServiceByTestClasses(allServices, filteredTestClasses);
-        allInterfaces = filterByGoalType(allGoals, BuggyConfigurationYML.getComponents(), Interface.class, AllInterfaces.class);
-        availableInterfaces = filterInterfaceByTestClasses(allInterfaces, filteredTestClasses);
+        try {
+            beforeConfiguration(isLogbackConfigurationInitialized);
+            properties = props;
+            allBuggyListeners = scanTestNGListeners();
+            enabledBuggyListeners = allBuggyListeners.stream().filter(BuggyListener::isEnable).collect(Collectors.toSet());
+            allTestClasses = scanTestClassesWithSuiteAnnotation();
+            filteredTestClasses = filterTestClassesByBuggyConfig(allTestClasses);
+            allGoals = scanGoals();
+            allComponents = filterByGoalType(allGoals, BuggyConfigurationYML.getComponents(), Component.class, AllComponents.class);
+            availableComponents = filterComponentsByTestClasses(allComponents, filteredTestClasses);
+            allServices = filterByGoalType(allGoals, BuggyConfigurationYML.getComponents(), Service.class, AllServices.class);
+            availableServices = filterServiceByTestClasses(allServices, filteredTestClasses);
+            allInterfaces = filterByGoalType(allGoals, BuggyConfigurationYML.getComponents(), Interface.class, AllInterfaces.class);
+            availableInterfaces = filterInterfaceByTestClasses(allInterfaces, filteredTestClasses);
+        } catch (Exception e) {
+            BuggyRunner.exit("Error initializing Buggy config", e);
+            throw e;
+        }
     }
 
     public void beforeConfiguration(final boolean isLogbackConfigurationInitialized) {
@@ -82,7 +87,7 @@ public class BuggyRunnerConfiguration implements IConfiguration {
 
     @PostConstruct
     public void printConfigurationInfo() {
-        ConfLogger.center("TestNG listeners");
+        ConfLogger.center("Buggy listeners");
         for (BuggyListener buggyListener : allBuggyListeners) {
             if (buggyListener.isEnable()) {
                 ConfLogger.dotPlaceholder(buggyListener.getClass().getSimpleName(), "Enable");
@@ -90,17 +95,6 @@ public class BuggyRunnerConfiguration implements IConfiguration {
                 ConfLogger.dotPlaceholder(buggyListener.getClass().getSimpleName(), "Disable");
             }
         }
-        ConfLogger.stepDelimiter();
-        ConfLogger.center("Available suites goals");
-        ConfLogger.stepDelimiter();
-        ConfLogger.center("Components");
-        availableComponents.forEach(g -> ConfLogger.dotPlaceholder(JUtils.getSimpleNameC(g), g.getName()));
-        ConfLogger.stepDelimiter();
-        ConfLogger.center("Services");
-        availableServices.forEach(g -> ConfLogger.dotPlaceholder(JUtils.getSimpleNameC(g), g.getName()));
-        ConfLogger.stepDelimiter();
-        ConfLogger.center("Interfaces");
-        availableInterfaces.forEach(g -> ConfLogger.dotPlaceholder(JUtils.getSimpleNameC(g), g.getName()));
     }
 
     public Set<Class<?>> filterTestClassesByBuggyConfig(Set<Class<?>> testClassesWithSuiteAnnotation) {

@@ -9,13 +9,12 @@ import org.touchbit.buggy.core.goal.interfaze.Interface;
 import org.touchbit.buggy.core.goal.service.Service;
 import org.touchbit.buggy.core.model.ParallelMode;
 import org.touchbit.buggy.core.model.Type;
-import org.touchbit.buggy.spring.boot.starter.jcommander.converters.InterfaceConverter;
-import org.touchbit.buggy.spring.boot.starter.jcommander.converters.ParameterValidator;
-import org.touchbit.buggy.spring.boot.starter.jcommander.converters.ServiceConverter;
+import org.touchbit.buggy.spring.boot.starter.jcommander.converters.*;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.touchbit.buggy.spring.boot.starter.jcommander.CommandNames.*;
 
@@ -71,11 +70,8 @@ public final class BuggyConfiguration implements JCommand {
         BuggyConfigurationYML.setArtifactsUrl(artifactsUrl);
     }
 
-    @Parameter(names = {T, TYPE}, description = "Type of tests to run.", validateWith = ParameterValidator.class)
-    public static void setTypes(List<Type> types) {
-       BuggyConfigurationYML.setTypes(types);
-    }
-
+    @Parameter(names = {T, TYPE}, description = "Type of tests to run.", validateWith = ParameterValidator.class,
+            listConverter = TypeListConverter.class)
     public static void setTypes(Type... types) {
         BuggyConfigurationYML.setTypes(types);
     }
@@ -96,7 +92,7 @@ public final class BuggyConfiguration implements JCommand {
         BuggyConfigurationYML.setServices(services);
     }
 
-    @Parameter(names = {I, INTERFACE}, description = "List of tested interfaces in the format: NAME,NAME,NAME.",
+    @Parameter(names = {I, INTERFACES}, description = "List of tested interfaces in the format: NAME,NAME,NAME.",
             validateWith = ParameterValidator.class, listConverter = InterfaceConverter.class)
     public static void setInterfaces(List<Interface> interfaces) {
         BuggyConfigurationYML.setInterfaces(interfaces);
@@ -113,7 +109,7 @@ public final class BuggyConfiguration implements JCommand {
     }
 
     @Parameter(names = {C, COMPONENTS}, description = "List of tested components in the format: NAME,NAME,NAME.",
-            validateWith = ParameterValidator.class, listConverter = ServiceConverter.class)
+            validateWith = ParameterValidator.class, listConverter = ComponentConverter.class)
     public static void setComponents(List<Component> components) {
         BuggyConfigurationYML.setComponents(components);
     }
@@ -147,7 +143,7 @@ public final class BuggyConfiguration implements JCommand {
         return BuggyConfigurationYML.isHelp();
     }
 
-    @Parameter(names = {TEST_CASE_TITLE}, description = "Print the title of the test case to the console log.")
+    @Parameter(names = {TEST_CASE_TITLE}, arity = 1, description = "Print the title of the test case to the console log.")
     public static void setTestCaseTitle(Boolean testCaseTitle) {
         BuggyConfigurationYML.setTestCaseTitle(testCaseTitle);
     }
@@ -226,7 +222,7 @@ public final class BuggyConfiguration implements JCommand {
         return BuggyConfigurationYML.getArtifactsUrl();
     }
 
-    public static List<Type> getTypes() {
+    public static Type[] getTypes() {
         return BuggyConfigurationYML.getTypes();
     }
 

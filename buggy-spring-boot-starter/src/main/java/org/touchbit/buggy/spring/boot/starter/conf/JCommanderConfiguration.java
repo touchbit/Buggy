@@ -1,8 +1,7 @@
 package org.touchbit.buggy.spring.boot.starter.conf;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
+import com.beust.jcommander.*;
+import com.google.common.base.CaseFormat;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
@@ -16,6 +15,7 @@ import org.touchbit.buggy.core.utils.JUtils;
 import org.touchbit.buggy.spring.boot.starter.BuggyRunner;
 import org.touchbit.buggy.spring.boot.starter.jcommander.BuggyConfiguration;
 import org.touchbit.buggy.core.config.JCommand;
+import org.touchbit.buggy.spring.boot.starter.jcommander.config.EnvironmentUsageFormatter;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
@@ -23,6 +23,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 /**
  * {@link JCommander} spring boot configuration class.
@@ -38,23 +41,28 @@ import java.util.stream.Collectors;
 public class JCommanderConfiguration implements IConfiguration {
 
     private final JCommander jCommander;
-    private final Set<JCommand> JCommands = new LinkedHashSet<>();
+    private final Set<JCommand> jCommands = new LinkedHashSet<>();
     private final ApplicationProperties properties;
-    private final String[] args;
     private final Map<Class<? extends JCommand>, JCommand> buggyConfigurations = new HashMap<>();
     private final boolean isJCommanderConfigured;
 
-    public JCommanderConfiguration(final ApplicationProperties properties, final ApplicationArguments args) {
-        this.properties = properties;
-        this.args = args.getSourceArgs();
-        beforeConfiguration();
-        this.JCommands.addAll(scanBuggyConfig());
-        scanJCConfigurations().stream()
-                .filter(i -> !(i instanceof BuggyConfiguration))
-                .forEach(this.JCommands::add);
-        this.jCommander = buildJCommander();
-        parseArguments();
-        isJCommanderConfigured = true;
+    public JCommanderConfiguration(final ApplicationProperties properties, final ApplicationArguments appArgs) {
+        try {
+            beforeConfiguration();
+            String[] runArgs = appArgs.getSourceArgs();
+            this.properties = properties;
+            this.jCommands.addAll(scanBuggyConfig());
+            scanJCConfigurations().stream()
+                    .filter(i -> !(i instanceof BuggyConfiguration))
+                    .forEach(this.jCommands::add);
+            this.jCommander = buildJCommander(this.jCommands, buggyConfigurations);
+            parseEnvArguments(this.jCommander);
+            parseRunArguments(this.jCommander, runArgs);
+            isJCommanderConfigured = true;
+        } catch (Exception e) {
+            BuggyRunner.exit("Error initializing JCommander config", e);
+            throw e;
+        }
     }
 
     public void beforeConfiguration() {
@@ -102,10 +110,11 @@ public class JCommanderConfiguration implements IConfiguration {
         return getBeanDefinitionInstances(defs, JCommand.class);
     }
 
-    private JCommander buildJCommander() {
+    private JCommander buildJCommander(Set<JCommand> jCommands, Map<Class<? extends JCommand>, JCommand> configMap) {
         JCommander jCommander = new JCommander();
-        for (JCommand config : JCommands) {
-            buggyConfigurations.put(config.getClass(), config);
+        jCommander.setUsageFormatter(new EnvironmentUsageFormatter(jCommander));
+        for (JCommand config : jCommands) {
+            configMap.put(config.getClass(), config);
             checkConfiguration(config);
             try {
                 if (config.getClass().isAnnotationPresent(Parameters.class) &&
@@ -123,7 +132,24 @@ public class JCommanderConfiguration implements IConfiguration {
         return jCommander;
     }
 
-    public void parseArguments() {
+    public void parseEnvArguments(JCommander jCommander) {
+        Map<String, String> buggyEnv = System.getenv().entrySet().stream()
+                .filter(e -> e.getKey().toUpperCase().startsWith("BUGGY_"))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        for (Map.Entry<String, String> entry : buggyEnv.entrySet()) {
+            String[] envVar = new String[]{entry.getKey(), entry.getValue()};
+            String key = UPPER_UNDERSCORE.to(LOWER_HYPHEN, entry.getKey().replace("BUGGY_", "__"));
+            String[] runVar = new String[]{key, entry.getValue()};
+            try {
+                jCommander.parse(runVar);
+            } catch (Exception e) {
+                printConfigurationsParams(buggyConfigurations);
+                BuggyRunner.exit("Error parsing environment variable: " + Arrays.toString(envVar), e);
+            }
+        }
+    }
+
+    public void parseRunArguments(JCommander jCommander, String[] args) {
         try {
             jCommander.parse(args);
             ConfLogger.stepDelimiter();
@@ -188,7 +214,7 @@ public class JCommanderConfiguration implements IConfiguration {
     }
 
     public void printConfigurationsParams(Map<Class<? extends JCommand>, JCommand> configs) {
-        for (JCommand autowiredConfig : JCommands) {
+        for (JCommand autowiredConfig : jCommands) {
             JCommand config = configs.get(autowiredConfig.getClass());
             printConfigurationParams(config);
         }

@@ -33,6 +33,7 @@ public abstract class ExecutionListenerBase implements BuggyListener, ISuiteList
     }
 
     private void disableTestsByType(ITestNGMethod method) {
+        System.out.println(" >>>>>>>>>> " + isSkipByType(method));
         if (isSkipByType(method)) {
             method.setInvocationCount(0);
         }
