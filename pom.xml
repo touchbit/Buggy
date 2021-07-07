@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -9,14 +9,18 @@
     <name>Buggy</name>
     <version>0.3.7</version>
     <packaging>pom</packaging>
-    <description>Buggy is an add-on to TestNG for quickly creating test projects and easily customizing the launch of automated tests.</description>
+    <description>Buggy is an add-on to TestNG for quickly creating test projects and easily customizing the launch of
+        automated tests.
+    </description>
 
     <modules>
         <module>buggy-core</module>
+        <module>buggy-spring-boot-starter</module>
+        <module>buggy-spring-boot-starter-example</module>
         <module>buggy-feign</module>
-        <module>buggy-min-example</module>
         <module>buggy-okhttp</module>
         <module>buggy-testrail</module>
+        <module>buggy-testng-listeners</module>
     </modules>
 
     <licenses>
@@ -72,7 +76,6 @@
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <log4j.version>2.9.1</log4j.version>
         <junit.jupiter.version>5.5.0</junit.jupiter.version>
         <feign.version>10.2.3</feign.version>
 
@@ -159,6 +162,12 @@
             </dependency>
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
+                <artifactId>buggy-spring-boot-starter</artifactId>
+                <version>0.3.7</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.touchbit.buggy</groupId>
                 <artifactId>buggy-feign</artifactId>
                 <version>0.3.7</version>
                 <scope>compile</scope>
@@ -175,6 +184,12 @@
                 <version>0.3.7</version>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.touchbit.buggy</groupId>
+                <artifactId>buggy-testng-listeners</artifactId>
+                <version>0.3.7</version>
+                <scope>compile</scope>
+            </dependency>
             <!-- Self Test -->
             <dependency>
                 <groupId>org.touchbit.buggy</groupId>
@@ -187,12 +202,12 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.0.0-beta7</version>
+                <version>7.3.0</version>
             </dependency>
             <dependency>
                 <groupId>com.beust</groupId>
                 <artifactId>jcommander</artifactId>
-                <version>1.74</version>
+                <version>1.78</version>
             </dependency>
             <dependency>
                 <groupId>org.atteo.classindex</groupId>
@@ -216,29 +231,9 @@
             </dependency>
             <!-- Logging -->
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4j.version}</version>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.3</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -359,20 +354,12 @@
                                             <Version>${project.version}</Version>
                                         </manifestEntries>
                                     </transformer>
-                                    <transformer implementation="org.atteo.classindex.ClassIndexTransformer"/>
                                 </transformers>
                                 <shadedClassifierName>executable</shadedClassifierName>
                                 <createDependencyReducedPom>true</createDependencyReducedPom>
                             </configuration>
                         </execution>
                     </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.atteo.classindex</groupId>
-                            <artifactId>classindex-transformer</artifactId>
-                            <version>3.7</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

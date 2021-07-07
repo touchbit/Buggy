@@ -1,0 +1,22 @@
+programName: Buggy
+help: false
+forceRun: true
+threads: 50
+parallelMode: 'METHODS'
+artifactsUrl: null
+components:
+  - !!org.touchbit.buggy.core.goal.component.AllComponents {}
+services:
+  - !!org.touchbit.buggy.core.goal.service.AllServices {}
+interfaces:
+  - !!org.touchbit.buggy.core.goal.interfaze.AllInterfaces {}
+types:
+  - ALL
+issuesUrl: ''
+testCaseTitle: true
+testSuiteInfo: false
+testLogFilePath: true
+testIssuesInfo: false
+testBugsInfo: true
+testErrorInfo: true
+outputRule: UNSUCCESSFUL

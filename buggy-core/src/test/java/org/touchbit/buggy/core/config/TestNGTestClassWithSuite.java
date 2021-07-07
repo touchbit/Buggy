@@ -1,7 +1,7 @@
 package org.touchbit.buggy.core.config;
 
 import org.testng.annotations.Test;
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 import org.touchbit.buggy.core.model.Suite;
 
 /**
@@ -12,7 +12,7 @@ import org.touchbit.buggy.core.model.Suite;
 public class TestNGTestClassWithSuite {
 
     @Test
-    @Details
+    @Buggy
     public void iTestResultMethodWithDetails() {
 
     }

@@ -21,10 +21,10 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.config.TestComponent;
 import org.touchbit.buggy.core.config.TestInterface;
 import org.touchbit.buggy.core.config.TestService;
-import org.touchbit.buggy.core.process.DefaultComponent;
+import org.touchbit.buggy.core.goal.component.AllComponents;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by Oleg Shaburov on 19.09.2018
@@ -36,11 +36,10 @@ class GoalTests {
     @Test
     @DisplayName("Check DefaultComponent")
     void unitTest_20180919222639() {
-        DefaultComponent component = new DefaultComponent();
+        AllComponents component = new AllComponents();
         assertThat(component.getName(), is("DEFAULT"));
         assertThat(component.toString(), is("DEFAULT"));
         assertThat(component.getDescription(), is("Default component"));
-        assertThat(component.getServices(), is(empty()));
     }
 
     @Test
@@ -50,7 +49,6 @@ class GoalTests {
         assertThat(component.getName(), is("TESTCOMPONENT"));
         assertThat(component.toString(), is("TESTCOMPONENT"));
         assertThat(component.getDescription(), is("TestComponent"));
-        assertThat(component.getServices(), contains(instanceOf(TestService.class)));
     }
 
     @Test

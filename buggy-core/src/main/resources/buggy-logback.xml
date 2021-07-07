@@ -1,0 +1,28 @@
+<configuration debug="false">
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+    <property name="LOG_PATH" value="${LOG_PATH:-logs}"/>
+
+    <appender name="Console"        class="org.touchbit.buggy.core.logback.appender.ConsoleColorAppender"/>
+    <appender name="Framework"      class="org.touchbit.buggy.core.logback.appender.FrameworkFileAppender"/>
+    <appender name="TestSupervisor" class="org.touchbit.buggy.core.logback.appender.TestSupervisorFileAppender"/>
+    <appender name="Sifting"        class="org.touchbit.buggy.core.logback.appender.SiftingAppender">
+        <sift><appender class="org.touchbit.buggy.core.logback.appender.SiftingFileAppender"/></sift>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="Framework"/>
+    </root>
+    <logger name="Console" level="ALL" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="Framework"/>
+    </logger>
+    <logger name="Sifting" level="ALL" additivity="false">
+        <appender-ref ref="Sifting"/>
+    </logger>
+    <logger name="Framework" level="ALL" additivity="false">
+        <appender-ref ref="Framework"/>
+    </logger>
+    <logger name="org.touchbit.buggy.core.testng.TestSupervisor" level="ALL" additivity="false">
+        <appender-ref ref="TestSupervisor"/>
+    </logger>
+</configuration>

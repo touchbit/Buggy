@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.touchbit.buggy</groupId>
+        <artifactId>buggy</artifactId>
+        <version>0.3.7</version>
+    </parent>
+
+    <artifactId>buggy-spring-boot-starter-example</artifactId>
+    <name>Buggy SB starter</name>
+    <description>Buggy spring boot starter</description>
+    <version>0.3.7</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <jar.main.class>org.touchbit.buggy.spring.boot.starter.example.ExampleBuggyRunner</jar.main.class>
+        <jar.final.name>Buggy</jar.final.name>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.touchbit.buggy</groupId>
+            <artifactId>buggy-spring-boot-starter</artifactId>
+            <version>0.3.7</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.3.4.RELEASE</version>
+                <configuration>
+                    <fork>true</fork>
+                    <finalName>${jar.final.name}</finalName>
+                    <mainClass>${jar.main.class}</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

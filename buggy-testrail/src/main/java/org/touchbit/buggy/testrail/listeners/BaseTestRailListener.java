@@ -1,10 +1,11 @@
 package org.touchbit.buggy.testrail.listeners;
 
-import org.touchbit.buggy.core.Buggy;
-import org.touchbit.buggy.core.config.PrimaryConfig;
-import org.touchbit.buggy.core.model.Details;
-import org.touchbit.buggy.core.testng.listeners.BaseBuggyExecutionListener;
-import org.testng.*;
+import org.testng.IExecutionListener;
+import org.testng.IInvokedMethodListener;
+import org.testng.ITestResult;
+import org.touchbit.buggy.core.config.BuggyConfigurationYML;
+import org.touchbit.buggy.core.model.Buggy;
+import org.touchbit.buggy.core.testng.BaseBuggyExecutionListener;
 import org.touchbit.buggy.testrail.BaseTestRailConfig;
 import org.touchbit.buggy.testrail.RunsResultsStorage;
 import org.touchbit.buggy.testrail.StatusMapper;
@@ -19,8 +20,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.touchbit.buggy.core.test.TRProperty.RUN_ID;
-
 /**
  * Listener of the test methods to be followed for the subsequent translation of the results into the TestRail.
  * <p>
@@ -31,14 +30,12 @@ import static org.touchbit.buggy.core.test.TRProperty.RUN_ID;
 public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
         implements IExecutionListener, IInvokedMethodListener {
 
-    private TestRailClient client;
     private static RunsResultsStorage runsResults = new RunsResultsStorage();
+    private TestRailClient client;
     private StatusMapper<S> statusMapper;
-    private final PrimaryConfig config;
 
     public BaseTestRailListener(StatusMapper<S> statusMapper) {
         this.statusMapper = statusMapper;
-        this.config = Buggy.getPrimaryConfig();
         BasicAuth interceptor = new BasicAuth(BaseTestRailConfig.getLogin(), BaseTestRailConfig.getPass());
         client = TestRailClientBuilder.build(interceptor, BaseTestRailConfig.getTestRailHost());
     }
@@ -76,13 +73,13 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
                     frameworkLog.info("Test results for run_id={} transferred.", rId);
                     if (!caseIDsCheckList.isEmpty()) {
                         caseIDsCheckList.forEach(cId -> {
-                            Buggy.incrementBuggyErrors();
+//                            Buggy.incrementBuggyErrors();
                             frameworkLog.error("In TestRail is absent or in the " +
                                     "test the case with id={} is incorrectly specified", cId);
                         });
                     }
                 } catch (Exception e) {
-                    Buggy.incrementBuggyErrors();
+//                    Buggy.incrementBuggyErrors();
                     frameworkLog.error("Error getting data from TestRail.", e);
                 }
             }
@@ -90,22 +87,23 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
         }
     }
 
-    protected void addResult(ITestResult result, Details details, S status, String comment) {
+    protected void addResult(ITestResult result, Buggy buggy, S status, String comment) {
         String msg = comment + addAttachments(result);
-        String strRunID = String.valueOf(result.getAttribute(RUN_ID.toString()));
+        String strRunID = "0"; // TODO
+//        String strRunID = String.valueOf(result.getAttribute(RUN_ID.toString()));
         if ("null".equals(String.valueOf(strRunID))) {
-            strRunID = String.valueOf(System.getProperty(RUN_ID.toString()));
+//            strRunID = String.valueOf(System.getProperty(RUN_ID.toString()));
         }
         try {
             Long runID = Long.parseLong(strRunID);
-            for (Long caseId : details.id()) {
+            for (String caseId : buggy.caseIDs()) {
                 if (statusMapper.getId(status) > 0) {
                     StringJoiner defects = new StringJoiner(", ");
-                    for (String bug : details.bug()) {
+                    for (String bug : buggy.bugs()) {
                         defects.add(bug);
                     }
                     TRResult trResult = new TRResult()
-                            .withCaseId(caseId)
+                            .withCaseId(Long.valueOf(caseId))
                             .withStatusId(statusMapper.getId(status))
                             .withComment(msg)
                             .withDefects(defects.toString());
@@ -115,22 +113,22 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
                 }
             }
         } catch (Exception ignore) {
-            Buggy.incrementBuggyErrors();
-            frameworkLog.error("An incorrect value {} = {} was received", RUN_ID, strRunID);
+//            BuCo.incrementBuggyErrors();
+//            frameworkLog.error("An incorrect value {} = {} was received", RUN_ID, strRunID);
         }
     }
 
     protected String addAttachments(ITestResult testResult) {
         Method method = testResult.getMethod().getConstructorOrMethod().getMethod();
-        Details trCase = method.getAnnotation(Details.class);
+        Buggy trCase = method.getAnnotation(Buggy.class);
 
-        String caseIds = trCase != null ? Arrays.toString(trCase.id()) + "_" : "";
+        String caseIds = trCase != null ? Arrays.toString(trCase.caseIDs()) + "_" : "";
         String prefix = caseIds + method.getName();
         return "\n" + attachLogfile(prefix) + "\n" + attachScreenshots(prefix);
     }
 
     protected String attachLogfile(String prefix) {
-        String logfile = config.getArtifactsUrl() + "/tests/" + prefix + ".log";
+        String logfile = BuggyConfigurationYML.getArtifactsUrl() + "/tests/" + prefix + ".log";
         return attachFile(logfile);
     }
 
@@ -150,7 +148,7 @@ public abstract class BaseTestRailListener<S> extends BaseBuggyExecutionListener
     protected String attachFile(String filename) {
         File sourceFile = new File(filename);
         return "[" + sourceFile.getName() + "](" +
-                config.getArtifactsUrl() + "/tests/" + sourceFile.getName() + ")\n";
+                BuggyConfigurationYML.getArtifactsUrl() + "/tests/" + sourceFile.getName() + ")\n";
     }
 
     protected List<Long> getTestRailCasesByRunId(Long rId) {

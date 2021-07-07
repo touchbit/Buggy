@@ -22,21 +22,18 @@ package org.touchbit.buggy.core.model;
  * Created by Oleg Shaburov on 16.05.2018
  * shaburov.o.a@gmail.com
  */
-public enum Status {
+public enum Status implements IStatus {
 
-    // Test method statuses
     EXP_IMPL,
     EXP_FIX,
     BLOCKED,
     CORRUPTED,
-
-    // Result statuses
-    FIXED,
-    IMPLEMENTED,
-    UNTESTED,
-    SUCCESS,
-    SKIP,
-    FAILED,
+    NONE,
     ;
+
+    @Override
+    public String getStatus() {
+        return this.name();
+    }
 
 }

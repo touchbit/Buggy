@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 /**
  * Created by Oleg Shaburov on 13.10.2018

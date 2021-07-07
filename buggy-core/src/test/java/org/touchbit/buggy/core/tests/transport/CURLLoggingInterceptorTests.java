@@ -3,7 +3,7 @@ package org.touchbit.buggy.core.tests.transport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.touchbit.buggy.core.tests.BaseUnitTest;
-import org.touchbit.buggy.core.transport.interceptor.CURLLoggingInterceptor;
+import org.touchbit.buggy.core.transport.CURLLoggingInterceptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +23,8 @@ class CURLLoggingInterceptorTests extends BaseUnitTest {
     @Test
     @DisplayName("Check intercept() with body and headers")
     void unitTest_20181013152105() {
-        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(TEST_LOGGER::info) {{}};
+        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(TEST_LOGGER::info) {{
+        }};
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", new ArrayList<String>() {{
                 add("value");
@@ -38,7 +39,8 @@ class CURLLoggingInterceptorTests extends BaseUnitTest {
     @Test
     @DisplayName("Check intercept() without body and headers")
     void unitTest_20181013152204() {
-        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(TEST_LOGGER::info) {{}};
+        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(TEST_LOGGER::info) {{
+        }};
         interceptor.intercept("PUT", "http://url.test", null, null);
         assertThat(TEST_LOGGER.takeLoggedMessages(),
                 contains("Playback curl:\ncurl -i -k -X PUT 'http://url.test'"));
@@ -47,7 +49,8 @@ class CURLLoggingInterceptorTests extends BaseUnitTest {
     @Test
     @DisplayName("Check intercept() header value == null")
     void unitTest_20181013161843() {
-        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(TEST_LOGGER::info) {{}};
+        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(TEST_LOGGER::info) {{
+        }};
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", null);
         }};
@@ -59,7 +62,8 @@ class CURLLoggingInterceptorTests extends BaseUnitTest {
     @Test
     @DisplayName("Check intercept() header value is empty list")
     void unitTest_20181013162005() {
-        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(TEST_LOGGER::info) {{}};
+        CURLLoggingInterceptor interceptor = new CURLLoggingInterceptor(TEST_LOGGER::info) {{
+        }};
         Map<String, Collection<String>> headers = new HashMap<String, Collection<String>>() {{
             put("test_header", new ArrayList<>());
         }};

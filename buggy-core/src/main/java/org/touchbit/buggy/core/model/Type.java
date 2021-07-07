@@ -17,35 +17,41 @@
 package org.touchbit.buggy.core.model;
 
 /**
- * Types of autoTests.
+ * All kinds and levels of testing.
+ * This enumeration is used to label tests and further filter which tests are run.
  * <p>
  * Created by Oleg Shaburov on 16.05.2018
  * shaburov.o.a@gmail.com
  */
 public enum Type {
 
-    SMOKE       (new Type[]{}),
-    MODULE      (new Type[]{SMOKE}),
-    INTEGRATION (new Type[]{SMOKE, MODULE}),
-    SYSTEM      (new Type[]{SMOKE, MODULE, INTEGRATION}),
+    FUNCTIONAL,
+    SECURITY,
+    INTEROPERABILITY,
+    LOAD,
+    PERFORMANCE,
+    STRESS,
+    VOLUME,
+    STABILITY,
+    SMOKE,
+    BUILD,
+    SANITY,
+    REGRESSION,
+    USABILITY,
+    FAILOVER_AND_RECOVERY,
+    CONFIGURATION,
+    INSTALLATION,
+    UNIT,
+    MODULE,
+    INTEGRATION,
+    COMPATIBILITY,
+    SYSTEM,
+    ACCEPTANCE,
+    // Helper type for filtering.
+    SLOW,
+    NORMAL,
+    FAST,
+    ALL,
     ;
-
-    private Type[] innerTypes;
-
-    Type(Type[] priority) {
-        this.innerTypes = priority;
-    }
-
-    public boolean isIncludeOrEquals(Type type) {
-        if (this.equals(type)) {
-            return true;
-        }
-        for (Type innerType : innerTypes) {
-            if (innerType.equals(type)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
 }

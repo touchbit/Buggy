@@ -28,7 +28,7 @@ public class OkHttpCallLoggingInterceptor implements Interceptor {
     public OkHttpCallLoggingInterceptor(final Consumer<String> logMethod) {
         this.logMethod = logMethod;
     }
-    
+
     @NotNull
     @Override
     public Response intercept(Chain chain) throws IOException {

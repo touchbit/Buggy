@@ -17,8 +17,8 @@
 package org.touchbit.buggy.core.config;
 
 import org.testng.annotations.Test;
-import org.touchbit.buggy.core.model.Details;
-import org.touchbit.buggy.core.test.BaseBuggyTest;
+import org.touchbit.buggy.core.BaseBuggyTest;
+import org.touchbit.buggy.core.model.Buggy;
 
 /**
  * Created by Oleg Shaburov on 20.09.2018
@@ -27,7 +27,7 @@ import org.touchbit.buggy.core.test.BaseBuggyTest;
 public class TestClassWithoutSuite extends BaseBuggyTest {
 
     @Test(description = "test_20180920150514")
-    @Details
+    @Buggy
     public void test_20180920150514() {
         step("Example step test_20180920150514");
     }

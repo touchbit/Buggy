@@ -21,9 +21,11 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import org.touchbit.buggy.core.exceptions.BuggyException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Properties;
 
 /**
  * Utility class work with OC.
@@ -33,6 +35,10 @@ import java.util.*;
  */
 @SuppressWarnings({"ResultOfMethodCallIgnored", "UnstableApiUsage", "WeakerAccess"})
 public class IOHelper {
+
+    private IOHelper() {
+        throw new IllegalStateException("Utility class. Prohibit instantiation.");
+    }
 
     public static void copyFile(String sourceFile, String destFile) throws IOException {
         File from = new File(sourceFile);
@@ -109,29 +115,6 @@ public class IOHelper {
         } catch (IOException e) {
             throw new BuggyException("Error reading file from resources: " + file, e);
         }
-    }
-
-    /**
-     * Returns the file {@link File} from the resources.
-     *
-     * @param file - relative path to file
-     * @return {@link File}
-     */
-    public static Properties readPropertiesFileFromResource(final String file) {
-        try (InputStream inputStream = getResourceAsStream(file)) {
-            if ((inputStream == null)) {
-                throw new BuggyException("The following file can not be found in the project resources: " + file);
-            }
-            final Properties properties = new Properties();
-            properties.load(inputStream);
-            return properties;
-        } catch (IOException e) {
-            throw new BuggyException("Error reading file [" + file + "] from project resources", e);
-        }
-    }
-
-    private IOHelper() {
-        throw new IllegalStateException("Utility class. Prohibit instantiation.");
     }
 
 }

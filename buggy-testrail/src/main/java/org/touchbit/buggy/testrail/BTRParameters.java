@@ -6,10 +6,10 @@ package org.touchbit.buggy.testrail;
  */
 public class BTRParameters {
 
-    public static final String ENABLE           = "--tr";
-    public static final String HOST             = "--tr-host";
-    public static final String LOGIN            = "--tr-login";
-    public static final String PASS_TOKEN       = "--tr-auth";
+    public static final String ENABLE = "--tr";
+    public static final String HOST = "--tr-host";
+    public static final String LOGIN = "--tr-login";
+    public static final String PASS_TOKEN = "--tr-auth";
 
     private BTRParameters() {
         throw new IllegalStateException("Utility class. Prohibit instantiation.");

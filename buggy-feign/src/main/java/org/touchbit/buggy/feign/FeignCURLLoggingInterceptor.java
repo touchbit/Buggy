@@ -20,7 +20,7 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.touchbit.buggy.core.transport.interceptor.CURLLoggingInterceptor;
+import org.touchbit.buggy.core.transport.CURLLoggingInterceptor;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
  */
 public class FeignCURLLoggingInterceptor extends CURLLoggingInterceptor implements RequestInterceptor {
 
-    private String host;
+    private final String host;
 
     public FeignCURLLoggingInterceptor(final String host) {
         this(host, LoggerFactory.getLogger(FeignCURLLoggingInterceptor.class));

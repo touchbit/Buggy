@@ -1,6 +1,6 @@
 package org.touchbit.buggy.core.exceptions;
 
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 
 import java.util.Arrays;
 
@@ -27,16 +27,16 @@ public abstract class BaseBuggyTestException extends RuntimeException {
         super(e);
     }
 
-    protected static String getMsg(String brief, Details details) {
+    protected static String getMsg(String brief, Buggy buggy) {
         StringBuilder sb = new StringBuilder();
         sb.append(brief);
-        if (details != null) {
+        if (buggy != null) {
             String[] tmp;
-            tmp = details.issue();
+            tmp = buggy.issues();
             if (tmp.length > 0) {
                 sb.append(". Related issues: ").append(Arrays.toString(tmp));
             }
-            tmp = details.bug();
+            tmp = buggy.bugs();
             if (tmp.length > 0) {
                 sb.append(". Related bugs: ").append(Arrays.toString(tmp));
             }

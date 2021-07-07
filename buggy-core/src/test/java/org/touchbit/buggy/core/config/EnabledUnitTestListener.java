@@ -1,6 +1,6 @@
 package org.touchbit.buggy.core.config;
 
-import org.touchbit.buggy.core.testng.listeners.BuggyListener;
+import org.touchbit.buggy.core.testng.BuggyListener;
 
 /**
  * Created by Oleg Shaburov on 22.10.2018

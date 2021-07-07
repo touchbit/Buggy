@@ -16,11 +16,12 @@
 
 package org.touchbit.buggy.core.model;
 
-import org.atteo.classindex.IndexAnnotated;
-import org.touchbit.buggy.core.process.Component;
-import org.touchbit.buggy.core.process.DefaultComponent;
-import org.touchbit.buggy.core.process.Interface;
-import org.touchbit.buggy.core.process.Service;
+import org.touchbit.buggy.core.goal.component.Component;
+import org.touchbit.buggy.core.goal.component.DefaultComponent;
+import org.touchbit.buggy.core.goal.interfaze.DefaultInterface;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
+import org.touchbit.buggy.core.goal.service.DefaultService;
+import org.touchbit.buggy.core.goal.service.Service;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -33,19 +34,26 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-@IndexAnnotated
 public @interface Suite {
 
-    /** The component to be tested */
+    /**
+     * The component to be tested
+     */
     Class<? extends Component> component() default DefaultComponent.class;
 
-    /** The test service included in the component */
-    Class<? extends Service> service();
+    /**
+     * The test service included in the component
+     */
+    Class<? extends Service> service() default DefaultService.class;
 
-    /** The interface on which the test is performed */
-    Class<? extends Interface> interfaze();
+    /**
+     * The interface on which the test is performed
+     */
+    Class<? extends Interface> interfaze() default DefaultInterface.class;
 
-    /** The task for the tests included in the test class. (example: add_user) */
-    String task() default "";
+    /**
+     * The purpose of the tests included in the test class. (example: 'update_user' or 'upload_pdf')
+     */
+    String purpose() default "";
 
 }

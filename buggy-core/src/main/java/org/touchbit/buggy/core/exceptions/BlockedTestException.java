@@ -12,7 +12,7 @@
 
 package org.touchbit.buggy.core.exceptions;
 
-import org.touchbit.buggy.core.model.Details;
+import org.touchbit.buggy.core.model.Buggy;
 
 /**
  * Created by Oleg Shaburov on 18.05.2018
@@ -22,8 +22,8 @@ public class BlockedTestException extends BaseBuggyTestException {
 
     private static final String MSG = "Autotest blocked. Test case verification is not possible.";
 
-    public BlockedTestException(Details details) {
-        super(getMsg(MSG, details));
+    public BlockedTestException(Buggy buggy) {
+        super(getMsg(MSG, buggy));
     }
 
     public BlockedTestException() {

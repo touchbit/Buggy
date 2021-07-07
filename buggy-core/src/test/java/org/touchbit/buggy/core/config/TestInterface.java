@@ -1,6 +1,6 @@
 package org.touchbit.buggy.core.config;
 
-import org.touchbit.buggy.core.process.Interface;
+import org.touchbit.buggy.core.goal.interfaze.Interface;
 
 /**
  * Created by Oleg Shaburov on 16.09.2018

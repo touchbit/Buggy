@@ -1,0 +1,13 @@
+logging:
+  config: 'classpath:buggy-logback.xml'
+  file:
+    path: /tmp/logs
+buggy:
+  commandsScannerBasePackages:
+    - "**.buggy"
+  goalsScannerBasePackages:
+    - "**.buggy"
+  suitesScannerBasePackages:
+    - "**.buggy"
+  listenersScannerBasePackages:
+    - "**.buggy"
